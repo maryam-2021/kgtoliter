@@ -9,6 +9,7 @@
     "start": "astro dev",
     "api": "tsx server.js",
     "build": "astro build",
+    "deploy:cloudflare": "npm run build && wrangler pages deploy dist --project-name kgtolitre --branch main",
     "check": "astro check",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -40,6 +41,7 @@
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.67.0",
+    "wrangler": "^4.125.0"
   }
 }

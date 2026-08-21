@@ -59,6 +59,14 @@ Build command: `npm run build`
 
 Output directory: `dist`
 
+Deploy the production build directly to the configured Cloudflare Pages project:
+
+```sh
+npm run deploy:cloudflare
+```
+
+Cloudflare Pages project: `kgtolitre`; production branch: `main`.
+
 The service worker and web manifest live in `public/`. The Express API is not part of the static deployment and must be deployed and secured separately if it is ever needed.
 
 ## Git baseline
