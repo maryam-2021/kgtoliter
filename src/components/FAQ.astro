@@ -1,0 +1,55 @@
+---
+const faqs = [
+  {
+    q: 'Is 1 kg always equal to 1 litre?',
+    a: 'No! 1 kg is only equal to 1 litre for pure water at 4°C (which has a density of exactly 1.0 kg/L). For other liquids like cooking oil (0.92 kg/L), 1 kg equals 1.087 litres. For dense liquids like honey (1.42 kg/L), 1 kg is only 0.704 litres.',
+  },
+  {
+    q: 'How many litres is 1 kg of vegetable oil?',
+    a: '1 kilogram of vegetable cooking oil is approximately 1.087 litres. Cooking oil is less dense than water (0.92 kg/L), meaning it expands over a larger volume for the same mass.',
+  },
+  {
+    q: 'How many kg is 1 litre of milk?',
+    a: '1 litre of whole milk weighs approximately 1.03 kilograms. Milk contains dissolved fats, proteins, and minerals which make it slightly denser than plain water.',
+  },
+  {
+    q: 'How many litres is 1 kg of diesel fuel?',
+    a: '1 kilogram of diesel fuel is approximately 1.176 litres (assuming a standard density of 0.85 kg/L at 15°C).',
+  },
+  {
+    q: 'Why does temperature affect kg to litre conversion?',
+    a: 'Liquids expand when heated and contract when cooled. As temperature increases, volume increases while mass remains constant, causing liquid density (&rho;) to decrease slightly.',
+  },
+];
+---
+
+<section id="faq" class="py-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-extrabold text-white sm:text-4xl tracking-tight">
+        Frequently Asked Questions
+      </h2>
+      <p class="mt-3 text-slate-400 text-sm">
+        Everything you need to know about mass and volume unit conversions.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      {
+        faqs.map((faq) => (
+          <details class="glass-card rounded-2xl border border-slate-800 p-6 group [&_summary::-webkit-details-marker]:hidden cursor-pointer transition-all">
+            <summary class="flex items-center justify-between text-white font-semibold text-base">
+              <span>{faq.q}</span>
+              <span class="ml-4 flex-shrink-0 text-brand-400 group-open:rotate-180 transition-transform duration-200">
+                ▼
+              </span>
+            </summary>
+            <p class="mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed border-t border-slate-800/60 pt-4">
+              {faq.a}
+            </p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

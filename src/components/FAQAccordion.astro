@@ -1,0 +1,50 @@
+---
+export interface Props {
+  faqs?: { q: string; a: string }[];
+}
+
+const defaultFaqs = [
+  {
+    q: 'How do you convert kilograms to litres?',
+    a: "To convert kilograms (kg) to litres (L), divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
+  },
+  {
+    q: 'Is 1 kg always equal to 1 litre?',
+    a: 'No. Kilograms measure mass, whereas litres measure spatial volume. They are only equal for substances with a density of exactly 1.00 kg/L, like pure water at 4°C.',
+  },
+];
+
+const { faqs = defaultFaqs } = Astro.props;
+
+// Generate Schema in Frontmatter (Safe from UI leaks)
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
+};
+---
+
+<!-- Inject Schema via script tag -->
+<script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+<!-- Actual UI Accordion -->
+<div class="space-y-4 max-w-4xl mx-auto my-8 font-sans">
+  {
+    faqs.map((faq) => (
+      <details class="group bg-gray-800/50 border border-gray-700 rounded-lg open:bg-gray-800 transition-all">
+        <summary class="flex justify-between items-center p-4 cursor-pointer list-none text-white font-medium">
+          {faq.q}
+          <span class="transition-transform group-open:rotate-45 text-brand-400 text-xl">+</span>
+        </summary>
+        <div class="px-4 pb-4 text-gray-400 text-sm leading-relaxed">{faq.a}</div>
+      </details>
+    ))
+  }
+</div>

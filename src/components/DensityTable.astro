@@ -1,0 +1,75 @@
+---
+import { substances, categories } from '../data/densities.ts';
+---
+
+<section id="substances" class="py-16">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-3xl font-extrabold text-white sm:text-4xl tracking-tight">
+        Common Liquid Density Reference Table
+      </h2>
+      <p class="mt-4 text-slate-400 text-sm sm:text-base">
+        Because 1 liter of water weighs exactly 1 kilogram, other liquids vary based on their
+        molecular density (&rho;). Here is the reference index for standard ambient temperatures
+        (20°C / 68°F).
+      </p>
+    </div>
+
+    <!-- Table Container -->
+    <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead
+            class="bg-slate-900/90 text-xs font-semibold text-slate-200 uppercase tracking-wider border-b border-slate-800"
+          >
+            <tr>
+              <th scope="col" class="py-4 px-6">Substance Name</th>
+              <th scope="col" class="py-4 px-6">Category</th>
+              <th scope="col" class="py-4 px-6 font-mono text-brand-400">Density (&rho;)</th>
+              <th scope="col" class="py-4 px-6 font-mono">1 Kg equals</th>
+              <th scope="col" class="py-4 px-6 font-mono">1 Litre weighs</th>
+              <th scope="col" class="py-4 px-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60 font-mono text-xs sm:text-sm">
+            {
+              substances.map((s) => {
+                const catSlug = categories.find((c) => c.id === s.category)?.slug || 'basic';
+                return (
+                  <tr class="hover:bg-slate-900/50 transition-colors">
+                    <td class="py-4 px-6 font-medium text-white font-sans flex items-center gap-2">
+                      <a
+                        href={`/${catSlug}/kg-to-litres-${s.id}/`}
+                        class="hover:text-brand-400 transition-colors"
+                      >
+                        {s.name}
+                      </a>
+                    </td>
+                    <td class="py-4 px-6">
+                      <span class="px-2.5 py-1 rounded-md text-[11px] font-sans font-medium bg-slate-800 text-slate-300 border border-slate-700/50 capitalize">
+                        {s.category}
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-brand-400 font-bold">{s.density_kg_per_l} kg/L</td>
+                    <td class="py-4 px-6 text-emerald-300 font-semibold">
+                      {(1 / s.density_kg_per_l).toFixed(3)} L
+                    </td>
+                    <td class="py-4 px-6 text-cyan-300">{s.density_kg_per_l.toFixed(3)} kg</td>
+                    <td class="py-4 px-6 text-right">
+                      <a
+                        href={`/${catSlug}/kg-to-litres-${s.id}/`}
+                        class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-brand-400 text-xs font-sans font-semibold transition-colors"
+                      >
+                        Convert →
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

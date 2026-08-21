@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryHubConverter from '../../components/interactive/CategoryHubConverter.astro';
+import { substances, categories } from '../../data/densities.ts';
+
+export async function getStaticPaths() {
+  return categories.map((cat) => ({
+    params: { category: cat.slug },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props;
+const categorySubstances = substances.filter((s) => s.category === category.id);
+const title = `Kg to Litres of ${category.name} | Density & Volume Reference`;
+const description = `Mass-to-volume conversion tools and a reference directory for ${category.name.toLowerCase()}. Estimate kg to litres using compiled density values.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="max-w-6xl mx-auto px-4 py-10 space-y-12">
+    <!-- Breadcrumbs -->
+    <nav class="text-sm text-slate-400 flex items-center gap-2 font-mono">
+      <a href="/" class="hover:underline hover:text-brand-400 transition-colors">Home</a> &gt;
+      <a href="/tools/" class="hover:underline hover:text-brand-400 transition-colors">Tools</a> &gt;
+      <span class="text-white font-medium">{category.name}</span>
+    </nav>
+
+    <!-- Main Category Hub Converter & Directory -->
+    <CategoryHubConverter categorySlug={category.slug} />
+
+    {
+      categorySubstances.length > 0 ? (
+        <section class="max-w-5xl mx-auto pt-8 border-t border-slate-800 space-y-6">
+          <h2 class="text-2xl font-bold text-white">Dedicated Calculators in {category.name}</h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categorySubstances.map((sub) => (
+              <a
+                href={`/${category.slug}/kg-to-litres-${sub.id}/`}
+                class="group block p-6 glass-card glass-card-hover rounded-xl border border-slate-800 transition-all"
+              >
+                <h3 class="text-xl font-bold text-white group-hover:text-brand-400 transition-colors mb-2">
+                  Kg to Litres {sub.name}
+                </h3>
+                <p class="text-sm text-slate-400 mb-4 line-clamp-2">
+                  {sub.seo.description.substring(0, 100)}...
+                </p>
+                <div class="flex items-center text-sm font-semibold text-brand-400">
+                  Use Dedicated Converter
+                  <svg
+                    class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null
+    }
+  </article>
+</BaseLayout>

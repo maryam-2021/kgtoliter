@@ -1,0 +1,41 @@
+---
+import { substances, categories, type Substance } from '../data/densities.ts';
+
+export interface Props {
+  currentSubstance: Substance;
+  categorySlug: string;
+}
+
+const { currentSubstance, categorySlug } = Astro.props;
+
+const categoryObj = categories.find(
+  (c) => c.slug === categorySlug || c.id === currentSubstance.category,
+);
+
+// Filter substances in same category excluding current substance (limit 3)
+const related = substances
+  .filter((s) => s.category === currentSubstance.category && s.id !== currentSubstance.id)
+  .slice(0, 3);
+---
+
+<section class="border-t border-slate-800 pt-8 mt-12">
+  <h3 class="text-xl font-bold text-white mb-4">
+    Related Tools in {categoryObj?.name}
+  </h3>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {
+      related.map((sub) => (
+        <a
+          href={`/${categorySlug}/kg-to-litres-${sub.id}/`}
+          class="block p-4 glass-card glass-card-hover rounded-xl border border-slate-800 transition-all group"
+        >
+          <span class="font-semibold text-brand-400 group-hover:text-brand-300 block text-sm">
+            Kg to Litres of {sub.name} &rarr;
+          </span>
+          <p class="text-xs text-slate-400 mt-1 font-mono">Density: {sub.density_kg_per_l} kg/L</p>
+        </a>
+      ))
+    }
+  </div>
+</section>

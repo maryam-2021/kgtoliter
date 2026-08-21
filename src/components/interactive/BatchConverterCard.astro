@@ -1,0 +1,225 @@
+---
+// Batch Converter Card Component
+---
+
+<div class="glass-card bg-slate-950/90 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl">
+  <!-- Header -->
+  <div
+    class="flex items-start justify-between flex-wrap gap-4 mb-6 border-b border-slate-800/80 pb-5"
+  >
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-2xl">📚</span>
+        <h3 class="text-xl sm:text-2xl font-extrabold text-white">Batch Conversion Calculator</h3>
+      </div>
+      <p class="text-slate-400 text-xs sm:text-sm">
+        Convert multiple substances simultaneously with instant aggregate totals
+      </p>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <button
+        id="homeAddBatchBtn"
+        disabled
+        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-blue-600/20 active:scale-95"
+      >
+        <span>+</span> Add Substance
+      </button>
+      <button
+        id="homeExportBatchBtn"
+        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm transition-all shadow-md shadow-emerald-600/20 active:scale-95"
+      >
+        <span>📁</span> Export Results
+      </button>
+      <button
+        id="homeClearBatchBtn"
+        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs sm:text-sm transition-all active:scale-95"
+      >
+        <span>🗑️</span> Clear All
+      </button>
+    </div>
+  </div>
+
+  <!-- Batch Rows Container -->
+  <div id="homeBatchRowsContainer" class="space-y-3 mb-6 min-h-[100px]">
+    <!-- Rows dynamically generated via JS -->
+  </div>
+
+  <!-- Summary Bar -->
+  <div
+    id="homeBatchSummaryBar"
+    class="hidden bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm font-mono text-slate-300"
+  >
+    <div>
+      <strong>Total Items:</strong>
+      <span id="homeBatchTotalItems" class="text-white font-bold">0</span>
+    </div>
+    <div>
+      <strong>Total Mass:</strong>
+      <span id="homeBatchTotalMass" class="text-blue-400 font-bold">0.00 kg</span>
+    </div>
+    <div>
+      <strong>Total Volume:</strong>
+      <span id="homeBatchTotalVolume" class="text-emerald-400 font-bold">0.000 L</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import type { CatalogItem } from '../../data/catalog';
+
+  let chemicals: CatalogItem[] = [];
+
+  function createHomeBatchRow() {
+    const container = document.getElementById('homeBatchRowsContainer');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className =
+      'home-batch-row grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_auto] gap-2 sm:gap-3 items-center bg-slate-900/50 p-3 rounded-xl border border-slate-800/80 animate-fade-in';
+
+    row.innerHTML = `
+      <select aria-label="Substance" class="batch-select bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm rounded-lg p-2.5 outline-none focus:border-blue-500">
+        ${chemicals.map((c) => `<option value="${c.catalogKey}">${c.name} (${c.density} kg/L)</option>`).join('')}
+      </select>
+      <div class="relative">
+        <input type="number" aria-label="Mass in kilograms" class="batch-mass bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none focus:border-blue-500" value="1.0" step="0.1" min="0.01" placeholder="Mass (kg)">
+        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg</span>
+      </div>
+      <div class="relative">
+        <input type="text" aria-label="Calculated volume in litres" class="batch-vol bg-slate-950 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none" readonly placeholder="Volume (L)">
+        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">L</span>
+      </div>
+      <button aria-label="Remove batch row" class="remove-row-btn p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors font-bold text-sm h-10 w-10 flex items-center justify-center">
+        ✕
+      </button>
+    `;
+
+    container.appendChild(row);
+
+    const selectEl = row.querySelector<HTMLSelectElement>('.batch-select');
+    const massEl = row.querySelector<HTMLInputElement>('.batch-mass');
+    const removeBtn = row.querySelector<HTMLButtonElement>('.remove-row-btn');
+
+    selectEl?.addEventListener('change', () => updateRowAndSummary(row));
+    massEl?.addEventListener('input', () => updateRowAndSummary(row));
+    removeBtn?.addEventListener('click', () => {
+      row.remove();
+      calculateTotals();
+    });
+
+    updateRowAndSummary(row);
+  }
+
+  function updateRowAndSummary(row: HTMLDivElement) {
+    const select = row.querySelector<HTMLSelectElement>('.batch-select');
+    const massInput = row.querySelector<HTMLInputElement>('.batch-mass');
+    const volInput = row.querySelector<HTMLInputElement>('.batch-vol');
+
+    const chemId = select?.value;
+    const mass = parseFloat(massInput?.value ?? '0') || 0;
+
+    const chem = chemicals.find((c) => c.catalogKey === chemId);
+    if (chem && mass > 0) {
+      const vol = mass / chem.density;
+      if (volInput) volInput.value = vol.toFixed(3);
+    } else {
+      if (volInput) volInput.value = '0.000';
+    }
+
+    calculateTotals();
+  }
+
+  function calculateTotals() {
+    const rows = document.querySelectorAll<HTMLElement>('.home-batch-row');
+    let totalItems = 0;
+    let totalMass = 0;
+    let totalVolume = 0;
+
+    rows.forEach((r) => {
+      const select = r.querySelector<HTMLSelectElement>('.batch-select');
+      const massInput = r.querySelector<HTMLInputElement>('.batch-mass');
+      const volInput = r.querySelector<HTMLInputElement>('.batch-vol');
+
+      const chemId = select?.value;
+      const mass = parseFloat(massInput?.value ?? '0') || 0;
+      const vol = parseFloat(volInput?.value ?? '0') || 0;
+
+      if (chemId && mass > 0) {
+        totalItems++;
+        totalMass += mass;
+        totalVolume += vol;
+      }
+    });
+
+    const summaryBar = document.getElementById('homeBatchSummaryBar');
+    const totalItemsEl = document.getElementById('homeBatchTotalItems');
+    const totalMassEl = document.getElementById('homeBatchTotalMass');
+    const totalVolEl = document.getElementById('homeBatchTotalVolume');
+
+    if (totalItems > 0) {
+      if (summaryBar) summaryBar.classList.remove('hidden');
+      if (totalItemsEl) totalItemsEl.textContent = totalItems.toString();
+      if (totalMassEl) totalMassEl.textContent = `${totalMass.toFixed(2)} kg`;
+      if (totalVolEl) totalVolEl.textContent = `${totalVolume.toFixed(3)} L`;
+    } else {
+      if (summaryBar) summaryBar.classList.add('hidden');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const addBtn = document.getElementById('homeAddBatchBtn') as HTMLButtonElement | null;
+    const clearBtn = document.getElementById('homeClearBatchBtn');
+    const exportBtn = document.getElementById('homeExportBatchBtn');
+
+    addBtn?.addEventListener('click', createHomeBatchRow);
+
+    clearBtn?.addEventListener('click', () => {
+      const container = document.getElementById('homeBatchRowsContainer');
+      if (container) container.innerHTML = '';
+      calculateTotals();
+    });
+
+    exportBtn?.addEventListener('click', () => {
+      const rows = document.querySelectorAll<HTMLElement>('.home-batch-row');
+      if (rows.length === 0) {
+        alert('Please add at least one substance to batch export.');
+        return;
+      }
+
+      let csv = 'Substance,Mass (kg),Volume (L),Density (kg/L)\n';
+      rows.forEach((r) => {
+        const select = r.querySelector<HTMLSelectElement>('.batch-select');
+        const massInput = r.querySelector<HTMLInputElement>('.batch-mass');
+        const volInput = r.querySelector<HTMLInputElement>('.batch-vol');
+
+        const chemId = select?.value;
+        const mass = parseFloat(massInput?.value ?? '0') || 0;
+        const vol = parseFloat(volInput?.value ?? '0') || 0;
+        const chem = chemicals.find((c) => c.catalogKey === chemId);
+
+        if (chem && mass > 0) {
+          csv += `"${chem.name}",${mass},${vol.toFixed(4)},${chem.density}\n`;
+        }
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `batch_conversions_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    });
+
+    try {
+      const response = await fetch('/data/substances.json');
+      if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
+      chemicals = (await response.json()) as CatalogItem[];
+      if (addBtn) addBtn.disabled = false;
+      createHomeBatchRow();
+      createHomeBatchRow();
+    } catch (error) {
+      console.error('Batch converter catalog could not be loaded.', error);
+    }
+  });
+</script>

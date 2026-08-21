@@ -1,0 +1,292 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalculatorWidget from '../components/CalculatorWidget.astro';
+import HeroDensityVisualizer from '../components/interactive/HeroDensityVisualizer.astro';
+import FormulaPlayground from '../components/interactive/FormulaPlayground.astro';
+import VolumeComparisonSlider from '../components/interactive/VolumeComparisonSlider.astro';
+import IndustrialVolumeComparisonCard from '../components/interactive/IndustrialVolumeComparisonCard.astro';
+import BatchConverterCard from '../components/interactive/BatchConverterCard.astro';
+import SubcategoriesGridCard from '../components/interactive/SubcategoriesGridCard.astro';
+import EngineOilViscosityChartCard from '../components/interactive/EngineOilViscosityChartCard.astro';
+import TemperatureDensitySlider from '../components/interactive/TemperatureDensitySlider.astro';
+import InteractiveConversionTable from '../components/interactive/InteractiveConversionTable.astro';
+import FAQAccordion from '../components/interactive/FAQAccordion.astro';
+import { getToolPath, toolsData } from '../data/toolsData.ts';
+import { getCollection } from 'astro:content';
+
+// Title
+const title = 'Kg to litre | Free Mass to Volume Calculator';
+const description =
+  'Convert kilograms to litres for water, milk, oil, diesel, and more using compiled reference density values.';
+
+// Define the Schema Array
+const homepageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Kg to litre',
+    url: 'https://kgtolitre.com/',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Kg to Litre Calculator',
+    applicationCategory: 'UtilityApplication',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do you convert kg to litres?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: "To convert kilograms to litres, divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is 1 kg always equal to 1 litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. Kilograms measure mass, while litres measure volume. They are only equal for substances with a density of exactly 1 kg/L, like pure water at 4°C.',
+        },
+      },
+    ],
+  },
+];
+
+const allGuides = await getCollection('guides');
+---
+
+<BaseLayout title={title} description={description} schema={homepageSchema}>
+  <!-- ======== HERO SECTION ======== -->
+  <section class="max-w-5xl mx-auto px-4 py-12 md:py-20">
+    <div class="grid md:grid-cols-2 gap-8 items-start mb-16">
+      <div class="animate-fade-in-up">
+        <!-- Badge -->
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-900/30 border border-brand-500/30 text-brand-400 text-xs font-semibold mb-6"
+        >
+          <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+          Free Reference Calculator
+        </div>
+
+        <!-- H1 -->
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+          Kg to litre
+        </h1>
+
+        <!-- Cleaned Up Paragraph -->
+        <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+          Instantly convert <strong>mass to volume</strong> for water, milk, oil, diesel, and more. Select
+          a substance below to apply its reference <strong>density value</strong> and estimate the corresponding
+          volume.
+        </p>
+
+        <!-- Calculator Widget -->
+        <CalculatorWidget />
+      </div>
+
+      <!-- Interactive Visual Diagram -->
+      <div class="animate-slide-in-right">
+        <HeroDensityVisualizer />
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CONTENT SECTIONS ======== -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-24 pb-16">
+    <!-- Formula Playground -->
+    <section class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <span class="badge badge-brand">Interactive Sliders</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">How to Calculate Volume</h2>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+          The formula is simple: divide mass by density. Drag the sliders below to see how changing
+          either value affects the resulting volume in real-time.
+        </p>
+      </div>
+      <div class="max-w-3xl mx-auto">
+        <FormulaPlayground />
+      </div>
+    </section>
+
+    <!-- Volume Comparison -->
+    <section class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <span class="badge badge-brand">Visual Comparison</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">
+          Volume Comparison Across Substances
+        </h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          See how equal mass (kg) fills different liquid volumes across 5 common materials.
+        </p>
+      </div>
+      <VolumeComparisonSlider />
+    </section>
+
+    <!-- Industrial Chemicals 1kg Volume Comparison Card -->
+    <section class="reveal-section max-w-5xl mx-auto">
+      <IndustrialVolumeComparisonCard />
+    </section>
+
+    <!-- Batch Conversion Calculator Section -->
+    <section class="reveal-section max-w-5xl mx-auto">
+      <BatchConverterCard />
+    </section>
+
+    <!-- Master Subcategories & Density Filter Grid Section -->
+    <section class="reveal-section max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <span class="badge badge-brand">Subcategories & Directory</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Explore Master Density Categories</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Filter through 25+ subcategories and 620+ substances by density range and industry domain.
+        </p>
+      </div>
+      <SubcategoriesGridCard />
+    </section>
+
+    <!-- Temperature Density -->
+    <section class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <span class="badge badge-brand">Thermal Physics</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">
+          Effect of Temperature on Liquid Density
+        </h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Demonstrating thermal expansion physics from 0°C freezing to 100°C boiling point.
+        </p>
+      </div>
+      <TemperatureDensitySlider />
+    </section>
+
+    <!-- Interactive Conversion Table -->
+    <section class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <span class="badge badge-brand">Density Directory</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Substance Density Directory</h2>
+      </div>
+      <InteractiveConversionTable />
+    </section>
+
+    <!-- Guides & Articles -->
+    <section class="reveal-section space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="badge badge-brand">Resources</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">
+          Conversion Guides &amp; Technical Articles
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+        {
+          allGuides.map((guide) => (
+            <a
+              href={`/guides/${guide.id}/`}
+              class="group glass-card glass-card-hover rounded-2xl p-6 block"
+            >
+              <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-3">
+                <span class="badge badge-brand capitalize font-sans">{guide.data.category}</span>
+                <span class="text-slate-600">•</span>
+                <span class="text-slate-500">
+                  {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+              <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
+                {guide.data.title}
+              </h3>
+              <p class="text-slate-500 text-xs line-clamp-2 leading-relaxed">
+                {guide.data.description}
+              </p>
+              <div class="mt-4">
+                <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform duration-300">
+                  Read Guide &rarr;
+                </span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ======== TOOLS SHOWCASE ======== -->
+    <section class="reveal-section">
+      <div class="glass-card p-8 sm:p-10 rounded-2xl glow-brand space-y-8">
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+          <span class="badge badge-brand">Specialised Calculators</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+            Explore Dedicated KG to Litre Tools
+          </h2>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Each tool features a unique calculator tailored to the substance density, formula
+            mechanics, and search intent.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+          {
+            toolsData.map((tool) => (
+              <a
+                href={getToolPath(tool)}
+                class="block p-5 rounded-xl bg-surface-900/60 border border-white/[0.05] hover:border-brand-500/30 transition-all duration-300 group hover:bg-surface-900/90"
+                style="transform: translateY(0); transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;"
+                onmouseenter="this.style.transform='translateY(-3px)'"
+                onmouseleave="this.style.transform='translateY(0)'"
+              >
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white font-mono font-bold text-xs flex items-center justify-center shadow-sm shadow-brand-500/20">
+                    &sum;
+                  </span>
+                  <span class="badge badge-brand text-[9px]">Unique Calculator</span>
+                </div>
+                <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-1">
+                  {tool.h1}
+                </h3>
+                <p class="text-[11px] text-slate-500 line-clamp-1 font-mono">{tool.mainQuestion}</p>
+              </a>
+            ))
+          }
+        </div>
+
+        <div class="text-center pt-2">
+          <a href="/tools/" class="btn-primary inline-flex items-center gap-2">
+            <span>View All {toolsData.length} Specialised Calculators</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg
+            >
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Engine Oil Viscosity Comparison Chart Section -->
+    <section class="reveal-section max-w-5xl mx-auto">
+      <EngineOilViscosityChartCard />
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="reveal-section space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="badge badge-brand">Knowledge Base</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Frequently Asked Questions</h2>
+      </div>
+      <FAQAccordion />
+    </section>
+  </div>
+</BaseLayout>

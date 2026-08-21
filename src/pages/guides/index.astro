@@ -1,0 +1,69 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allGuides = await getCollection('guides');
+---
+
+<Layout
+  title="Mass & Volume Conversion Guides"
+  description="Explore comprehensive guides, tutorials, and physics reference articles on converting kilograms to litres."
+>
+  <section class="py-12 sm:py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12 space-y-4">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-mono border border-brand-500/20"
+        >
+          <span>Knowledge Hub</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+          Conversion Guides & Articles
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto">
+          In-depth guides on liquid density, culinary measurement formulas, and industrial fluid
+          dynamics.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {
+          allGuides.map((guide) => (
+            <a
+              href={`/guides/${guide.id}/`}
+              class="group glass-card glass-card-hover rounded-2xl p-6 border border-slate-800 block"
+            >
+              <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-2">
+                <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20 capitalize font-sans">
+                  {guide.data.category}
+                </span>
+                <span>•</span>
+                <span>
+                  {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+              <h2 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors mb-2">
+                {guide.data.title}
+              </h2>
+              <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                {guide.data.description}
+              </p>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 transition-transform">
+                  Read Article →
+                </span>
+                <span class="text-[11px] text-slate-500 font-mono">
+                  {guide.data.related_tools.length} Related Tools
+                </span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

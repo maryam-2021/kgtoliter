@@ -1,0 +1,82 @@
+---
+// Industrial Chemicals & Solvents 1kg Volume Comparison Data
+const items = [
+  { name: 'Acetone', volume: 1.276, density: 0.784, color: 'blue' },
+  { name: 'Ethanol (100%)', volume: 1.267, density: 0.789, color: 'blue' },
+  { name: 'Isopropyl Alcohol (99%)', volume: 1.272, density: 0.786, color: 'blue' },
+  { name: 'Methanol', volume: 1.263, density: 0.792, color: 'blue' },
+  { name: 'Glycerin', volume: 0.793, density: 1.261, color: 'red' },
+  { name: 'Ethylene Glycol', volume: 0.898, density: 1.113, color: 'orange' },
+  { name: 'Propylene Glycol', volume: 0.965, density: 1.036, color: 'orange' },
+  { name: 'Toluene', volume: 1.153, density: 0.867, color: 'blue' },
+  { name: 'Xylene', volume: 1.157, density: 0.864, color: 'blue' },
+  { name: 'Mineral Spirits', volume: 1.282, density: 0.78, color: 'blue' },
+  { name: 'Turpentine', volume: 1.156, density: 0.865, color: 'blue' },
+  { name: 'Ammonia (28%)', volume: 1.111, density: 0.9, color: 'blue' },
+  { name: 'Hydrogen Peroxide (30%)', volume: 0.901, density: 1.11, color: 'orange' },
+  { name: 'Sulfuric Acid (98%)', volume: 0.543, density: 1.84, color: 'red' },
+  { name: 'Hydrochloric Acid (37%)', volume: 0.84, density: 1.198, color: 'orange' },
+  { name: 'Nitric Acid (68%)', volume: 0.709, density: 1.41, color: 'red' },
+  { name: 'Sodium Hydroxide (50%)', volume: 0.66, density: 1.515, color: 'red' },
+];
+
+const maxVolume = 1.282;
+
+const colorClasses: Record<string, string> = {
+  blue: 'bg-blue-600 shadow-blue-500/20',
+  orange: 'bg-amber-500 shadow-amber-500/20',
+  red: 'bg-red-500 shadow-red-500/20',
+};
+---
+
+<div
+  class="glass-card bg-slate-950/90 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl overflow-hidden"
+>
+  <!-- Card Header -->
+  <div class="flex items-start gap-3 mb-6">
+    <span class="text-2xl sm:text-3xl leading-none">📊</span>
+    <div>
+      <h3 class="text-lg sm:text-2xl font-bold text-white tracking-tight">
+        1 kg Volume Comparison <span class="text-slate-400 font-normal text-sm sm:text-base"
+          >(Industrial Chemicals & Solvents)</span
+        >
+      </h3>
+      <p class="text-slate-400 text-xs sm:text-sm mt-1">
+        See how 1 kg of each substance in this category occupies different volumes
+      </p>
+    </div>
+  </div>
+
+  <!-- Comparison Rows -->
+  <div class="space-y-2.5 sm:space-y-3">
+    {
+      items.map((item) => {
+        const pct = (item.volume / maxVolume) * 100;
+        const barColor = colorClasses[item.color] || colorClasses.blue;
+        return (
+          <div class="grid grid-cols-[130px_1fr_80px] sm:grid-cols-[200px_1fr_95px] items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+            {/* Substance Name */}
+            <span class="text-slate-200 font-medium truncate" title={item.name}>
+              {item.name}
+            </span>
+
+            {/* Bar Track */}
+            <div class="w-full bg-slate-900/80 rounded-full h-7 sm:h-8 p-0.5 overflow-hidden flex items-center border border-slate-800/60">
+              <div
+                class={`h-full rounded-full flex items-center px-3 text-white font-mono font-bold text-[11px] sm:text-xs transition-all duration-500 ease-out shadow-sm ${barColor}`}
+                style={`width: ${Math.max(pct, 12)}%;`}
+              >
+                <span class="drop-shadow">{item.volume.toFixed(3)} L</span>
+              </div>
+            </div>
+
+            {/* Density Label */}
+            <span class="text-slate-400 font-mono text-right text-[11px] sm:text-xs">
+              {item.density.toFixed(3)} kg/L
+            </span>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

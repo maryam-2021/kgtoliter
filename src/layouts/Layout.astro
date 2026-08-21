@@ -1,0 +1,316 @@
+---
+import '../styles/global.css';
+
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  schema?: Record<string, any> | Record<string, any>[];
+  ogImage?: string;
+  article?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  schema,
+  ogImage = '/og-image.png',
+  article = false,
+} = Astro.props;
+const siteUrl = Astro.site ? new URL(Astro.site) : new URL('https://kgtolitre.com');
+const finalCanonical = canonicalUrl || Astro.url.pathname;
+const canonicalHref = new URL(finalCanonical, siteUrl).href;
+const ogImageHref = new URL(ogImage, siteUrl).href;
+
+const hasBrandInTitle = /kg\s*to\s*litres?|kgtolitre\.com/i.test(title);
+const pageTitle = hasBrandInTitle ? title : `${title} | Kg to litre`;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalHref} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalHref} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageHref} />
+    <meta property="og:site_name" content="Kg to litre" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalHref} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageHref} />
+
+    <!-- Title Tag -->
+    <title>{pageTitle}</title>
+
+    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body class="bg-surface-950 text-slate-100 flex flex-col min-h-screen bg-mesh">
+    <!-- Accessible Skip to Content Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-500 focus:text-white focus:rounded-xl focus:shadow-xl font-semibold text-xs transition-all"
+    >
+      Skip to main content
+    </a>
+
+    <!-- ======== HEADER ======== -->
+    <header class="sticky top-0 z-50 animate-fade-in-down">
+      <div
+        class="absolute inset-0 bg-surface-950/80 backdrop-blur-2xl border-b border-white/[0.06]"
+      >
+      </div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="/" class="group flex items-center gap-2.5">
+          <div
+            class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/40 transition-shadow duration-300"
+          >
+            <span class="text-white font-black text-sm font-mono">KL</span>
+          </div>
+          <span
+            class="text-xl font-bold text-white tracking-tight group-hover:text-brand-300 transition-colors duration-300"
+          >
+            Kg to litre
+          </span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="flex items-center gap-3">
+          <nav class="hidden md:flex items-center gap-1">
+            <a
+              href="/tools/"
+              class="px-3 py-2 rounded-lg text-sm font-semibold text-brand-400 hover:bg-brand-500/10 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+              >All Tools</a
+            >
+            <a
+              href="/basic/"
+              class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+              >Basic</a
+            >
+            <a
+              href="/cooking/"
+              class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+              >Cooking</a
+            >
+            <a
+              href="/fuels/"
+              class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+              >Fuels</a
+            >
+            <a
+              href="/guides/"
+              class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+              >Guides</a
+            >
+          </nav>
+
+          <!-- Language Selector -->
+          <LanguageSwitcher />
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/[0.06] transition-colors focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
+            aria-label="Open navigation menu"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Nav Drawer -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden relative border-t border-white/[0.04] bg-surface-950/95 backdrop-blur-2xl"
+      >
+        <nav class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1">
+          <a
+            href="/tools/"
+            class="px-4 py-3 rounded-xl text-sm font-semibold text-brand-400 hover:bg-brand-500/10 transition-all"
+            >All Tools</a
+          >
+          <a
+            href="/basic/"
+            class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
+            >Basic</a
+          >
+          <a
+            href="/cooking/"
+            class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
+            >Cooking</a
+          >
+          <a
+            href="/fuels/"
+            class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
+            >Fuels</a
+          >
+          <a
+            href="/guides/"
+            class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
+            >Guides</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <!-- ======== MAIN ======== -->
+    <main id="main-content" tabindex="-1" class="flex-grow relative outline-none">
+      <slot />
+    </main>
+
+    <!-- ======== FOOTER ======== -->
+    <footer class="relative mt-20 border-t border-white/[0.04]">
+      <div class="absolute inset-0 bg-surface-950/90 backdrop-blur-xl"></div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 space-y-10">
+        <!-- Footer Top -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+          <!-- Brand -->
+          <div class="space-y-3">
+            <a href="/" class="flex items-center gap-2.5 group">
+              <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md"
+              >
+                <span class="text-white font-bold text-xs font-mono">KL</span>
+              </div>
+              <span
+                class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors"
+                >Kg to litre</span
+              >
+            </a>
+            <p class="text-xs text-slate-500 max-w-xs leading-relaxed">
+              Mass-to-volume estimates based on compiled reference density values.
+            </p>
+          </div>
+
+          <!-- Links -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-8 text-xs">
+            <div class="space-y-3">
+              <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                Calculators
+              </h4>
+              <nav class="flex flex-col gap-2">
+                <a href="/tools/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >All Tools</a
+                >
+                <a
+                  href="/kg-to-litre-calculator/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">KG to Litre</a
+                >
+                <a
+                  href="/basic/kg-to-litres-water/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Water</a
+                >
+              </nav>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                Categories
+              </h4>
+              <nav class="flex flex-col gap-2">
+                <a href="/basic/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >Basic Liquids</a
+                >
+                <a href="/cooking/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >Cooking</a
+                >
+                <a href="/fuels/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >Fuels &amp; Energy</a
+                >
+              </nav>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                Resources
+              </h4>
+              <nav class="flex flex-col gap-2">
+                <a href="/guides/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >Guides</a
+                >
+                <a
+                  href="/methodology/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Data methodology</a
+                >
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider-glow"></div>
+
+        <!-- Copyright -->
+        <p class="text-[11px] text-slate-600 text-center">
+          &copy; {new Date().getFullYear()} Kg to litre. Results are reference estimates; material conditions
+          can change density.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn?.addEventListener('click', () => {
+          menu?.classList.toggle('hidden');
+        });
+      });
+    </script>
+
+    <!-- Intersection Observer for Reveal Animations -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -40px 0px' },
+        );
+
+        document.querySelectorAll('.reveal-section, .stagger-children').forEach((el) => {
+          observer.observe(el);
+        });
+      });
+    </script>
+
+    <!-- PWA Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+            console.error('Service worker registration failed.', error);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getToolPath, toolsData } from '../data/toolsData';
+
+const title = 'All KG to Litre Tools & Calculators Directory';
+const description = `Explore our complete suite of ${toolsData.length} specialised mass-to-volume converters, density calculators, and unit tools.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16 space-y-12">
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto space-y-4 animate-fade-in-up">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-brand-400">{toolsData.length} Calculators</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+        All KG to Litre Tools &amp; Calculators
+      </h1>
+      <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+        Search and access our specialised unit converters, density solvers, and material measurement
+        tools.
+      </p>
+    </header>
+
+    <!-- Search Filter -->
+    <div class="max-w-md mx-auto animate-fade-in">
+      <div class="relative group">
+        <svg
+          class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-brand-400 transition-colors"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input
+          type="text"
+          id="directory-search"
+          placeholder="Search tools (e.g. Milk, Diesel, Gallons, Tank)..."
+          aria-label="Search tools directory"
+          class="input-pro pl-11"
+        />
+      </div>
+    </div>
+
+    <!-- Tools Grid -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children"
+      id="tools-grid"
+    >
+      {
+        toolsData.map((tool, idx) => (
+          <a
+            href={getToolPath(tool)}
+            class="tool-directory-card block p-6 glass-card glass-card-hover rounded-2xl group"
+            data-title={tool.h1.toLowerCase()}
+            data-slug={tool.slug}
+            data-question={tool.mainQuestion.toLowerCase()}
+          >
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white font-mono font-bold text-xs flex items-center justify-center shadow-sm shadow-brand-500/20">
+                  {idx + 1}
+                </span>
+                <span class="badge badge-brand text-[9px]">Calculator</span>
+              </div>
+              <span class="text-xs font-mono text-slate-600 group-hover:text-brand-400 transition-colors duration-300">
+                Open &rarr;
+              </span>
+            </div>
+
+            <h2 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
+              {tool.h1}
+            </h2>
+
+            <p class="text-[11px] text-brand-400/70 font-mono mb-3 font-semibold">
+              {tool.mainQuestion}
+            </p>
+
+            <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+              {tool.metaDescription}
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('directory-search') as HTMLInputElement;
+    const cards = document.querySelectorAll('.tool-directory-card');
+
+    function filterTools() {
+      const q = (searchInput?.value || '').toLowerCase().trim();
+      cards.forEach((card) => {
+        const title = card.getAttribute('data-title') || '';
+        const question = card.getAttribute('data-question') || '';
+        const slug = card.getAttribute('data-slug') || '';
+
+        if (title.includes(q) || question.includes(q) || slug.includes(q)) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    }
+
+    searchInput?.addEventListener('input', filterTools);
+  });
+</script>

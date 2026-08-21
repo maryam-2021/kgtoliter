@@ -1,0 +1,18 @@
+---
+import Layout from './Layout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  schema?: Record<string, any> | Record<string, any>[];
+  ogImage?: string;
+  article?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<Layout {...props}>
+  <slot />
+</Layout>

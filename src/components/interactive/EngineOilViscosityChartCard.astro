@@ -1,0 +1,121 @@
+---
+// Engine Oil Viscosity Comparison Chart Data
+const viscosityData = [
+  { grade: 'SAE 0W-20', cold40: 45, hot100: 8.5 },
+  { grade: 'SAE 0W-30', cold40: 55, hot100: 10.5 },
+  { grade: 'SAE 0W-40', cold40: 72, hot100: 14.0 },
+  { grade: 'SAE 5W-20', cold40: 49, hot100: 8.8 },
+  { grade: 'SAE 5W-30', cold40: 62, hot100: 10.8 },
+  { grade: 'SAE 5W-40', cold40: 82, hot100: 14.2 },
+  { grade: 'SAE 10W-30', cold40: 78, hot100: 11.0 },
+  { grade: 'SAE 10W-40', cold40: 95, hot100: 14.5 },
+  { grade: 'SAE 15W-40', cold40: 115, hot100: 15.0 },
+  { grade: 'SAE 20W-50', cold40: 165, hot100: 19.0 },
+  { grade: 'SAE 30', cold40: 90, hot100: 11.5 },
+  { grade: 'SAE 40', cold40: 140, hot100: 14.8 },
+  { grade: 'SAE 50', cold40: 200, hot100: 19.5 },
+  { grade: 'SAE 60', cold40: 260, hot100: 24.5 },
+];
+
+const maxY = 300;
+const yTicks = [300, 250, 200, 150, 100, 50, 0];
+---
+
+<div
+  class="glass-card bg-slate-950/90 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl overflow-hidden"
+>
+  <!-- Section Title -->
+  <div class="mb-6">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="text-2xl">📈</span>
+      <h3 class="text-xl sm:text-2xl font-extrabold text-white">Engine Oil Viscosity Comparison</h3>
+    </div>
+    <p class="text-slate-400 text-xs sm:text-sm">
+      Compare viscosity grades at 40°C (cold startup) and 100°C (operating temperature)
+    </p>
+  </div>
+
+  <!-- Chart White Card Container -->
+  <div class="bg-white rounded-xl p-4 sm:p-6 shadow-inner text-slate-900 border border-slate-200">
+    <!-- Chart Area with Y-axis & Gridlines -->
+    <div class="relative pl-10 sm:pl-12 pr-2 pt-4 pb-8 h-72 sm:h-80 flex flex-col justify-between">
+      <!-- Y-Axis Label (Rotated) -->
+      <div
+        class="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] sm:text-xs font-semibold text-slate-500 font-sans tracking-wide origin-center -ml-3 sm:-ml-2"
+      >
+        Viscosity (cSt)
+      </div>
+
+      <!-- Y-Axis Grid Lines & Tick Labels -->
+      <div
+        class="absolute inset-0 pl-10 sm:pl-12 pr-2 pt-4 pb-8 flex flex-col justify-between pointer-events-none"
+      >
+        {
+          yTicks.map((tick) => (
+            <div class="relative w-full border-b border-slate-200 flex items-center">
+              <span class="absolute -left-7 sm:-left-8 text-[10px] sm:text-xs text-slate-400 font-mono">
+                {tick}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Bars Container -->
+      <div class="relative w-full h-full flex items-end justify-between gap-1 sm:gap-2 z-10 pt-2">
+        {
+          viscosityData.map((item) => {
+            const coldPct = (item.cold40 / maxY) * 100;
+            const hotPct = (item.hot100 / maxY) * 100;
+            return (
+              <div class="flex-1 flex flex-col items-center h-full justify-end group">
+                {/* Dual Bars */}
+                <div class="w-full flex items-end justify-center gap-[2px] sm:gap-1 h-full relative">
+                  {/* Tooltip on Hover */}
+                  <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] sm:text-xs font-mono p-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 whitespace-nowrap shadow-lg">
+                    <div>{item.grade}</div>
+                    <div class="text-blue-400">40°C: {item.cold40} cSt</div>
+                    <div class="text-red-400">100°C: {item.hot100} cSt</div>
+                  </div>
+
+                  {/* 40°C Cold Bar (Blue) */}
+                  <div
+                    class="w-1/2 max-w-[14px] bg-blue-600 rounded-t-sm transition-all duration-500 hover:brightness-110"
+                    style={`height: ${coldPct}%;`}
+                    title={`${item.grade} @ 40°C: ${item.cold40} cSt`}
+                  />
+
+                  {/* 100°C Hot Bar (Red) */}
+                  <div
+                    class="w-1/2 max-w-[14px] bg-red-500 rounded-t-sm transition-all duration-500 hover:brightness-110"
+                    style={`height: ${hotPct}%;`}
+                    title={`${item.grade} @ 100°C: ${item.hot100} cSt`}
+                  />
+                </div>
+
+                {/* X-Axis Label */}
+                <span class="text-[8px] sm:text-[10px] font-semibold text-slate-600 mt-2 truncate w-full text-center tracking-tighter">
+                  {item.grade}
+                </span>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <!-- Legend at Bottom -->
+    <div
+      class="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-slate-100 text-xs sm:text-sm"
+    >
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded bg-blue-600 inline-block"></span>
+        <span class="font-medium text-slate-700">@ 40°C (Cold)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded bg-red-500 inline-block"></span>
+        <span class="font-medium text-slate-700">@ 100°C (Hot)</span>
+      </div>
+    </div>
+  </div>
+</div>

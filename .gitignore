@@ -1,0 +1,9 @@
+node_modules/
+.astro/
+dist/
+playwright-report/
+test-results/
+.eslintcache
+.env
+.env.*
+!.env.example

@@ -1,0 +1,240 @@
+---
+// Data layer hardcoded as per specifications
+const comparisonData = [
+  {
+    id: 'water',
+    name: 'Water',
+    density: 1.0,
+    color: 'bg-blue-400',
+    textColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'milk',
+    name: 'Milk',
+    density: 1.03,
+    color: 'bg-slate-100 dark:bg-slate-200',
+    textColor: 'text-slate-600 dark:text-slate-400',
+    border: 'border-b-2 border-slate-300 dark:border-slate-400',
+  },
+  {
+    id: 'oil',
+    name: 'Cooking Oil',
+    density: 0.92,
+    color: 'bg-yellow-400',
+    textColor: 'text-yellow-600 dark:text-yellow-400',
+  },
+  {
+    id: 'diesel',
+    name: 'Diesel',
+    density: 0.832,
+    color: 'bg-slate-700 dark:bg-slate-600',
+    textColor: 'text-slate-700 dark:text-slate-300',
+  },
+  {
+    id: 'honey',
+    name: 'Honey',
+    density: 1.42,
+    color: 'bg-amber-500',
+    textColor: 'text-amber-600 dark:text-amber-400',
+  },
+];
+---
+
+<section class="max-w-5xl mx-auto px-4 py-12 md:py-16">
+  <!-- Semantic SEO Heading & Intro -->
+  <div class="text-center mb-10">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-4">
+      Volume Comparison: Why 1 kg Doesn't Always Look the Same
+    </h2>
+    <p class="text-slate-300 max-w-3xl mx-auto text-base md:text-lg leading-relaxed">
+      Because <strong>density variation</strong> exists across different materials, a 1 kg block of honey
+      is much smaller than a 1 kg bottle of cooking oil. Adjust the mass slider below to see how <strong
+        >comparative volume</strong
+      > changes based on <strong>substance type</strong> and <strong>mass</strong>.
+    </p>
+  </div>
+
+  <!-- Interactive Controls -->
+  <div class="glass-card p-6 rounded-2xl shadow-md border border-slate-800 mb-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <label for="mass-slider" class="text-lg font-bold text-white">
+        Adjust Mass: <span id="slider-mass-display" class="text-brand-400 font-mono">1</span> kg
+      </label>
+      <input
+        type="range"
+        id="mass-slider"
+        min="1"
+        max="25"
+        step="1"
+        value="1"
+        class="w-full md:w-1/2 h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500"
+        aria-label="Adjust mass in kilograms from 1 to 25"
+      />
+    </div>
+  </div>
+
+  <!-- Beakers Visualization (Zero CLS: Fixed Heights, Mobile Horizontal Snap Scroll) -->
+  <div
+    class="flex flex-nowrap md:flex-row justify-start md:justify-center items-end gap-4 md:gap-8 h-auto md:h-80 overflow-x-auto snap-x snap-mandatory pb-6 px-4 md:px-0 scrollbar-hide"
+    role="img"
+    aria-label="Bar chart comparing the volume of 5 different substances"
+  >
+    {
+      comparisonData.map((sub) => (
+        <div class="flex flex-col items-center w-20 md:w-24 shrink-0 snap-center group relative">
+          {/* Tooltip */}
+          <div class="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-mono font-medium px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg border border-slate-700">
+            <span id={`tooltip-${sub.id}`}>1 kg of {sub.name} = 1.00 L</span>
+            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+          </div>
+
+          {/* Volume Label */}
+          <span
+            id={`vol-label-${sub.id}`}
+            class="text-sm font-bold text-white mb-2 font-mono tabular-nums"
+          >
+            1.00 L
+          </span>
+
+          {/* Beaker Container (Fixed Height to prevent CLS) */}
+          <div class="relative w-16 md:w-20 h-48 md:h-64 border-2 md:border-4 border-slate-700 rounded-b-xl md:rounded-b-2xl bg-slate-950/80 backdrop-blur-sm overflow-visible">
+            {/* Water Baseline Reference Line */}
+            <div
+              id={`baseline-${sub.id}`}
+              class="absolute w-full border-t-2 border-dashed border-slate-500 z-10 transition-all duration-500"
+              style="top: 16.66%;"
+            />
+
+            {/* Liquid Fill */}
+            <div
+              id={`liquid-${sub.id}`}
+              class={`absolute bottom-0 w-full rounded-b-lg md:rounded-b-xl transition-all duration-500 ease-out ${sub.color} ${sub.border || ''}`}
+              style="height: 20%;"
+            />
+          </div>
+
+          {/* Substance Name */}
+          <span class={`text-xs md:text-sm font-semibold mt-3 ${sub.textColor}`}>{sub.name}</span>
+          <span class="text-[10px] md:text-xs text-slate-400 font-mono tabular-nums">
+            {sub.density} kg/L
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  /* Scrollbar Hide Utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Custom Range Slider Styling */
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  input[type='range']::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Spill Animation for Low-Density Liquids */
+  @keyframes spill-wave {
+    0%,
+    100% {
+      transform: translateY(0) scaleX(1);
+    }
+    50% {
+      transform: translateY(-4px) scaleX(1.02);
+    }
+  }
+  .spill-effect {
+    animation: spill-wave 1.5s ease-in-out infinite;
+    transform-origin: bottom;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('mass-slider') as HTMLInputElement;
+    const massDisplay = document.getElementById('slider-mass-display') as HTMLSpanElement;
+
+    // Guard clause: If critical elements aren't found, stop execution safely
+    if (!slider || !massDisplay) {
+      console.warn('VolumeComparisonSlider elements not found. Skipping initialization.');
+      return;
+    }
+
+    const comparisonData = [
+      { id: 'water', density: 1.0 },
+      { id: 'milk', density: 1.03 },
+      { id: 'oil', density: 0.92 },
+      { id: 'diesel', density: 0.832 },
+      { id: 'honey', density: 1.42 },
+    ];
+
+    function updateBeakers() {
+      if (!slider) return;
+      const mass = parseFloat(slider?.value || '1') || 1;
+      if (massDisplay) massDisplay.textContent = mass.toString();
+
+      // To prevent CLS and keep visuals stable, the beaker container (h-64)
+      // represents (mass * 1.2) Liters. This gives 20% headroom for spills.
+      const maxVisualVolume = mass * 1.2;
+
+      comparisonData.forEach((sub) => {
+        const volume = mass / sub.density;
+        const fillPercentage = (volume / maxVisualVolume) * 100;
+        const baselinePercentage = (mass / maxVisualVolume) * 100; // Water baseline
+
+        // Update DOM Elements
+        const liquidEl = document.getElementById(`liquid-${sub.id}`) as HTMLDivElement;
+        const baselineEl = document.getElementById(`baseline-${sub.id}`) as HTMLDivElement;
+        const volLabelEl = document.getElementById(`vol-label-${sub.id}`) as HTMLSpanElement;
+        const tooltipEl = document.getElementById(`tooltip-${sub.id}`) as HTMLSpanElement;
+
+        // Apply heights
+        if (liquidEl) liquidEl.style.height = `${fillPercentage}%`;
+        if (baselineEl) baselineEl.style.top = `${100 - baselinePercentage}%`;
+
+        // Update text
+        if (volLabelEl) volLabelEl.textContent = `${volume.toFixed(2)} L`;
+        if (tooltipEl)
+          tooltipEl.textContent = `${mass} kg of ${sub.id === 'oil' ? 'Cooking Oil' : sub.id.charAt(0).toUpperCase() + sub.id.slice(1)} = ${volume.toFixed(2)} L`;
+
+        // Apply spill effect if volume exceeds the water baseline (density < 1)
+        if (liquidEl) {
+          if (sub.density < 1.0) {
+            liquidEl.classList.add('spill-effect');
+          } else {
+            liquidEl.classList.remove('spill-effect');
+          }
+        }
+      });
+    }
+
+    // Initial render
+    updateBeakers();
+
+    // Event listener for slider
+    if (slider) slider.addEventListener('input', updateBeakers);
+  });
+</script>

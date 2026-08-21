@@ -1,0 +1,44 @@
+---
+export interface Props {
+  categoryName: string;
+  categorySlug: string;
+  substanceName: string;
+}
+
+const { categoryName, categorySlug, substanceName } = Astro.props;
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://kgtolitre.com/' },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: categoryName,
+      item: `https://kgtolitre.com/${categorySlug}/`,
+    },
+    { '@type': 'ListItem', position: 3, name: `Kg to Litres of ${substanceName}` },
+  ],
+};
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+<nav aria-label="Breadcrumb" class="text-xs sm:text-sm text-slate-400 mb-6 font-mono">
+  <ol class="flex items-center space-x-2">
+    <li>
+      <a href="/" class="hover:underline hover:text-brand-400 transition-colors">Home</a>
+    </li>
+    <li class="text-slate-600">&gt;</li>
+    <li>
+      <a href={`/${categorySlug}/`} class="hover:underline hover:text-brand-400 transition-colors"
+        >{categoryName}</a
+      >
+    </li>
+    <li class="text-slate-600">&gt;</li>
+    <li class="text-white font-medium truncate" aria-current="page">
+      Kg to Litres {substanceName}
+    </li>
+  </ol>
+</nav>

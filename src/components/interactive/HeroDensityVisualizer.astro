@@ -1,0 +1,127 @@
+---
+
+---
+
+<div class="glass-card p-6 rounded-2xl border border-slate-800 shadow-xl max-w-3xl mx-auto">
+  <h3 class="text-lg font-bold text-white mb-6 text-center">How Mass Becomes Volume</h3>
+
+  <!-- Pipeline Diagram -->
+  <div
+    class="grid grid-cols-3 gap-2 md:gap-4 items-center"
+    role="img"
+    aria-label="Mass to Volume conversion pipeline: Mass divided by Density equals Volume"
+  >
+    <!-- Node 1: Mass -->
+    <div
+      class="text-center p-4 md:p-6 bg-slate-900/90 rounded-xl border-2 border-brand-500 transition-all duration-300"
+      id="viz-mass-node"
+    >
+      <span class="text-xs uppercase tracking-wider text-slate-400 block mb-1">Mass</span>
+      <p class="text-2xl md:text-3xl font-extrabold text-brand-400 tabular-nums" id="viz-mass">
+        1.00
+      </p>
+      <span class="text-sm text-slate-300">kg</span>
+    </div>
+
+    <!-- Operator -->
+    <div class="text-center">
+      <div class="text-3xl font-bold text-slate-500 mb-1">&divide;</div>
+      <p
+        class="text-xs md:text-sm font-semibold text-slate-200 tabular-nums"
+        id="viz-density-label"
+      >
+        1.00 kg/L
+      </p>
+      <p class="text-xs text-slate-400 mt-1" id="viz-substance-name">Water</p>
+    </div>
+
+    <!-- Node 3: Volume -->
+    <div
+      class="text-center p-4 md:p-6 bg-slate-900/90 rounded-xl border-2 border-emerald-500 transition-all duration-300"
+      id="viz-volume-node"
+    >
+      <span class="text-xs uppercase tracking-wider text-slate-400 block mb-1">Volume</span>
+      <p class="text-2xl md:text-3xl font-extrabold text-emerald-400 tabular-nums" id="viz-volume">
+        1.000
+      </p>
+      <span class="text-sm text-slate-300">Litres</span>
+    </div>
+  </div>
+
+  <!-- Liquid Container Visual -->
+  <div class="mt-8 flex flex-col items-center">
+    <p class="text-xs text-slate-400 mb-2">Visual Volume Representation</p>
+    <div
+      class="relative w-24 h-40 border-4 border-slate-700/80 rounded-b-2xl overflow-hidden bg-slate-950"
+    >
+      <!-- Measurement lines -->
+      <div class="absolute inset-0 flex flex-col justify-between py-2 pointer-events-none">
+        <div class="border-t border-slate-800 w-full"></div>
+        <div class="border-t border-slate-800 w-full"></div>
+        <div class="border-t border-slate-800 w-full"></div>
+        <div class="border-t border-slate-800 w-full"></div>
+        <div class="border-t border-slate-800 w-full"></div>
+      </div>
+      <!-- Liquid -->
+      <div
+        id="viz-liquid"
+        class="absolute bottom-0 w-full transition-all duration-700 ease-out"
+        style="height: 50%; background-color: #60a5fa;"
+      >
+      </div>
+    </div>
+    <p class="text-xs text-slate-300 mt-2 tabular-nums font-mono">
+      <span id="viz-liquid-label">1.00 L</span> of liquid
+    </p>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const massEl = document.getElementById('viz-mass') as HTMLParagraphElement;
+    const volumeEl = document.getElementById('viz-volume') as HTMLParagraphElement;
+    const densityLabelEl = document.getElementById('viz-density-label') as HTMLParagraphElement;
+    const substanceNameEl = document.getElementById('viz-substance-name') as HTMLParagraphElement;
+    const liquidEl = document.getElementById('viz-liquid') as HTMLDivElement;
+    const liquidLabelEl = document.getElementById('viz-liquid-label') as HTMLSpanElement;
+    const massNode = document.getElementById('viz-mass-node') as HTMLDivElement;
+    const volumeNode = document.getElementById('viz-volume-node') as HTMLDivElement;
+
+    // Guard clause: If critical elements aren't found, stop execution safely
+    if (!massEl || !volumeEl || !liquidEl) {
+      console.warn('HeroDensityVisualizer elements not found. Skipping initialization.');
+      return;
+    }
+
+    window.addEventListener('kg-conversion-update', (e: Event) => {
+      // Cast the event to CustomEvent to access 'detail' safely in TS
+      const detail = (e as CustomEvent).detail;
+
+      // Destructure the exact keys you dispatched
+      const { mass, density, volume, substanceName, liquidColor } = detail;
+
+      // Animate nodes (pulse effect)
+      if (massNode) massNode.classList.add('scale-105');
+      if (volumeNode) volumeNode.classList.add('scale-105');
+      setTimeout(() => {
+        if (massNode) massNode.classList.remove('scale-105');
+        if (volumeNode) volumeNode.classList.remove('scale-105');
+      }, 300);
+
+      // Update text values
+      if (massEl) massEl.textContent = mass.toFixed(2);
+      if (volumeEl) volumeEl.textContent = volume.toFixed(3);
+      if (densityLabelEl) densityLabelEl.textContent = `${density.toFixed(2)} kg/L`;
+      if (substanceNameEl) substanceNameEl.textContent = substanceName;
+      if (liquidLabelEl) liquidLabelEl.textContent = `${volume.toFixed(2)} L`;
+
+      // Update liquid height (cap at 100% for visual, scale relative to 5L max)
+      const maxVisualVolume = 5; // 5L = 100% fill
+      const fillPercent = Math.min((volume / maxVisualVolume) * 100, 100);
+      if (liquidEl) {
+        liquidEl.style.height = `${fillPercent}%`;
+        liquidEl.style.backgroundColor = liquidColor || '#60a5fa';
+      }
+    });
+  });
+</script>

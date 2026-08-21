@@ -1,0 +1,44 @@
+---
+import { languages, defaultLang } from '../i18n/utils';
+
+export interface Props {
+  currentLang?: string;
+}
+
+const { currentLang = defaultLang } = Astro.props;
+---
+
+<div class="relative inline-block text-left" id="lang-switcher">
+  <select
+    id="lang-select"
+    aria-label="Select Language"
+    class="px-2.5 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs font-mono text-slate-300 hover:text-white hover:border-brand-500/30 transition-all cursor-pointer outline-none"
+  >
+    {
+      Object.entries(languages).map(([code, name]) => (
+        <option value={code} selected={code === currentLang}>
+          {name} ({code.toUpperCase()})
+        </option>
+      ))
+    }
+  </select>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('lang-select') as HTMLSelectElement;
+    if (!sel) return;
+
+    // Load saved lang preference from localStorage if available
+    const saved = localStorage.getItem('user_lang');
+    if (saved && sel.value !== saved && sel.querySelector(`option[value="${saved}"]`)) {
+      sel.value = saved;
+    }
+
+    sel.addEventListener('change', () => {
+      const code = sel.value;
+      localStorage.setItem('user_lang', code);
+      window.dispatchEvent(new CustomEvent('language-change', { detail: { lang: code } }));
+    });
+  });
+</script>

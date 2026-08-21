@@ -1,0 +1,410 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@config "../../tailwind.config.mjs";
+@plugin "@tailwindcss/typography";
+
+/* ========================================================================
+   DESIGN SYSTEM — PREMIUM DARK THEME WITH ANIMATIONS
+   ======================================================================== */
+
+@layer base {
+  html {
+    font-family:
+      'Inter',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #060a14;
+    color: #f1f5f9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  ::selection {
+    background-color: #29a5ff;
+    color: #ffffff;
+  }
+
+  /* Smooth animated scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b1120;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e3a5f;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #29a5ff;
+  }
+}
+
+/* ========================================================================
+   GLASS MORPHISM CARDS
+   ======================================================================== */
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(11, 17, 32, 0.85) 0%,
+    rgba(17, 24, 39, 0.75) 50%,
+    rgba(11, 17, 32, 0.85) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-card-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card-hover:hover {
+  border-color: rgba(41, 165, 255, 0.3);
+  box-shadow:
+    0 20px 50px -12px rgba(41, 165, 255, 0.15),
+    0 0 0 1px rgba(41, 165, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-3px);
+}
+
+/* ========================================================================
+   GRADIENT TEXT
+   ======================================================================== */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #51c3ff 0%, #29a5ff 40%, #1187f5 70%, #89daff 100%);
+}
+
+.gradient-text-warm {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #f97316 100%);
+}
+
+/* ========================================================================
+   BACKGROUND EFFECTS
+   ======================================================================== */
+.bg-mesh {
+  background-image:
+    radial-gradient(at 20% 30%, rgba(41, 165, 255, 0.08) 0, transparent 50%),
+    radial-gradient(at 80% 20%, rgba(17, 135, 245, 0.06) 0, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(89, 218, 255, 0.04) 0, transparent 50%);
+}
+
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========================================================================
+   GLOW EFFECTS
+   ======================================================================== */
+.glow-brand {
+  box-shadow: 0 0 60px -15px rgba(41, 165, 255, 0.25);
+}
+
+.glow-brand-strong {
+  box-shadow:
+    0 0 30px rgba(41, 165, 255, 0.2),
+    0 0 80px rgba(41, 165, 255, 0.1);
+}
+
+.glow-line {
+  position: relative;
+}
+.glow-line::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(41, 165, 255, 0.5), transparent);
+}
+
+/* ========================================================================
+   SECTION ENTRANCE ANIMATIONS (triggered by IntersectionObserver)
+   ======================================================================== */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-section:nth-child(2) {
+  transition-delay: 0.08s;
+}
+.reveal-section:nth-child(3) {
+  transition-delay: 0.16s;
+}
+.reveal-section:nth-child(4) {
+  transition-delay: 0.24s;
+}
+
+/* Stagger children inside grids */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
+}
+.stagger-children.revealed > *:nth-child(1) {
+  transition-delay: 0.05s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children.revealed > *:nth-child(2) {
+  transition-delay: 0.1s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children.revealed > *:nth-child(3) {
+  transition-delay: 0.15s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children.revealed > *:nth-child(4) {
+  transition-delay: 0.2s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children.revealed > *:nth-child(5) {
+  transition-delay: 0.25s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children.revealed > *:nth-child(6) {
+  transition-delay: 0.3s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================================================
+   BUTTON SYSTEM
+   ======================================================================== */
+.btn-primary {
+  @apply relative overflow-hidden px-6 py-3 rounded-xl font-bold text-sm
+         bg-gradient-to-r from-brand-500 to-brand-600
+         text-white shadow-lg transition-all duration-300;
+}
+.btn-primary:hover {
+  @apply shadow-brand-500/25 shadow-xl;
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Shimmer hover effect */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s ease;
+}
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+/* ========================================================================
+   INPUT SYSTEM
+   ======================================================================== */
+.input-pro {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  background-color: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.125rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+.input-pro:focus {
+  @apply border-brand-500/50 ring-2 ring-brand-500/20;
+  box-shadow: 0 0 20px -5px rgba(41, 165, 255, 0.15);
+}
+
+.select-pro {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  background-color: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.3s ease;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2351c3ff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+.select-pro:focus {
+  @apply border-brand-500/50 ring-2 ring-brand-500/20;
+}
+
+/* ========================================================================
+   TABLE SYSTEM
+   ======================================================================== */
+.table-pro {
+  @apply w-full text-left text-sm;
+}
+.table-pro thead {
+  @apply text-xs uppercase font-mono tracking-wider;
+  background: rgba(11, 17, 32, 0.6);
+}
+.table-pro thead th {
+  @apply py-4 px-5 text-brand-300/80 font-semibold border-b border-white/[0.06];
+}
+.table-pro tbody tr {
+  @apply transition-colors duration-200;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.table-pro tbody tr:hover {
+  background: rgba(41, 165, 255, 0.04);
+}
+.table-pro tbody td {
+  @apply py-3.5 px-5 font-mono text-xs;
+}
+
+/* ========================================================================
+   DIVIDER LINE
+   ======================================================================== */
+.divider-glow {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(41, 165, 255, 0.15) 20%,
+    rgba(41, 165, 255, 0.35) 50%,
+    rgba(41, 165, 255, 0.15) 80%,
+    transparent 100%
+  );
+}
+
+/* ========================================================================
+   TAG / BADGE SYSTEM
+   ======================================================================== */
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold font-mono
+         border transition-colors duration-200;
+}
+.badge-brand {
+  @apply bg-brand-500/10 text-brand-400 border-brand-500/20;
+}
+.badge-emerald {
+  @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+}
+
+/* ========================================================================
+   CUSTOM RANGE SLIDER STYLING — MOBILE OPTIMIZED
+   ======================================================================== */
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  /* Increased from 24px to 32px for better mobile touch target */
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0ea5e9; /* brand-500 */
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin-top: -10px; /* Centers thumb on track */
+}
+
+/* ========================================================================
+   CHEMICAL DIRECTORY & CHART STYLING UTILITIES
+   ======================================================================== */
+.density-cell {
+  @apply font-bold font-mono text-brand-400;
+}
+.density-range {
+  @apply text-xs text-slate-400 font-mono block;
+}
+.volume-cell {
+  @apply font-semibold font-mono text-emerald-400;
+}
+
+.category-badge {
+  @apply inline-block px-2.5 py-1 rounded-full text-xs font-semibold font-mono border transition-colors;
+}
+.category-badge.industrial {
+  @apply bg-blue-500/10 text-blue-400 border-blue-500/20;
+}
+.category-badge.cooking {
+  @apply bg-amber-500/10 text-amber-400 border-amber-500/20;
+}
+.category-badge.automotive {
+  @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+}
+.category-badge.petroleum {
+  @apply bg-amber-500/10 text-amber-400 border-amber-500/20;
+}
+.category-badge.solvents {
+  @apply bg-purple-500/10 text-purple-400 border-purple-500/20;
+}
+.category-badge.acids {
+  @apply bg-red-500/10 text-red-400 border-red-500/20;
+}
+.category-badge.bases {
+  @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+}
+.category-badge.specialty {
+  @apply bg-pink-500/10 text-pink-400 border-pink-500/20;
+}
+
+/* Comparison Bar Chart Classes */
+.chart-bar-container {
+  @apply flex items-center gap-4 my-2;
+}
+.chart-bar-label {
+  @apply min-w-[160px] text-xs font-medium text-slate-300 font-sans truncate;
+}
+.chart-bar-track {
+  @apply flex-1 h-7 bg-slate-900 border border-slate-800 rounded-lg overflow-hidden relative;
+}
+.chart-bar-fill {
+  @apply h-full rounded-lg bg-gradient-to-r from-brand-500 to-sky-400 transition-all duration-500 flex items-center px-3 text-white text-xs font-bold min-w-[40px];
+}
+.chart-bar-value {
+  @apply min-w-[80px] text-right text-xs font-bold text-slate-300 font-mono;
+}

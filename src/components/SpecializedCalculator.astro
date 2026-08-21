@@ -1,0 +1,361 @@
+---
+import type { ToolData } from '../data/toolsData';
+
+export interface Props {
+  tool: ToolData;
+}
+
+const { tool } = Astro.props;
+---
+
+<div
+  class="glass-card rounded-2xl p-6 sm:p-8 glow-brand space-y-0"
+  id="specialized-calc-root"
+  data-calc-type={tool.calculatorType}
+>
+  <!-- Calculator Header -->
+  <div class="flex items-center justify-between gap-4 mb-8 pb-5 border-b border-white/[0.06]">
+    <div class="space-y-1">
+      <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
+        <span
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-mono font-extrabold text-sm shadow-lg shadow-brand-500/20"
+        >
+          &sum;
+        </span>
+        <span>{tool.h1}</span>
+      </h3>
+      <p class="text-xs text-slate-500 pl-[46px]">{tool.mainQuestion}</p>
+    </div>
+    <span class="badge badge-brand hidden sm:inline-flex">Live Calculator</span>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Mass Input -->
+    <div class="space-y-2">
+      <label
+        for="sc-mass-input"
+        class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest"
+      >
+        Mass in Kilograms (kg)
+      </label>
+      <div class="relative group">
+        <input
+          type="number"
+          id="sc-mass-input"
+          step="0.01"
+          min="0"
+          value="1"
+          class="input-pro"
+          aria-label="Input mass in kilograms"
+        />
+        <span
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 font-mono group-focus-within:text-brand-400 transition-colors"
+          >kg</span
+        >
+      </div>
+
+      <!-- Quick Presets for Water Tool -->
+      {
+        tool.calculatorType === 'water' && (
+          <div class="flex items-center gap-2 pt-1">
+            <span class="text-[10px] text-slate-600 font-mono shrink-0">Quick:</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                class="sc-quick-preset text-[11px] px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 font-mono font-bold border border-white/[0.06] hover:border-brand-500/30 transition-all duration-200 active:scale-95"
+                data-val="1"
+              >
+                1 kg
+              </button>
+              <button
+                type="button"
+                class="sc-quick-preset text-[11px] px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 font-mono font-bold border border-white/[0.06] hover:border-brand-500/30 transition-all duration-200 active:scale-95"
+                data-val="5"
+              >
+                5 kg
+              </button>
+              <button
+                type="button"
+                class="sc-quick-preset text-[11px] px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 font-mono font-bold border border-white/[0.06] hover:border-brand-500/30 transition-all duration-200 active:scale-95"
+                data-val="10"
+              >
+                10 kg
+              </button>
+              <button
+                type="button"
+                class="sc-quick-preset text-[11px] px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 font-mono font-bold border border-white/[0.06] hover:border-brand-500/30 transition-all duration-200 active:scale-95"
+                data-val="25"
+              >
+                25 kg
+              </button>
+              <button
+                type="button"
+                class="sc-quick-preset text-[11px] px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 font-mono font-bold border border-white/[0.06] hover:border-brand-500/30 transition-all duration-200 active:scale-95"
+                data-val="100"
+              >
+                100 kg
+              </button>
+            </div>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Tool-Specific Selectors -->
+    {
+      tool.calculatorType === 'milk' && (
+        <div class="space-y-2">
+          <label
+            for="sc-milk-type"
+            class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Select Milk Type &amp; Density
+          </label>
+          <select id="sc-milk-type" class="select-pro">
+            <option value="1.030">Whole Milk (1.030 kg/L)</option>
+            <option value="1.033">Semi-Skimmed Milk (1.033 kg/L)</option>
+            <option value="1.035">Skimmed Milk (1.035 kg/L)</option>
+          </select>
+        </div>
+      )
+    }
+
+    {
+      tool.calculatorType === 'cooking-oil' && (
+        <div class="space-y-2">
+          <label
+            for="sc-oil-type"
+            class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Select Cooking Oil Variety
+          </label>
+          <select id="sc-oil-type" class="select-pro">
+            <option value="0.920">Vegetable Oil (0.920 kg/L)</option>
+            <option value="0.918">Olive Oil (0.918 kg/L)</option>
+            <option value="0.920">Sunflower Oil (0.920 kg/L)</option>
+            <option value="0.915">Canola Oil (0.915 kg/L)</option>
+            <option value="0.925">Coconut Oil (0.925 kg/L)</option>
+          </select>
+        </div>
+      )
+    }
+
+    {
+      tool.calculatorType === 'diesel' && (
+        <div class="space-y-2">
+          <label
+            for="sc-diesel-type"
+            class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Select Fuel Blend Grade
+          </label>
+          <select id="sc-diesel-type" class="select-pro">
+            <option value="0.832">Automotive Diesel EN 590 (0.832 kg/L at 15°C)</option>
+            <option value="0.860">Marine Gas Oil / MGO (0.860 kg/L)</option>
+            <option value="0.880">Biodiesel B100 (0.880 kg/L)</option>
+          </select>
+        </div>
+      )
+    }
+
+    {
+      tool.calculatorType === 'kg-to-litre' && (
+        <div class="space-y-2">
+          <label
+            for="sc-substance-select"
+            class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Select Substance
+          </label>
+          <select id="sc-substance-select" class="select-pro">
+            <option value="1.000" data-name="Water">
+              Water (1.000 kg/L)
+            </option>
+            <option value="1.030" data-name="Milk">
+              Milk (1.030 kg/L)
+            </option>
+            <option value="0.920" data-name="Cooking Oil">
+              Cooking Oil (0.920 kg/L)
+            </option>
+            <option value="0.832" data-name="Diesel">
+              Diesel (0.832 kg/L)
+            </option>
+            <option value="0.745" data-name="Petrol">
+              Petrol (0.745 kg/L)
+            </option>
+          </select>
+        </div>
+      )
+    }
+
+    <!-- Results Display -->
+    <div
+      class="mt-8 p-6 sm:p-7 rounded-2xl bg-surface-900/80 border border-brand-500/20 flex flex-col sm:flex-row items-center justify-between gap-6 glow-brand-strong relative overflow-hidden"
+    >
+      <!-- Decorative gradient orb -->
+      <div
+        class="absolute -right-12 -top-12 w-32 h-32 rounded-full bg-brand-500/[0.07] blur-2xl animate-pulse-glow pointer-events-none"
+      >
+      </div>
+
+      <div class="space-y-1.5 text-center sm:text-left relative z-10">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          Calculated Volume Output
+        </p>
+        <p class="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight">
+          <span id="sc-primary-result" class="gradient-text">1.000</span>
+          <span id="sc-primary-unit" class="text-sm font-bold text-slate-400 font-mono ml-1"
+            >Litres</span
+          >
+        </p>
+        <p id="sc-secondary-result" class="text-xs text-slate-500 font-mono mt-1">
+          Equal to 1,000 mL
+        </p>
+      </div>
+
+      <button
+        type="button"
+        id="sc-copy-btn"
+        class="btn-primary flex items-center gap-2 relative z-10"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+          ></path>
+        </svg>
+        <span id="sc-copy-txt">Copy Result</span>
+      </button>
+    </div>
+
+    <!-- Step-by-Step Breakdown -->
+    <div class="p-5 rounded-xl bg-surface-950 border border-white/[0.04] space-y-2">
+      <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest block"
+        >Step-by-Step Calculation</span
+      >
+      <div class="divider-glow mb-3"></div>
+      <p id="sc-step-1" class="text-xs font-mono text-slate-400">
+        1. Formula: Volume (L) = Mass (kg) &divide; Density (kg/L)
+      </p>
+      <p id="sc-step-2" class="text-xs font-mono text-slate-400">
+        2. Input: 1.00 kg &divide; 1.00 kg/L
+      </p>
+      <p id="sc-step-3" class="text-xs font-mono text-brand-300 font-bold">
+        3. Result: 1.000 Litres (1,000 mL)
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const calcRoot = document.getElementById('specialized-calc-root');
+    if (!calcRoot) return;
+
+    const calcType = calcRoot.dataset.calcType || 'kg-to-litre';
+
+    const massInput = document.getElementById('sc-mass-input') as HTMLInputElement;
+    const primaryResult = document.getElementById('sc-primary-result');
+    const secondaryResult = document.getElementById('sc-secondary-result');
+    const step1 = document.getElementById('sc-step-1');
+    const step2 = document.getElementById('sc-step-2');
+    const step3 = document.getElementById('sc-step-3');
+
+    const copyBtn = document.getElementById('sc-copy-btn');
+    const copyTxt = document.getElementById('sc-copy-txt');
+    const quickPresets = document.querySelectorAll('.sc-quick-preset');
+
+    const defaultDensities: Record<string, number> = {
+      water: 1.0,
+      milk: 1.03,
+      'cooking-oil': 0.92,
+      diesel: 0.832,
+      'kg-to-litre': 1.0,
+    };
+
+    function calculate() {
+      const mass = parseFloat(massInput?.value || '1') || 0;
+      let density = defaultDensities[calcType] || 1.0;
+      let substanceName = calcType.toUpperCase();
+
+      if (calcType === 'milk') {
+        const sel = document.getElementById('sc-milk-type') as HTMLSelectElement;
+        density = parseFloat(sel?.value || '1.030');
+        substanceName = sel?.options[sel.selectedIndex]?.text || 'Milk';
+      } else if (calcType === 'cooking-oil') {
+        const sel = document.getElementById('sc-oil-type') as HTMLSelectElement;
+        density = parseFloat(sel?.value || '0.920');
+        substanceName = sel?.options[sel.selectedIndex]?.text || 'Cooking Oil';
+      } else if (calcType === 'diesel') {
+        const sel = document.getElementById('sc-diesel-type') as HTMLSelectElement;
+        density = parseFloat(sel?.value || '0.832');
+        substanceName = sel?.options[sel.selectedIndex]?.text || 'Diesel';
+      } else if (calcType === 'kg-to-litre') {
+        const sel = document.getElementById('sc-substance-select') as HTMLSelectElement;
+        density = parseFloat(sel?.value || '1.000');
+        substanceName = sel?.options[sel.selectedIndex]?.getAttribute('data-name') || 'Water';
+      } else if (calcType === 'water') {
+        substanceName = 'Pure Water (4°C)';
+      }
+
+      const volume = mass / density;
+      const mL = volume * 1000;
+
+      if (primaryResult) primaryResult.textContent = volume.toFixed(3);
+      if (secondaryResult)
+        secondaryResult.textContent = `Equal to ${mL.toLocaleString(undefined, { maximumFractionDigits: 0 })} mL`;
+
+      if (step1)
+        step1.textContent = `1. Formula: Volume (L) = Mass (kg) ÷ Density (${density} kg/L)`;
+      if (step2)
+        step2.textContent = `2. Input: ${mass.toFixed(2)} kg ÷ ${density} kg/L (${substanceName})`;
+      if (step3)
+        step3.textContent = `3. Result: ${volume.toFixed(3)} Litres (${mL.toLocaleString(undefined, { maximumFractionDigits: 0 })} mL)`;
+
+      // Broadcast custom event to interactive diagrams
+      window.dispatchEvent(
+        new CustomEvent('kg-conversion-update', {
+          detail: {
+            mass,
+            density,
+            volume,
+            substanceId: calcType,
+            substanceName,
+            liquidColor: '#29a5ff',
+          },
+        }),
+      );
+    }
+
+    quickPresets.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        if (val && massInput) {
+          massInput.value = val;
+          calculate();
+        }
+      });
+    });
+
+    const inputs = calcRoot.querySelectorAll('input, select');
+    inputs.forEach((el) => el.addEventListener('input', calculate));
+    inputs.forEach((el) => el.addEventListener('change', calculate));
+
+    copyBtn?.addEventListener('click', async () => {
+      const textToCopy = `${massInput?.value} kg = ${primaryResult?.textContent} Litres (${secondaryResult?.textContent})`;
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        if (copyTxt) copyTxt.textContent = 'Copied!';
+        setTimeout(() => {
+          if (copyTxt) copyTxt.textContent = 'Copy Result';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    });
+
+    calculate();
+  });
+</script>

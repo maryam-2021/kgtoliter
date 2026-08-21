@@ -1,0 +1,171 @@
+---
+
+---
+
+<div class="glass-card p-6 rounded-2xl border border-slate-800 shadow-xl max-w-4xl mx-auto">
+  <h3 class="text-lg font-bold text-white mb-2">Interactive Formula Playground</h3>
+  <p class="text-sm text-slate-400 mb-6">
+    Drag the sliders to see how mass and density affect volume in real-time.
+  </p>
+
+  <!-- Formula Display -->
+  <div class="text-center py-6 bg-slate-900/90 rounded-xl border border-slate-800 mb-6 font-mono">
+    <p class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+      <span id="fp-v" class="text-emerald-400 transition-all duration-200">1.00</span>
+      <span class="text-slate-500 mx-2">=</span>
+      <span id="fp-m" class="text-brand-400 transition-all duration-200">1</span>
+      <span class="text-slate-500 mx-2">&divide;</span>
+      <span id="fp-rho" class="text-purple-400 transition-all duration-200">1.00</span>
+    </p>
+    <p class="text-xs text-slate-400 mt-2 font-mono">
+      <span class="text-emerald-400 font-semibold">V</span> (L) =
+      <span class="text-brand-400 font-semibold">m</span> (kg) &divide;
+      <span class="text-purple-400 font-semibold">&rho;</span> (kg/L)
+    </p>
+  </div>
+
+  <!-- Sliders -->
+  <div class="space-y-5">
+    <!-- Mass Slider -->
+    <div>
+      <div class="flex justify-between items-center mb-2 font-mono">
+        <label for="fp-mass-slider" class="text-sm font-semibold text-slate-300"> Mass (m) </label>
+        <span class="text-sm font-bold text-brand-400 tabular-nums">
+          <span id="fp-mass-value">1.0</span> kg
+        </span>
+      </div>
+      <input
+        type="range"
+        id="fp-mass-slider"
+        min="0.1"
+        max="50"
+        step="0.1"
+        value="1"
+        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500"
+        aria-label="Mass in kilograms"
+      />
+      <div class="flex justify-between text-xs text-slate-500 font-mono mt-1">
+        <span>0.1 kg</span>
+        <span>50 kg</span>
+      </div>
+    </div>
+
+    <!-- Density Slider -->
+    <div>
+      <div class="flex justify-between items-center mb-2 font-mono">
+        <label for="fp-density-slider" class="text-sm font-semibold text-slate-300">
+          Density (&rho;)
+        </label>
+        <span class="text-sm font-bold text-purple-400 tabular-nums">
+          <span id="fp-density-value">1.00</span> kg/L
+        </span>
+      </div>
+      <input
+        type="range"
+        id="fp-density-slider"
+        min="0.1"
+        max="3"
+        step="0.01"
+        value="1"
+        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
+        aria-label="Density in kg per litre"
+      />
+      <div class="flex justify-between text-xs text-slate-500 font-mono mt-1">
+        <span>0.10 kg/L</span>
+        <span>3.00 kg/L</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Sentence -->
+  <div
+    class="mt-6 p-4 bg-slate-900/90 rounded-xl border-l-4 border-brand-500 border border-slate-800 font-mono"
+  >
+    <p class="text-sm text-slate-300" id="fp-sentence">
+      <strong>1.0 kg</strong> of substance with density <strong>1.00 kg/L</strong> occupies <strong
+        >1.00 litres</strong
+      >.
+    </p>
+  </div>
+
+  <!-- Reset Button -->
+  <button
+    id="fp-reset"
+    class="mt-4 w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+  >
+    Reset to Water (1.00 kg/L)
+  </button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const massSlider = document.getElementById('fp-mass-slider') as HTMLInputElement;
+    const densitySlider = document.getElementById('fp-density-slider') as HTMLInputElement;
+    const massValue = document.getElementById('fp-mass-value') as HTMLSpanElement;
+    const densityValue = document.getElementById('fp-density-value') as HTMLSpanElement;
+    const vDisplay = document.getElementById('fp-v') as HTMLSpanElement;
+    const mDisplay = document.getElementById('fp-m') as HTMLSpanElement;
+    const rhoDisplay = document.getElementById('fp-rho') as HTMLSpanElement;
+    const sentence = document.getElementById('fp-sentence') as HTMLParagraphElement;
+    const resetBtn = document.getElementById('fp-reset') as HTMLButtonElement;
+
+    // Guard clause: If critical elements aren't found, stop execution safely
+    if (!massSlider || !densitySlider || !vDisplay) {
+      console.warn('FormulaPlayground elements not found. Skipping initialization.');
+      return;
+    }
+
+    let isExternalUpdate = false;
+
+    function updateFormula() {
+      if (!massSlider || !densitySlider) return;
+
+      const m = parseFloat(massSlider?.value || '1') || 0;
+      const rho = parseFloat(densitySlider?.value || '1.00') || 1.0;
+      const v = rho > 0 ? m / rho : 0;
+
+      // Update displays
+      if (massValue) massValue.textContent = m.toFixed(1);
+      if (densityValue) densityValue.textContent = rho.toFixed(2);
+      if (vDisplay) vDisplay.textContent = v.toFixed(2);
+      if (mDisplay) mDisplay.textContent = m.toFixed(1);
+      if (rhoDisplay) rhoDisplay.textContent = rho.toFixed(2);
+
+      // Update sentence
+      if (sentence) {
+        sentence.innerHTML = `<strong>${m.toFixed(1)} kg</strong> of substance with density <strong>${rho.toFixed(2)} kg/L</strong> occupies <strong>${v.toFixed(2)} litres</strong>.`;
+      }
+
+      // Broadcast to calculator (if not already from calculator)
+      if (!isExternalUpdate) {
+        window.dispatchEvent(
+          new CustomEvent('fp-slider-update', {
+            detail: { mass: m, density: rho },
+          }),
+        );
+      }
+      isExternalUpdate = false;
+    }
+
+    // Listen to calculator updates (bidirectional sync)
+    window.addEventListener('kg-conversion-update', (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      isExternalUpdate = true;
+      if (massSlider) massSlider.value = detail.mass.toString();
+      if (densitySlider) densitySlider.value = detail.density.toString();
+      updateFormula();
+    });
+
+    if (massSlider) massSlider.addEventListener('input', updateFormula);
+    if (densitySlider) densitySlider.addEventListener('input', updateFormula);
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (massSlider) massSlider.value = '1';
+        if (densitySlider) densitySlider.value = '1';
+        updateFormula();
+      });
+    }
+
+    updateFormula();
+  });
+</script>

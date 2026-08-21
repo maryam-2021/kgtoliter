@@ -1,0 +1,11 @@
+---
+import Converter from './Converter.astro';
+
+export interface Props {
+  defaultSubstanceId?: string;
+}
+
+const { defaultSubstanceId = 'water' } = Astro.props;
+---
+
+<Converter defaultSubstanceId={defaultSubstanceId} />

@@ -1,0 +1,296 @@
+---
+
+---
+
+<div
+  class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto"
+  role="region"
+  aria-label="Interactive Thermal Expansion and Temperature Density Simulator"
+>
+  <div class="text-center mb-6">
+    <h2 class="text-2xl font-extrabold text-white">Temperature & Thermal Expansion Simulator</h2>
+    <p class="text-xs text-slate-400 mt-1">
+      Explore how temperature alters molecular density and spatial liquid volume
+    </p>
+  </div>
+
+  <!-- Substance Toggle Buttons -->
+  <div class="flex justify-center items-center gap-2 mb-8">
+    <button
+      type="button"
+      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-brand-500 text-slate-950 shadow-md transition-all"
+      data-sub="water"
+    >
+      Water (Exact Reference Data)
+    </button>
+    <button
+      type="button"
+      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+      data-sub="diesel"
+    >
+      Diesel Fuel
+    </button>
+    <button
+      type="button"
+      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+      data-sub="ethanol"
+    >
+      Ethanol Alcohol
+    </button>
+  </div>
+
+  <!-- Main Thermometer & Readout Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-8">
+    <!-- CSS Thermometer Graphic Column -->
+    <div class="flex flex-col items-center justify-center space-y-2">
+      <div
+        class="relative w-10 h-52 bg-slate-950 rounded-full border-4 border-slate-700/80 p-1 flex flex-col justify-end overflow-hidden shadow-inner"
+      >
+        <!-- Mercury Tube -->
+        <div
+          id="thermo-fill"
+          class="w-full rounded-full bg-gradient-to-t from-blue-500 via-amber-400 to-red-500 transition-all duration-300 ease-out shadow-lg"
+          style="height: 20%"
+        >
+        </div>
+      </div>
+      <span class="text-xs font-bold font-mono text-amber-400" id="thermo-temp-label">20 °C</span>
+    </div>
+
+    <!-- Controls & Droplet Expansion Column -->
+    <div class="md:col-span-2 space-y-6">
+      <!-- Horizontal Slider -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-xs font-mono">
+          <label for="temp-range-slider" class="text-slate-300 font-semibold uppercase"
+            >Temperature: 0°C &rarr; 100°C</label
+          >
+          <span class="text-amber-400 font-extrabold text-sm" id="slider-temp-readout">20 °C</span>
+        </div>
+        <input
+          type="range"
+          id="temp-range-slider"
+          min="0"
+          max="100"
+          value="20"
+          step="1"
+          aria-label="Adjust temperature from 0 to 100 degrees Celsius"
+          class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+        />
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>0°C (Freezing)</span>
+          <span>50°C (Warm)</span>
+          <span>100°C (Boiling)</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Readout Cards -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
+          <span class="text-[10px] text-slate-400 font-mono uppercase block">Density (&rho;)</span>
+          <span class="text-xl font-extrabold text-sky-400 font-mono mt-1 block" id="td-density-val"
+            >0.9982 kg/L</span
+          >
+        </div>
+        <div
+          class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center flex flex-col items-center justify-center relative"
+        >
+          <span class="text-[10px] text-slate-400 font-mono uppercase block">1 kg Volume</span>
+          <span
+            class="text-xl font-extrabold text-emerald-400 font-mono mt-1 block"
+            id="td-volume-val">1.0018 L</span
+          >
+
+          <!-- Animated Liquid Droplet (CSS Transform Scale) -->
+          <div
+            id="td-droplet"
+            class="w-4 h-4 rounded-full bg-emerald-400/30 border border-emerald-400 mt-2 transition-transform duration-300"
+            style="transform: scale(1)"
+          >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pure SVG Density vs Temperature Chart (Zero Dependencies) -->
+  <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+    <div class="flex justify-between items-center text-xs font-mono text-slate-400">
+      <span>Density vs Temperature Curve</span>
+      <span id="chart-sub-label">Substance: Water</span>
+    </div>
+
+    <div class="relative w-full h-32">
+      <svg class="w-full h-full overflow-visible" viewBox="0 0 400 100" preserveAspectRatio="none">
+        <!-- Grid lines -->
+        <line
+          x1="0"
+          y1="20"
+          x2="400"
+          y2="20"
+          stroke="#334155"
+          stroke-width="0.5"
+          stroke-dasharray="2,2"></line>
+        <line
+          x1="0"
+          y1="50"
+          x2="400"
+          y2="50"
+          stroke="#334155"
+          stroke-width="0.5"
+          stroke-dasharray="2,2"></line>
+        <line
+          x1="0"
+          y1="80"
+          x2="400"
+          y2="80"
+          stroke="#334155"
+          stroke-width="0.5"
+          stroke-dasharray="2,2"></line>
+
+        <!-- Trend Line Path -->
+        <path
+          id="chart-curve-path"
+          d="M 0,20 Q 200,30 400,90"
+          fill="none"
+          stroke="#38bdf8"
+          stroke-width="3"
+          stroke-linecap="round"></path>
+
+        <!-- Vertical Cursor Line following temperature slider -->
+        <line
+          id="chart-cursor-line"
+          x1="80"
+          y1="0"
+          x2="80"
+          y2="100"
+          stroke="#f59e0b"
+          stroke-width="2"
+          stroke-dasharray="4,4"></line>
+
+        <!-- Cursor Marker Dot -->
+        <circle id="chart-cursor-dot" cx="80" cy="25" r="5" fill="#f59e0b"></circle>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Exact Reference Data for Water
+    const waterDensity = [
+      { temp: 0, density: 0.9998 },
+      { temp: 4, density: 1.0 },
+      { temp: 10, density: 0.9997 },
+      { temp: 20, density: 0.9982 },
+      { temp: 40, density: 0.9922 },
+      { temp: 60, density: 0.9832 },
+      { temp: 80, density: 0.9718 },
+      { temp: 100, density: 0.9584 },
+    ];
+
+    const tempSlider = document.getElementById('temp-range-slider') as HTMLInputElement;
+    const thermoFill = document.getElementById('thermo-fill');
+    const thermoTempLabel = document.getElementById('thermo-temp-label');
+    const sliderTempReadout = document.getElementById('slider-temp-readout');
+
+    const densityVal = document.getElementById('td-density-val');
+    const volumeVal = document.getElementById('td-volume-val');
+    const droplet = document.getElementById('td-droplet');
+    const chartSubLabel = document.getElementById('chart-sub-label');
+
+    const cursorLine = document.getElementById('chart-cursor-line');
+    const cursorDot = document.getElementById('chart-cursor-dot');
+    const subBtns = document.querySelectorAll('.temp-sub-btn');
+
+    // Guard clause: If critical elements aren't found, stop execution safely
+    if (!tempSlider || !densityVal || !volumeVal) {
+      console.warn('TemperatureDensitySlider elements not found. Skipping initialization.');
+      return;
+    }
+
+    let currentSub = 'water';
+
+    // Linear Interpolation Helper for waterDensity array
+    function getWaterDensity(tC: number): number {
+      if (tC <= 0) return waterDensity[0].density;
+      if (tC >= 100) return waterDensity[waterDensity.length - 1].density;
+
+      for (let i = 0; i < waterDensity.length - 1; i++) {
+        const p1 = waterDensity[i];
+        const p2 = waterDensity[i + 1];
+        if (tC >= p1.temp && tC <= p2.temp) {
+          const ratio = (tC - p1.temp) / (p2.temp - p1.temp);
+          return p1.density + ratio * (p2.density - p1.density);
+        }
+      }
+      return 1.0;
+    }
+
+    function getDensity(tC: number): { density: number; name: string } {
+      if (currentSub === 'diesel') {
+        const d = Math.max(0.844 - tC * 0.00074, 0.5);
+        return { density: d, name: 'Diesel Fuel' };
+      }
+      if (currentSub === 'ethanol') {
+        const d = Math.max(0.806 - tC * 0.00088, 0.5);
+        return { density: d, name: 'Ethanol Alcohol' };
+      }
+      return { density: getWaterDensity(tC), name: 'Water' };
+    }
+
+    function updateSimulation() {
+      if (!tempSlider) return;
+
+      const tC = parseFloat(tempSlider.value);
+      const { density, name } = getDensity(tC);
+      const volume = 1 / density;
+
+      // Thermometer Fill Height
+      if (thermoFill) thermoFill.style.height = `${tC}%`;
+      if (thermoTempLabel) thermoTempLabel.textContent = `${tC} °C`;
+      if (sliderTempReadout) sliderTempReadout.textContent = `${tC} °C`;
+
+      // Readout Display
+      if (densityVal) densityVal.textContent = `${density.toFixed(4)} kg/L`;
+      if (volumeVal) volumeVal.textContent = `${volume.toFixed(4)} L`;
+
+      // Droplet Expansion Scale
+      const scaleFactor = 1.0 + (volume - 1.0) * 1.5;
+      if (droplet) droplet.style.transform = `scale(${scaleFactor.toFixed(2)})`;
+
+      // SVG Chart Cursor Positioning
+      const xPos = (tC / 100) * 400;
+      // Scale yPos relative to 1.0000 at y=20 and 0.9584 at y=85
+      const yPos = 20 + ((1.0 - density) / (1.0 - 0.9584)) * 65;
+
+      if (cursorLine) {
+        cursorLine.setAttribute('x1', xPos.toString());
+        cursorLine.setAttribute('x2', xPos.toString());
+      }
+      if (cursorDot) {
+        cursorDot.setAttribute('cx', xPos.toString());
+        cursorDot.setAttribute('cy', Math.min(Math.max(yPos, 10), 90).toString());
+      }
+      if (chartSubLabel) chartSubLabel.textContent = `Substance: ${name}`;
+    }
+
+    subBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        subBtns.forEach((b) => {
+          b.className =
+            'temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all';
+        });
+        btn.className =
+          'temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-brand-500 text-slate-950 shadow-md transition-all';
+
+        currentSub = btn.getAttribute('data-sub') || 'water';
+        updateSimulation();
+      });
+    });
+
+    if (tempSlider) tempSlider.addEventListener('input', updateSimulation);
+
+    updateSimulation();
+  });
+</script>

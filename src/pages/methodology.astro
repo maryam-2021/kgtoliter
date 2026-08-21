@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Data Methodology & Limitations';
+const description =
+  'How Kg to litre compiles density values, calculates volume, and communicates the limitations of reference estimates.';
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 py-14 md:py-20">
+    <header class="mb-12">
+      <span class="badge badge-brand">Transparency</span>
+      <h1 class="mt-4 text-3xl md:text-4xl font-extrabold text-white">
+        Data methodology &amp; limitations
+      </h1>
+      <p class="mt-4 text-slate-400 leading-relaxed">
+        The calculators provide general-purpose estimates from compiled density values. They are not
+        laboratory measurements, certificates of analysis, or substitutes for a current product
+        specification.
+      </p>
+    </header>
+
+    <div class="prose prose-invert prose-slate max-w-none">
+      <h2>Calculation</h2>
+      <p>
+        Volume in litres is calculated as mass in kilograms divided by density in kilograms per
+        litre:
+        <code>volume = mass / density</code>. When the catalogue supplies a density range,
+        interfaces may show the range or use its representative value, depending on the calculator.
+      </p>
+
+      <h2>Catalogue status</h2>
+      <p>
+        The catalogue was assembled from source labels and reference values embedded in the project
+        data. It does not yet have a complete, item-by-item bibliography, an independent peer-review
+        record, or a documented re-verification schedule. Values should therefore be treated as
+        indicative references.
+      </p>
+
+      <h2>Why real values vary</h2>
+      <p>
+        Density can change with temperature, pressure, purity, formulation, moisture, particle size,
+        and bulk packing. Trade products sold under the same common name can also have different
+        specifications.
+      </p>
+
+      <h2>Appropriate use</h2>
+      <p>
+        These estimates are suitable for learning and rough planning. For engineering, transport,
+        dosing, regulatory, commercial, or safety-critical decisions, use the manufacturer’s current
+        safety data sheet or technical data sheet, a governing standard, or a calibrated measurement
+        for the actual material and operating conditions.
+      </p>
+
+      <h2>Future verification work</h2>
+      <p>
+        A publishable verification process should record a primary citation, edition or revision
+        date, measurement conditions, acceptable range, reviewer, and last-reviewed date for every
+        catalogue entry. Until that register exists, the site does not describe its full dataset as
+        verified or peer reviewed.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

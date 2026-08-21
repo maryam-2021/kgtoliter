@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import HeroDensityVisualizer from '../../components/interactive/HeroDensityVisualizer.astro';
+import FormulaPlayground from '../../components/interactive/FormulaPlayground.astro';
+import VolumeComparisonSlider from '../../components/interactive/VolumeComparisonSlider.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import FAQAccordion from '../../components/FAQAccordion.astro';
+import { substances, categories } from '../../data/densities.ts';
+
+export async function getStaticPaths() {
+  const batchIds = ['water', 'milk', 'cooking-oil', 'diesel', 'flour'];
+  const targetSubstances = substances.filter((sub) => batchIds.includes(sub.id));
+
+  return targetSubstances.map((sub) => {
+    const categorySlug = categories.find((c) => c.id === sub.category)?.slug || 'basic';
+    return {
+      params: { category: categorySlug, tool: `kg-to-litres-${sub.id}` },
+      props: { substance: sub },
+    };
+  });
+}
+
+const { substance } = Astro.props;
+const categoryObj = categories.find((c) => c.id === substance.category);
+const categorySlug = categoryObj?.slug || 'basic';
+const categoryName = categoryObj?.name || 'Basic & Universal Liquids';
+
+const pageTitle = `Kg to litre ${substance.name} | ${substance.seo.description.substring(0, 60)}...`;
+
+// Dynamic Tool Page Schema
+const toolSchema: Record<string, any>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://kgtolitre.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: categoryObj?.name,
+        item: `https://kgtolitre.com/${categoryObj?.slug}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: `Kg to litre ${substance.name}`,
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: `Kg to Litre ${substance.name} Calculator`,
+    applicationCategory: 'UtilityApplication',
+    description: substance.seo.description,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+  },
+];
+
+if (substance.content?.faq && substance.content.faq.length > 0) {
+  toolSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: substance.content.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  });
+}
+---
+
+<BaseLayout title={pageTitle} description={substance.seo.description} schema={toolSchema}>
+  <article class="max-w-3xl mx-auto px-4 py-12 space-y-12">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName={categoryName}
+      categorySlug={categorySlug}
+      substanceName={substance.name}
+    />
+
+    <!-- H1 -->
+    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+      Kg to litre {substance.name}
+    </h1>
+
+    <p class="text-lg text-slate-300 mb-8">
+      {substance.seo.description}
+    </p>
+
+    <!-- Core Utility -->
+    <div class="mb-12">
+      <CalculatorWidget defaultSubstanceId={substance.id} />
+    </div>
+
+    <!-- Interactive Diagrams -->
+    <section class="mb-12">
+      <HeroDensityVisualizer />
+    </section>
+
+    <!-- Unique Content Block 1: Intro -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl mb-12 space-y-4">
+      <h2 class="text-2xl font-bold text-white mb-4">About Converting {substance.name}</h2>
+      <p class="text-slate-300 leading-relaxed">
+        {substance.content.intro}
+      </p>
+    </section>
+
+    <!-- Formula Playground -->
+    <section class="mb-12">
+      <FormulaPlayground />
+    </section>
+
+    <!-- Unique Content Block 2: Real World Context -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl mb-12 space-y-4">
+      <h2 class="text-2xl font-bold text-white mb-4">
+        Real-World Context: Why Density Matters for {substance.name}
+      </h2>
+      <p class="text-slate-300 leading-relaxed">
+        {substance.content.real_world_context}
+      </p>
+    </section>
+
+    <!-- Volume Comparison Slider -->
+    <section class="mb-12">
+      <VolumeComparisonSlider />
+    </section>
+
+    <!-- Unique Content Block 3: FAQ Accordion -->
+    <section class="mb-12">
+      <FAQAccordion faqs={substance.content.faq} />
+    </section>
+
+    <!-- Related Tools -->
+    <section class="pt-8 border-t border-slate-800">
+      <RelatedTools currentSubstance={substance} categorySlug={categorySlug} />
+    </section>
+  </article>
+</BaseLayout>

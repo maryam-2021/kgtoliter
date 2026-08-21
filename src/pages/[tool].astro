@@ -1,0 +1,324 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../components/BreadcrumbNav.astro';
+import SpecializedCalculator from '../components/SpecializedCalculator.astro';
+import HeroDensityVisualizer from '../components/interactive/HeroDensityVisualizer.astro';
+import FormulaPlayground from '../components/interactive/FormulaPlayground.astro';
+import VolumeComparisonSlider from '../components/interactive/VolumeComparisonSlider.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import { getToolPath, toolsData, type ToolData } from '../data/toolsData';
+
+export async function getStaticPaths() {
+  return toolsData.map((tool) => ({
+    params: { tool: tool.slug },
+    props: { toolData: tool },
+  }));
+}
+
+export interface Props {
+  toolData: ToolData;
+}
+
+const { toolData } = Astro.props;
+
+const canonicalUrl = getToolPath(toolData);
+
+// Dynamic Tool Page Schema
+const toolSchema: Record<string, any>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://kgtolitre.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Calculators',
+        item: 'https://kgtolitre.com/tools/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: toolData.h1,
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: `${toolData.h1} Calculator`,
+    applicationCategory: 'UtilityApplication',
+    description: toolData.metaDescription,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+  },
+];
+
+if (toolData.faqs && toolData.faqs.length > 0) {
+  toolSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: toolData.faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  });
+}
+---
+
+<BaseLayout
+  title={toolData.seoTitle}
+  description={toolData.metaDescription}
+  schema={toolSchema}
+  canonicalUrl={canonicalUrl}
+>
+  <article class="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-14">
+    <!-- 1. Breadcrumbs -->
+    <div class="animate-fade-in">
+      <BreadcrumbNav
+        categoryName="Tools Directory"
+        categorySlug="tools"
+        substanceName={toolData.h1}
+      />
+    </div>
+
+    <!-- 2. Hero Header -->
+    <header class="text-center max-w-3xl mx-auto space-y-4 animate-fade-in-up">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 mb-2"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-brand-400 font-mono">Interactive Calculator</span>
+      </div>
+      <h1
+        class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.15]"
+      >
+        {toolData.h1}
+      </h1>
+      <p class="text-lg text-brand-300/80 font-medium max-w-xl mx-auto">
+        {toolData.mainQuestion}
+      </p>
+    </header>
+
+    <!-- 3. Personalised Introduction -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {toolData.intro}
+      </p>
+    </section>
+
+    <!-- 4. Personalised Interactive Calculator -->
+    <div class="reveal-section">
+      <SpecializedCalculator tool={toolData} />
+    </div>
+
+    <!-- 5. How to Use Section -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-5">
+      <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+        <span
+          class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
+          >
+        </span>
+        <span>How to Use the {toolData.h1}</span>
+      </h2>
+      <ol class="space-y-3">
+        {
+          toolData.howToUseSteps.map((step, idx) => (
+            <li class="flex items-start gap-3.5 p-4 rounded-xl bg-surface-900/60 border border-white/[0.04] hover:border-brand-500/20 transition-colors duration-300">
+              <span class="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-sm shadow-brand-500/20">
+                {idx + 1}
+              </span>
+              <span class="text-sm text-slate-300 mt-0.5 leading-relaxed">{step}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- 6. Formula and Explanation Section -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-5">
+      <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+        <span
+          class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold"
+          >&fnof;</span
+        >
+        Formula &amp; Scientific Mechanics
+      </h2>
+      <div
+        class="p-5 rounded-xl bg-surface-900/80 border border-brand-500/20 text-center glow-brand-strong"
+      >
+        <span class="font-mono text-brand-300 font-bold text-lg sm:text-xl">
+          {toolData.formulaExplanation.formula}
+        </span>
+      </div>
+      <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+        {toolData.formulaExplanation.details}
+      </p>
+      {
+        toolData.formulaExplanation.rearranged && (
+          <div class="pt-3 border-t border-white/[0.04]">
+            <p class="text-xs text-slate-500 font-mono">
+              Rearranged equations: {toolData.formulaExplanation.rearranged}
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <!-- 7. Worked Example Section -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-5">
+      <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+        <span
+          class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
+          >
+        </span>
+        Worked Conversion Example
+      </h2>
+      <h3 class="text-sm font-semibold text-brand-400 font-mono">{toolData.workedExample.title}</h3>
+      <p class="text-xs text-slate-500 font-mono badge badge-brand inline-block">
+        Given: {toolData.workedExample.given}
+      </p>
+      <ul class="space-y-2">
+        {
+          toolData.workedExample.steps.map((st) => (
+            <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] font-mono text-xs text-slate-300">
+              &bull; {st}
+            </li>
+          ))
+        }
+      </ul>
+      <div
+        class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-sm glow-line"
+      >
+        {toolData.workedExample.result}
+      </div>
+    </section>
+
+    <!-- 8. Conversion Table Section -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-5">
+      <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+        <span
+          class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            ></path></svg
+          >
+        </span>
+        Quick Reference Conversion Table
+      </h2>
+      <div class="overflow-x-auto rounded-xl border border-white/[0.06]">
+        <table class="table-pro">
+          <thead>
+            <tr>
+              <th scope="col">Substance / Input</th>
+              <th scope="col">Primary Volume</th>
+              <th scope="col">Notes / Classification</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              toolData.tableData.map((row) => (
+                <tr>
+                  <td class="text-white font-semibold">{row.col1}</td>
+                  <td class="text-brand-400 font-bold">{row.col2}</td>
+                  <td class="text-slate-500">{row.col3}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Interactive Visualizers -->
+    <div class="reveal-section">
+      <HeroDensityVisualizer />
+    </div>
+
+    <div class="reveal-section">
+      <FormulaPlayground />
+    </div>
+
+    <div class="reveal-section">
+      <VolumeComparisonSlider />
+    </div>
+
+    <!-- 9. Unique FAQs Section -->
+    <div class="reveal-section">
+      <FAQAccordion faqs={toolData.faqs} />
+    </div>
+
+    <!-- 10. Disclaimer Section -->
+    <div
+      class="reveal-section p-5 rounded-xl glass-card text-xs text-slate-500 leading-relaxed text-center space-y-1"
+    >
+      <p class="font-semibold text-slate-400">⚠️ Accuracy Disclaimer</p>
+      <p>
+        Fluid densities and bulk powder packing levels vary based on ambient temperature, altitude,
+        moisture content, and chemical purity. Calculator results provide theoretical estimations
+        based on standard reference values.
+      </p>
+    </div>
+
+    <!-- 11. Internal Links to Related Tools -->
+    <section class="reveal-section pt-8">
+      <div class="divider-glow mb-8"></div>
+      <h3 class="text-xl font-bold text-white mb-5 flex items-center gap-2">
+        <span
+          class="w-6 h-6 rounded bg-brand-500/15 text-brand-400 flex items-center justify-center text-xs"
+          >&rarr;</span
+        >
+        Related Conversion Calculators
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
+        {
+          toolsData
+            .filter((t) => toolData.relatedToolSlugs.includes(t.slug))
+            .slice(0, 4)
+            .map((rel) => (
+              <a
+                href={getToolPath(rel)}
+                class="block p-5 glass-card glass-card-hover rounded-xl group"
+              >
+                <span class="font-semibold text-brand-400 group-hover:text-brand-300 block text-sm transition-colors">
+                  {rel.h1} &rarr;
+                </span>
+                <p class="text-xs text-slate-500 mt-1.5 line-clamp-1">{rel.mainQuestion}</p>
+              </a>
+            ))
+        }
+      </div>
+    </section>
+  </article>
+</BaseLayout>
