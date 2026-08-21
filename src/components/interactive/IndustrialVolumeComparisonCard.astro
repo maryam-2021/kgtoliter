@@ -62,7 +62,7 @@ const colorClasses: Record<string, string> = {
         const pct = (item.volume / maxVolume) * 100;
         const barColor = colorClasses[item.color] || colorClasses.blue;
         return (
-          <div class="grid grid-cols-[130px_1fr_80px] sm:grid-cols-[200px_1fr_95px] items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+          <div class="grid grid-cols-[minmax(0,1fr)_minmax(96px,2fr)] sm:grid-cols-[200px_minmax(0,1fr)_95px] items-center gap-2 sm:gap-4 text-xs sm:text-sm">
             {/* Substance Name */}
             <span class="text-slate-200 font-medium truncate" title={item.name}>
               {item.name}
@@ -79,7 +79,7 @@ const colorClasses: Record<string, string> = {
             </div>
 
             {/* Density Label */}
-            <span class="text-slate-400 font-mono text-right text-[11px] sm:text-xs">
+            <span class="hidden sm:block text-slate-400 font-mono text-right text-[11px] sm:text-xs">
               {item.density.toFixed(3)} kg/L
             </span>
           </div>

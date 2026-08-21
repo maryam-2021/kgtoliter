@@ -15,6 +15,8 @@
       -apple-system,
       sans-serif;
     scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: clip;
   }
   body {
     background-color: #060a14;
@@ -22,6 +24,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  main,
+  section,
+  :where(.grid, .flex) > * {
+    min-width: 0;
+  }
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
   }
   ::selection {
     background-color: #29a5ff;
@@ -281,6 +296,12 @@
 .table-pro {
   @apply w-full text-left text-sm;
 }
+
+.overflow-x-auto,
+.overflow-auto {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+}
 .table-pro thead {
   @apply text-xs uppercase font-mono tracking-wider;
   background: rgba(11, 17, 32, 0.6);
@@ -407,4 +428,21 @@ input[type='range']::-webkit-slider-thumb {
 }
 .chart-bar-value {
   @apply min-w-[80px] text-right text-xs font-bold text-slate-300 font-mono;
+}
+
+@media (max-width: 480px) {
+  .chart-bar-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+  .chart-bar-label,
+  .chart-bar-value {
+    min-width: 0;
+  }
+  .chart-bar-track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+  }
 }

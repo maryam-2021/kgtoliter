@@ -1,6 +1,30 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+for (const viewport of [
+  { name: 'small Android', width: 360, height: 800 },
+  { name: 'iPhone SE', width: 375, height: 667 },
+  { name: 'tablet', width: 768, height: 1024 },
+]) {
+  test(`responsive pages have no horizontal overflow at ${viewport.name} width`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+
+    for (const path of ['/', '/industrial/', '/standalone/']) {
+      await page.goto(path);
+      const dimensions = await page.evaluate(() => ({
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+      }));
+
+      expect(dimensions.scrollWidth, `${path} at ${viewport.width}px`).toBeLessThanOrEqual(
+        dimensions.clientWidth,
+      );
+    }
+  });
+}
+
 test('homepage calculator and density directory are interactive', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'Kg to litre' })).toBeVisible();

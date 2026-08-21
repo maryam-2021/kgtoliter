@@ -34,9 +34,13 @@
       }
       html {
         scroll-behavior: smooth;
+        max-width: 100%;
+        overflow-x: clip;
       }
       body {
         margin: 0;
+        max-width: 100%;
+        overflow-x: clip;
         background: var(--background);
         color: var(--text);
         font-family: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -47,6 +51,7 @@
       }
       .container {
         width: min(1120px, calc(100% - 32px));
+        max-width: 100%;
         margin: 0 auto;
       }
       .site-header {
@@ -116,11 +121,12 @@
       }
       .categories-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
         gap: 12px;
       }
       .category-card {
         display: grid;
+        min-width: 0;
         gap: 6px;
         padding: 16px;
         text-decoration: none;
@@ -131,6 +137,7 @@
         transition:
           transform 0.2s ease,
           border-color 0.2s ease;
+        overflow-wrap: anywhere;
       }
       .category-card:hover {
         transform: translateY(-2px);
@@ -233,7 +240,9 @@
         width: min(100%, 340px);
       }
       .table-scroll {
+        max-width: 100%;
         overflow: auto;
+        overscroll-behavior-inline: contain;
         max-height: 620px;
         border: 1px solid var(--border);
         border-radius: 12px;
