@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kgtolitre.com/sitemap-index.xml
+Sitemap: https://kgtoliter.com/sitemap-index.xml

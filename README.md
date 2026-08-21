@@ -1,6 +1,6 @@
 # Kg to litre
 
-An Astro static site for estimating volume from mass and a substance's reference density. The production site is configured for `https://kgtolitre.com` and can be deployed as a static Cloudflare Pages project.
+An Astro static site for estimating volume from mass and a substance's reference density. The production site is configured for `https://kgtoliter.com` and can be deployed as a static Cloudflare Pages project.
 
 ## Requirements
 

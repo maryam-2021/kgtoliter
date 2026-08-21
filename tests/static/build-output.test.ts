@@ -43,7 +43,7 @@ test('generated Astro pages contain no broken internal links', async () => {
 
     for (const href of new Set(links)) {
       if (!href.startsWith('/') || href.startsWith('//')) continue;
-      const pathname = new URL(href, 'https://kgtolitre.com').pathname;
+      const pathname = new URL(href, 'https://kgtoliter.com').pathname;
       if (!(await targetExists(pathname))) {
         broken.push(`${path.relative(outputRoot, file)} -> ${pathname}`);
       }
@@ -58,6 +58,6 @@ test('homepage contains essential document landmarks and metadata', async () => 
   assert.match(html, /<html[^>]+lang="en"/);
   assert.match(html, /<main[^>]+id="main-content"/);
   assert.match(html, /<h1\b/);
-  assert.match(html, /<link rel="canonical" href="https:\/\/kgtolitre\.com\/"/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/kgtoliter\.com\/"/);
   assert.match(html, /navigator\.serviceWorker\.register\(/);
 });

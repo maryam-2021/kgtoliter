@@ -20,7 +20,7 @@ const {
   ogImage = '/og-image.png',
   article = false,
 } = Astro.props;
-const siteUrl = Astro.site ? new URL(Astro.site) : new URL('https://kgtolitre.com');
+const siteUrl = Astro.site ? new URL(Astro.site) : new URL('https://kgtoliter.com');
 const finalCanonical = canonicalUrl || Astro.url.pathname;
 const canonicalHref = new URL(finalCanonical, siteUrl).href;
 const ogImageHref = new URL(ogImage, siteUrl).href;
