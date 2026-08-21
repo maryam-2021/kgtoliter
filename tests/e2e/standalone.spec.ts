@@ -8,6 +8,18 @@ test('standalone toolkit loads the canonical database and integrates every secti
   await expect(page.locator('#appStatus')).toHaveText('772 substance records loaded');
   await expect(page.locator('#categoriesGrid .category-card')).toHaveCount(34);
   await expect(page.locator('#substanceSelect option')).toHaveCount(772);
+  await expect(page.getByRole('link', { name: 'KG to Litre' })).toHaveAttribute(
+    'href',
+    'https://kgtoliter.com/',
+  );
+  await expect(page.getByRole('link', { name: /Main website/ })).toHaveAttribute(
+    'href',
+    'https://kgtoliter.com/',
+  );
+  await expect(page.locator('#categoriesGrid .category-card').first()).toHaveAttribute(
+    'href',
+    /^https:\/\/kgtoliter\.com\//,
+  );
 
   await page.locator('#massInput').fill('2');
   await page.locator('#substanceSelect').selectOption({ label: 'Acetone (0.784 kg/L)' });
@@ -17,6 +29,10 @@ test('standalone toolkit loads the canonical database and integrates every secti
   await page.locator('#searchInput').fill('honey');
   await expect(page.locator('#resultCount')).toContainText('772 total');
   await expect(page.locator('#tableBody')).toContainText('Honey');
+  await expect(page.locator('#tableBody .table-action').first()).toHaveAttribute(
+    'href',
+    /^https:\/\/kgtoliter\.com\//,
+  );
 
   await expect(page.locator('#comparisonChart .comparison-row')).not.toHaveCount(0);
 });

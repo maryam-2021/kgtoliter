@@ -1,4 +1,6 @@
-const DATABASE_URL = '/data/substances.json';
+export const PRODUCTION_ORIGIN = 'https://kgtoliter.com';
+
+const DATABASE_PATH = '/data/substances.json';
 
 export let MASTER_DATABASE = [];
 
@@ -19,24 +21,35 @@ function isCatalogRecord(value) {
 export function loadMasterDatabase() {
   if (databaseRequest) return databaseRequest;
 
-  databaseRequest = fetch(DATABASE_URL, { headers: { Accept: 'application/json' } })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Database request failed with status ${response.status}`);
+  databaseRequest = (async () => {
+    const sameOriginUrl = new URL(DATABASE_PATH, window.location.href);
+    const productionUrl = new URL(DATABASE_PATH, PRODUCTION_ORIGIN);
+    const candidates =
+      sameOriginUrl.href === productionUrl.href ? [sameOriginUrl] : [sameOriginUrl, productionUrl];
+    let lastError;
+
+    for (const url of candidates) {
+      try {
+        const response = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!response.ok) {
+          throw new Error(`Database request failed with status ${response.status}`);
+        }
+        const records = await response.json();
+        if (!Array.isArray(records) || records.length === 0 || !records.every(isCatalogRecord)) {
+          throw new Error('The substance database response is invalid.');
+        }
+        MASTER_DATABASE = records;
+        return MASTER_DATABASE;
+      } catch (error) {
+        lastError = error;
       }
-      return response.json();
-    })
-    .then((records) => {
-      if (!Array.isArray(records) || records.length === 0 || !records.every(isCatalogRecord)) {
-        throw new Error('The substance database response is invalid.');
-      }
-      MASTER_DATABASE = records;
-      return MASTER_DATABASE;
-    })
-    .catch((error) => {
-      databaseRequest = undefined;
-      throw error;
-    });
+    }
+
+    throw lastError;
+  })().catch((error) => {
+    databaseRequest = undefined;
+    throw error;
+  });
 
   return databaseRequest;
 }

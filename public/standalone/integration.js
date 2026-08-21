@@ -1,4 +1,4 @@
-import { loadMasterDatabase } from './database.js';
+import { loadMasterDatabase, PRODUCTION_ORIGIN } from './database.js';
 
 const MAX_DIRECTORY_ROWS = 100;
 const comparisonKeys = [
@@ -27,6 +27,10 @@ const elements = {
 };
 
 let database = [];
+
+function productionUrl(pathname) {
+  return new URL(pathname, PRODUCTION_ORIGIN).href;
+}
 
 function formatDensity(record) {
   if (record.densityRange) {
@@ -57,7 +61,7 @@ function renderCategories() {
   for (const summary of [...summaries.values()].sort((a, b) => a.name.localeCompare(b.name))) {
     const link = document.createElement('a');
     link.className = 'category-card';
-    link.href = `/${summary.slug}/`;
+    link.href = productionUrl(`/${summary.slug}/`);
 
     const title = document.createElement('strong');
     title.textContent = summary.name;
@@ -131,7 +135,7 @@ function renderDirectory() {
 
     const actionCell = document.createElement('td');
     const link = document.createElement('a');
-    link.href = `/${record.categorySlug}/`;
+    link.href = productionUrl(`/${record.categorySlug}/`);
     link.textContent = 'Open category';
     link.className = 'table-action';
     actionCell.appendChild(link);
@@ -193,7 +197,9 @@ elements.mass.addEventListener('input', updateConversion);
 elements.substance.addEventListener('change', updateConversion);
 elements.search.addEventListener('input', renderDirectory);
 
-if ('serviceWorker' in navigator) {
+const isHostedApp = window.location.hostname.endsWith('kgtoliter.com');
+
+if ('serviceWorker' in navigator && isHostedApp) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
 }
 
