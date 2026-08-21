@@ -9,7 +9,7 @@
     "start": "astro dev",
     "api": "tsx server.js",
     "build": "astro build",
-    "deploy:cloudflare": "npm run build && wrangler pages deploy dist --project-name kgtolitre --branch main",
+    "deploy:cloudflare": "npm run build && wrangler pages deploy dist --project-name kgtoliter --branch main",
     "check": "astro check",
     "lint": "eslint .",
     "format": "prettier --write .",

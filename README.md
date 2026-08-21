@@ -65,7 +65,7 @@ Deploy the production build directly to the configured Cloudflare Pages project:
 npm run deploy:cloudflare
 ```
 
-Cloudflare Pages project: `kgtolitre`; production branch: `main`.
+Cloudflare Pages project: `kgtoliter`; production branch: `main`.
 
 The service worker and web manifest live in `public/`. The Express API is not part of the static deployment and must be deployed and secured separately if it is ever needed.
 
