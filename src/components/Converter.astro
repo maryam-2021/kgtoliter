@@ -1,13 +1,13 @@
 ---
-import { substances } from '../data/densities.ts';
+import { catalogItems, getCatalogItem } from '../data/catalog';
 
 export interface Props {
   defaultSubstanceId?: string;
 }
 
 const { defaultSubstanceId = 'water' } = Astro.props;
-const defaultSubstance = substances.find((sub) => sub.id === defaultSubstanceId) ?? substances[0];
-const initialVolume = 1 / defaultSubstance.density_kg_per_l;
+const defaultSubstance = getCatalogItem(defaultSubstanceId) ?? catalogItems[0];
+const initialVolume = 1 / defaultSubstance.density;
 ---
 
 <div
@@ -113,17 +113,19 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
           class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer"
         >
           {
-            substances.map((sub) => (
+            (
               <option
-                value={sub.density_kg_per_l}
-                data-name={sub.name}
-                data-note={sub.density_note}
-                data-id={sub.id}
-                selected={sub.id === defaultSubstance.id}
+                value={defaultSubstance.density}
+                data-name={defaultSubstance.name}
+                data-note={defaultSubstance.notes}
+                data-id={defaultSubstance.id}
+                data-catalog-key={defaultSubstance.catalogKey}
+                data-temperature={defaultSubstance.temperature}
+                selected
               >
-                {sub.name} ({sub.density_kg_per_l} kg/L)
+                {defaultSubstance.name} ({defaultSubstance.density} kg/L)
               </option>
-            ))
+            )
           }
         </select>
         <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -147,8 +149,8 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
           <span id="result-unit" class="text-base font-bold text-slate-300 font-mono">Litres</span>
         </p>
         <p id="density-note" class="text-xs text-slate-400 mt-1">
-          Based on {defaultSubstance.name} density {defaultSubstance.density_kg_per_l} kg/L ({
-            defaultSubstance.density_note
+          Based on {defaultSubstance.name} density {defaultSubstance.density} kg/L ({
+            defaultSubstance.notes
           })
         </p>
       </div>
@@ -169,10 +171,31 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
         <span id="copy-text">Copy Result</span>
       </button>
     </div>
+
+    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+      <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+        <dt class="text-slate-500 uppercase tracking-wider">Density</dt>
+        <dd id="converter-density" class="text-brand-400 font-mono font-bold mt-1">
+          {defaultSubstance.density.toFixed(3)} kg/L
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+        <dt class="text-slate-500 uppercase tracking-wider">Reference temperature</dt>
+        <dd id="converter-temperature" class="text-white font-mono font-bold mt-1">
+          {defaultSubstance.temperature}°C
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+        <dt class="text-slate-500 uppercase tracking-wider">Formula</dt>
+        <dd id="converter-formula" class="text-white font-mono font-bold mt-1">V = m ÷ ρ</dd>
+      </div>
+    </dl>
   </div>
 </div>
 
 <script>
+  import type { CatalogItem } from '../data/catalog';
+
   // Liquid color map by substance ID
   const liquidColors: Record<string, string> = {
     water: '#60a5fa', // blue-400
@@ -193,6 +216,9 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
     const noteDisplay = document.getElementById('density-note') as HTMLParagraphElement;
     const inputLabel = document.getElementById('input-label') as HTMLLabelElement;
     const inputUnit = document.getElementById('input-unit') as HTMLSpanElement;
+    const densityDisplay = document.getElementById('converter-density');
+    const temperatureDisplay = document.getElementById('converter-temperature');
+    const formulaDisplay = document.getElementById('converter-formula');
 
     // Guard clause: If critical elements aren't found, stop execution safely
     if (!massInput || !substanceSelect || !resultDisplay) {
@@ -213,7 +239,11 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
       const substanceId = selectedOption?.dataset.id || 'water';
       const substanceName = selectedOption?.dataset.name || 'Water';
       const densityNote = selectedOption?.dataset.note || '';
+      const temperature = selectedOption?.dataset.temperature || '20';
       const liquidColor = liquidColors[substanceId] || '#60a5fa';
+
+      if (densityDisplay) densityDisplay.textContent = `${density.toFixed(3)} kg/L`;
+      if (temperatureDisplay) temperatureDisplay.textContent = `${temperature}°C`;
 
       if (mode === 'kg-to-l') {
         const volume = density > 0 ? mass / density : 0;
@@ -222,6 +252,7 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
         if (resultLabel) resultLabel.textContent = 'Resulting Volume:';
         if (noteDisplay)
           noteDisplay.textContent = `Based on ${substanceName} density ${density} kg/L (${densityNote})`;
+        if (formulaDisplay) formulaDisplay.textContent = 'V = m ÷ ρ';
 
         // Broadcast custom event to all listening diagrams
         window.dispatchEvent(
@@ -244,6 +275,7 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
         if (resultLabel) resultLabel.textContent = 'Resulting Mass:';
         if (noteDisplay)
           noteDisplay.textContent = `Based on ${substanceName} density ${density} kg/L (${densityNote})`;
+        if (formulaDisplay) formulaDisplay.textContent = 'm = V × ρ';
 
         window.dispatchEvent(
           new CustomEvent('kg-conversion-update', {
@@ -287,6 +319,38 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
     massInput?.addEventListener('input', calculateAndBroadcast);
     substanceSelect?.addEventListener('change', calculateAndBroadcast);
 
+    async function loadCatalog() {
+      substanceSelect.setAttribute('aria-busy', 'true');
+      try {
+        const response = await fetch('/data/substances.json');
+        if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
+        const items = (await response.json()) as CatalogItem[];
+        const selectedKey =
+          substanceSelect.options[substanceSelect.selectedIndex]?.dataset.catalogKey;
+        const options = document.createDocumentFragment();
+
+        for (const item of items) {
+          const option = document.createElement('option');
+          option.value = item.density.toString();
+          option.textContent = `${item.name} (${item.density} kg/L)`;
+          option.dataset.name = item.name;
+          option.dataset.note = item.notes;
+          option.dataset.id = item.id;
+          option.dataset.catalogKey = item.catalogKey;
+          option.dataset.temperature = item.temperature.toString();
+          option.selected = item.catalogKey === selectedKey;
+          options.appendChild(option);
+        }
+
+        substanceSelect.replaceChildren(options);
+        calculateAndBroadcast();
+      } catch (error) {
+        console.error('Converter catalogue could not be loaded.', error);
+      } finally {
+        substanceSelect.removeAttribute('aria-busy');
+      }
+    }
+
     quickBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const val = btn.getAttribute('data-val');
@@ -313,12 +377,24 @@ const initialVolume = 1 / defaultSubstance.density_kg_per_l;
 
     // Listen for slider updates from FormulaPlayground (bidirectional sync)
     window.addEventListener('fp-slider-update', (e: Event) => {
-      const detail = (e as CustomEvent).detail;
+      const detail = (e as CustomEvent<{ mass: number; density: number }>).detail;
       if (massInput) massInput.value = detail.mass.toString();
-      // Match nearest option or custom density
+
+      const options = Array.from(substanceSelect.options);
+      if (options.length > 0 && Number.isFinite(detail.density)) {
+        const nearestOption = options.reduce((nearest, option) => {
+          const nearestDistance = Math.abs(parseFloat(nearest.value) - detail.density);
+          const optionDistance = Math.abs(parseFloat(option.value) - detail.density);
+          return optionDistance < nearestDistance ? option : nearest;
+        });
+        substanceSelect.value = nearestOption.value;
+        nearestOption.selected = true;
+      }
+
       calculateAndBroadcast();
     });
 
     calculateAndBroadcast();
+    void loadCatalog();
   });
 </script>

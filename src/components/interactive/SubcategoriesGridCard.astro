@@ -1,249 +1,69 @@
 ---
-// Subcategories & Master Categories Filter Grid Component
-const subcategories = [
-  {
-    id: 'industrial',
-    name: 'Industrial',
-    count: 25,
-    density: '0.780 - 1.900 kg/L',
-    colorBorder: 'border-l-blue-500',
-    colorText: 'text-blue-400',
-    icon: '🏭',
-  },
-  {
-    id: 'petroleum',
-    name: 'Petroleum',
-    count: 20,
-    density: '0.640 - 1.200 kg/L',
-    colorBorder: 'border-l-amber-500',
-    colorText: 'text-amber-400',
-    icon: '⛽',
-  },
-  {
-    id: 'solvents',
-    name: 'Solvents',
-    count: 20,
-    density: '0.640 - 1.594 kg/L',
-    colorBorder: 'border-l-purple-500',
-    colorText: 'text-purple-400',
-    icon: '💧',
-  },
-  {
-    id: 'acids',
-    name: 'Acids',
-    count: 20,
-    density: '0.993 - 1.900 kg/L',
-    colorBorder: 'border-l-red-500',
-    colorText: 'text-red-400',
-    icon: '🧪',
-  },
-  {
-    id: 'bases',
-    name: 'Bases',
-    count: 15,
-    density: '0.728 - 2.211 kg/L',
-    colorBorder: 'border-l-emerald-500',
-    colorText: 'text-emerald-400',
-    icon: '🧼',
-  },
-  {
-    id: 'specialty',
-    name: 'Specialty',
-    count: 16,
-    density: '0.970 - 1.425 kg/L',
-    colorBorder: 'border-l-pink-500',
-    colorText: 'text-pink-400',
-    icon: '⭐',
-  },
-  {
-    id: 'engine-oils',
-    slug: 'automotive',
-    name: 'Engine Oils',
-    count: 14,
-    density: '0.842 - 0.915 kg/L',
-    colorBorder: 'border-l-cyan-500',
-    colorText: 'text-cyan-400',
-    icon: '🛢️',
-  },
-  {
-    id: 'transmission-oils',
-    name: 'Transmission Oils',
-    count: 16,
-    density: '0.852 - 0.910 kg/L',
-    colorBorder: 'border-l-indigo-500',
-    colorText: 'text-indigo-400',
-    icon: '⚙️',
-  },
-  {
-    id: 'brake-fluids',
-    name: 'Brake Fluids',
-    count: 7,
-    density: '0.860 - 1.085 kg/L',
-    colorBorder: 'border-l-rose-500',
-    colorText: 'text-rose-400',
-    icon: '🚗',
-  },
-  {
-    id: 'coolants',
-    name: 'Coolants',
-    count: 15,
-    density: '0.980 - 1.120 kg/L',
-    colorBorder: 'border-l-sky-500',
-    colorText: 'text-sky-400',
-    icon: '❄️',
-  },
-  {
-    id: 'additives',
-    slug: 'auto-additives',
-    name: 'Additives',
-    count: 18,
-    density: '0.760 - 1.100 kg/L',
-    colorBorder: 'border-l-teal-500',
-    colorText: 'text-teal-400',
-    icon: '🧪',
-  },
-  {
-    id: 'dairy',
-    name: 'Dairy',
-    count: 31,
-    density: '0.320 - 1.300 kg/L',
-    colorBorder: 'border-l-yellow-500',
-    colorText: 'text-yellow-400',
-    icon: '🥛',
-  },
-  {
-    id: 'cooking-oils',
-    name: 'Cooking Oils',
-    count: 30,
-    density: '0.888 - 0.927 kg/L',
-    colorBorder: 'border-l-lime-500',
-    colorText: 'text-lime-400',
-    icon: '🫒',
-  },
-  {
-    id: 'sweeteners',
-    name: 'Sweeteners',
-    count: 27,
-    density: '0.560 - 1.450 kg/L',
-    colorBorder: 'border-l-amber-400',
-    colorText: 'text-amber-300',
-    icon: '🍯',
-  },
-  {
-    id: 'condiments',
-    name: 'Condiments',
-    count: 45,
-    density: '0.910 - 1.250 kg/L',
-    colorBorder: 'border-l-red-400',
-    colorText: 'text-red-300',
-    icon: '🌶️',
-  },
-  {
-    id: 'baking',
-    slug: 'baking-ingredients',
-    name: 'Baking',
-    count: 31,
-    density: '0.500 - 1.250 kg/L',
-    colorBorder: 'border-l-purple-400',
-    colorText: 'text-purple-300',
-    icon: '🍞',
-  },
-  {
-    id: 'beverages',
-    name: 'Beverages',
-    count: 32,
-    density: '0.995 - 1.060 kg/L',
-    colorBorder: 'border-l-blue-400',
-    colorText: 'text-blue-300',
-    icon: '🥤',
-  },
-  {
-    id: 'produce',
-    slug: 'produce-processing',
-    name: 'Produce',
-    count: 20,
-    density: '1.005 - 1.250 kg/L',
-    colorBorder: 'border-l-orange-400',
-    colorText: 'text-orange-300',
-    icon: '🥕',
-  },
-  {
-    id: 'concrete-cement',
-    name: 'Concrete & Cement',
-    count: 30,
-    density: '1.000 - 3.600 kg/L',
-    colorBorder: 'border-l-slate-400',
-    colorText: 'text-slate-300',
-    icon: '🏗️',
-  },
-  {
-    id: 'aggregates-fill',
-    name: 'Aggregates & Fill',
-    count: 28,
-    density: '0.500 - 2.000 kg/L',
-    colorBorder: 'border-l-stone-500',
-    colorText: 'text-stone-400',
-    icon: '🪨',
-  },
-  {
-    id: 'wood-lumber',
-    name: 'Wood & Lumber',
-    count: 38,
-    density: '0.320 - 0.950 kg/L',
-    colorBorder: 'border-l-yellow-600',
-    colorText: 'text-yellow-500',
-    icon: '🪵',
-  },
-  {
-    id: 'insulation',
-    slug: 'insulation-materials',
-    name: 'Insulation',
-    count: 30,
-    density: '0.010 - 0.500 kg/L',
-    colorBorder: 'border-l-amber-300',
-    colorText: 'text-amber-200',
-    icon: '🛡️',
-  },
-  {
-    id: 'masonry-block',
-    name: 'Masonry & Block',
-    count: 21,
-    density: '1.100 - 2.800 kg/L',
-    colorBorder: 'border-l-red-600',
-    colorText: 'text-red-500',
-    icon: '🧱',
-  },
-  {
-    id: 'roofing',
-    slug: 'roofing-materials',
-    name: 'Roofing',
-    count: 20,
-    density: '0.400 - 8.900 kg/L',
-    colorBorder: 'border-l-blue-600',
-    colorText: 'text-blue-500',
-    icon: '🏠',
-  },
-  {
-    id: 'paints-coatings',
-    name: 'Paints & Coatings',
-    count: 26,
-    density: '0.800 - 1.800 kg/L',
-    colorBorder: 'border-l-teal-400',
-    colorText: 'text-teal-300',
-    icon: '🎨',
-  },
-  {
-    id: 'adhesives-mortars',
-    name: 'Adhesives & Mortars',
-    count: 25,
-    density: '0.900 - 2.100 kg/L',
-    colorBorder: 'border-l-cyan-400',
-    colorText: 'text-cyan-300',
-    icon: '🔧',
-  },
+import { catalogItems, getCatalogStats } from '../../data/catalog';
+import { categories } from '../../data/substances';
+
+const stats = getCatalogStats();
+const icons: Record<string, string> = {
+  industrial: '🏭',
+  automotive: '🛢️',
+  food: '🛒',
+  beverages: '🥤',
+  cleaning: '🧼',
+  'personal-care': '🧴',
+  construction: '🏗️',
+  'metals-molten': '⚙️',
+  agriculture: '🌱',
+  viscous: '💧',
+  petroleum: '⛽',
+  solvents: '🧪',
+  acids: '⚗️',
+  bases: '🧼',
+  specialty: '⭐',
+  'transmission-oils': '⚙️',
+  'brake-fluids': '🚗',
+  coolants: '❄️',
+  'auto-additives': '🔧',
+  dairy: '🥛',
+  'cooking-oils': '🫒',
+  sweeteners: '🍯',
+  condiments: '🌶️',
+  'baking-ingredients': '🍞',
+  'beverages-full': '🧃',
+  'produce-processing': '🥕',
+  'concrete-cement': '🏗️',
+  'aggregates-fill': '🪨',
+  'wood-lumber': '🪵',
+  'insulation-materials': '🛡️',
+  'masonry-block': '🧱',
+  'roofing-materials': '🏠',
+  'paints-coatings': '🎨',
+  'adhesives-mortars': '🔩',
+};
+const borderColors = [
+  'border-l-blue-500',
+  'border-l-amber-500',
+  'border-l-purple-500',
+  'border-l-red-500',
+  'border-l-emerald-500',
+  'border-l-cyan-500',
 ];
 
-const totalChemicalsCount = 620;
+const subcategories = categories.flatMap((category, index) => {
+  const categoryStats = stats[category.id];
+  if (!categoryStats?.count) return [];
+
+  return [
+    {
+      ...category,
+      count: categoryStats.count,
+      density: `${categoryStats.minDensity.toFixed(3)} - ${categoryStats.maxDensity.toFixed(3)} kg/L`,
+      colorBorder: borderColors[index % borderColors.length],
+      icon: icons[category.id] ?? '◆',
+    },
+  ];
+});
+
+const totalChemicalsCount = catalogItems.length;
 ---
 
 <div class="space-y-8">
@@ -254,6 +74,8 @@ const totalChemicalsCount = 620;
     <button
       class="subcat-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-md transition-all cursor-pointer flex items-center gap-1.5"
       data-filter="all"
+      aria-pressed="true"
+      aria-controls="subcategoriesGrid"
     >
       <span>All</span>
       <span class="bg-blue-800 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono"
@@ -266,6 +88,8 @@ const totalChemicalsCount = 620;
         <button
           class="subcat-pill px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 transition-all cursor-pointer flex items-center gap-1.5"
           data-filter={cat.id}
+          aria-pressed="false"
+          aria-controls="subcategoriesGrid"
         >
           <span class="text-xs">{cat.icon}</span>
           <span>{cat.name}</span>
@@ -285,7 +109,7 @@ const totalChemicalsCount = 620;
     {
       subcategories.map((cat) => (
         <a
-          href={`/${cat.slug ?? cat.id}/`}
+          href={`/${cat.slug}/`}
           class={`subcat-card block bg-slate-900/80 hover:bg-slate-900 border border-slate-800/80 ${cat.colorBorder} border-l-4 rounded-xl p-3.5 transition-all duration-300 transform hover:-translate-y-1 shadow-md group`}
           data-category={cat.id}
         >
@@ -295,9 +119,7 @@ const totalChemicalsCount = 620;
               {cat.count} chemicals
             </span>
           </div>
-          <h4
-            class={`text-xs sm:text-sm font-bold text-white group-hover:${cat.colorText} transition-colors truncate mb-1`}
-          >
+          <h4 class="text-xs sm:text-sm font-bold text-white group-hover:text-brand-300 transition-colors truncate mb-1">
             {cat.name}
           </h4>
           <p class="text-[10px] font-mono text-slate-400 truncate">{cat.density}</p>
@@ -319,10 +141,12 @@ const totalChemicalsCount = 620;
         pills.forEach((p) => {
           p.classList.remove('active', 'bg-blue-600', 'text-white');
           p.classList.add('bg-slate-900', 'text-slate-300');
+          p.setAttribute('aria-pressed', 'false');
         });
 
         pill.classList.remove('bg-slate-900', 'text-slate-300');
         pill.classList.add('active', 'bg-blue-600', 'text-white');
+        pill.setAttribute('aria-pressed', 'true');
 
         cards.forEach((card) => {
           const category = card.getAttribute('data-category');

@@ -11,6 +11,7 @@ import EngineOilViscosityChartCard from '../components/interactive/EngineOilVisc
 import TemperatureDensitySlider from '../components/interactive/TemperatureDensitySlider.astro';
 import InteractiveConversionTable from '../components/interactive/InteractiveConversionTable.astro';
 import FAQAccordion from '../components/interactive/FAQAccordion.astro';
+import { catalogItems } from '../data/catalog.ts';
 import { getToolPath, toolsData } from '../data/toolsData.ts';
 import { getCollection } from 'astro:content';
 
@@ -64,6 +65,45 @@ const homepageSchema = [
 ];
 
 const allGuides = await getCollection('guides');
+
+const featureLinks = [
+  {
+    href: '#interactive-sliders',
+    eyebrow: 'Model',
+    title: 'Interactive Sliders',
+    description: 'Adjust mass and density in real time.',
+  },
+  {
+    href: '#batch-conversion',
+    eyebrow: 'Convert',
+    title: 'Batch Conversion',
+    description: 'Calculate and export multiple results.',
+  },
+  {
+    href: '#temperature-simulator',
+    eyebrow: 'Simulate',
+    title: 'Temperature Simulator',
+    description: 'Explore thermal density changes.',
+  },
+  {
+    href: '#visual-comparisons',
+    eyebrow: 'Compare',
+    title: 'Visual Comparisons',
+    description: 'See equal masses at different volumes.',
+  },
+  {
+    href: '#density-directory',
+    eyebrow: 'Search',
+    title: 'Density Directory',
+    description: `Filter all ${catalogItems.length} catalogue records.`,
+  },
+  {
+    href: '#advanced-calculators',
+    eyebrow: 'Solve',
+    title: 'Advanced Calculators',
+    description: `Open ${toolsData.length} dedicated tools.`,
+  },
+];
 ---
 
 <BaseLayout title={title} description={description} schema={homepageSchema}>
@@ -104,8 +144,46 @@ const allGuides = await getCollection('guides');
 
   <!-- ======== CONTENT SECTIONS ======== -->
   <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-24 pb-16">
+    <nav aria-label="Interactive feature navigation" class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
+        <span class="badge badge-brand">Interactive Toolkit</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Choose a Conversion Feature</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Jump directly to a calculator, simulator, comparison, or searchable density reference.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {
+          featureLinks.map((feature) => (
+            <a
+              href={feature.href}
+              class="glass-card glass-card-hover rounded-2xl p-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+            >
+              <span class="text-[10px] uppercase tracking-[0.18em] text-brand-400 font-semibold">
+                {feature.eyebrow}
+              </span>
+              <span class="flex items-center justify-between gap-3 mt-2">
+                <strong class="text-white group-hover:text-brand-300 transition-colors">
+                  {feature.title}
+                </strong>
+                <span
+                  aria-hidden="true"
+                  class="text-brand-400 group-hover:translate-x-1 transition-transform"
+                >
+                  &rarr;
+                </span>
+              </span>
+              <span class="block text-xs text-slate-500 mt-2 leading-relaxed">
+                {feature.description}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </nav>
+
     <!-- Formula Playground -->
-    <section class="reveal-section">
+    <section id="interactive-sliders" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
         <span class="badge badge-brand">Interactive Sliders</span>
         <h2 class="text-2xl md:text-3xl font-bold text-white">How to Calculate Volume</h2>
@@ -120,7 +198,7 @@ const allGuides = await getCollection('guides');
     </section>
 
     <!-- Volume Comparison -->
-    <section class="reveal-section">
+    <section id="visual-comparisons" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
         <span class="badge badge-brand">Visual Comparison</span>
         <h2 class="text-2xl md:text-3xl font-bold text-white">
@@ -134,7 +212,7 @@ const allGuides = await getCollection('guides');
     </section>
 
     <!-- Industrial Chemicals 1kg Volume Comparison Card -->
-    <section class="reveal-section max-w-5xl mx-auto">
+    <section id="batch-conversion" class="reveal-section max-w-5xl mx-auto scroll-mt-24">
       <IndustrialVolumeComparisonCard />
     </section>
 
@@ -149,14 +227,15 @@ const allGuides = await getCollection('guides');
         <span class="badge badge-brand">Subcategories & Directory</span>
         <h2 class="text-2xl md:text-3xl font-bold text-white">Explore Master Density Categories</h2>
         <p class="text-slate-400 text-sm leading-relaxed">
-          Filter through 25+ subcategories and 620+ substances by density range and industry domain.
+          Filter through 25+ subcategories and {catalogItems.length} substances by density range and industry
+          domain.
         </p>
       </div>
       <SubcategoriesGridCard />
     </section>
 
     <!-- Temperature Density -->
-    <section class="reveal-section">
+    <section id="temperature-simulator" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
         <span class="badge badge-brand">Thermal Physics</span>
         <h2 class="text-2xl md:text-3xl font-bold text-white">
@@ -170,7 +249,7 @@ const allGuides = await getCollection('guides');
     </section>
 
     <!-- Interactive Conversion Table -->
-    <section class="reveal-section">
+    <section id="density-directory" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
         <span class="badge badge-brand">Density Directory</span>
         <h2 class="text-2xl md:text-3xl font-bold text-white">Substance Density Directory</h2>
@@ -222,7 +301,7 @@ const allGuides = await getCollection('guides');
     </section>
 
     <!-- ======== TOOLS SHOWCASE ======== -->
-    <section class="reveal-section">
+    <section id="advanced-calculators" class="reveal-section scroll-mt-24">
       <div class="glass-card p-8 sm:p-10 rounded-2xl glow-brand space-y-8">
         <div class="text-center max-w-2xl mx-auto space-y-3">
           <span class="badge badge-brand">Specialised Calculators</span>

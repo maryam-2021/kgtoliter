@@ -18,5 +18,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  trailingSlash: 'always',
+  // Accept extensionless checklist URLs in local/preview environments. Cloudflare's
+  // redirect rules below still consolidate them onto the canonical trailing-slash URLs.
+  trailingSlash: 'ignore',
 });

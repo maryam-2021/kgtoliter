@@ -1,26 +1,34 @@
 ---
-// Industrial Chemicals & Solvents 1kg Volume Comparison Data
-const items = [
-  { name: 'Acetone', volume: 1.276, density: 0.784, color: 'blue' },
-  { name: 'Ethanol (100%)', volume: 1.267, density: 0.789, color: 'blue' },
-  { name: 'Isopropyl Alcohol (99%)', volume: 1.272, density: 0.786, color: 'blue' },
-  { name: 'Methanol', volume: 1.263, density: 0.792, color: 'blue' },
-  { name: 'Glycerin', volume: 0.793, density: 1.261, color: 'red' },
-  { name: 'Ethylene Glycol', volume: 0.898, density: 1.113, color: 'orange' },
-  { name: 'Propylene Glycol', volume: 0.965, density: 1.036, color: 'orange' },
-  { name: 'Toluene', volume: 1.153, density: 0.867, color: 'blue' },
-  { name: 'Xylene', volume: 1.157, density: 0.864, color: 'blue' },
-  { name: 'Mineral Spirits', volume: 1.282, density: 0.78, color: 'blue' },
-  { name: 'Turpentine', volume: 1.156, density: 0.865, color: 'blue' },
-  { name: 'Ammonia (28%)', volume: 1.111, density: 0.9, color: 'blue' },
-  { name: 'Hydrogen Peroxide (30%)', volume: 0.901, density: 1.11, color: 'orange' },
-  { name: 'Sulfuric Acid (98%)', volume: 0.543, density: 1.84, color: 'red' },
-  { name: 'Hydrochloric Acid (37%)', volume: 0.84, density: 1.198, color: 'orange' },
-  { name: 'Nitric Acid (68%)', volume: 0.709, density: 1.41, color: 'red' },
-  { name: 'Sodium Hydroxide (50%)', volume: 0.66, density: 1.515, color: 'red' },
+import { getCatalogItem } from '../../data/catalog';
+
+const comparisonKeys = [
+  'acetone',
+  'ethanol',
+  'isopropyl-alcohol',
+  'methanol',
+  'glycerin',
+  'ethylene-glycol',
+  'propylene-glycol',
+  'toluene',
+  'xylene',
+  'mineral-spirits',
+  'turpentine',
+  'ammonia-28',
+  'hydrogen-peroxide-30',
+  'sulfuric-acid-98',
+  'hydrochloric-acid-37',
+  'nitric-acid-68',
+  'sodium-hydroxide-50',
 ];
 
-const maxVolume = 1.282;
+const items = comparisonKeys.flatMap((key) => {
+  const item = getCatalogItem(key);
+  if (!item) return [];
+  const color = item.density < 1 ? 'blue' : item.density < 1.3 ? 'orange' : 'red';
+  return [{ name: item.name, volume: 1 / item.density, density: item.density, color }];
+});
+
+const maxVolume = Math.max(...items.map((item) => item.volume));
 
 const colorClasses: Record<string, string> = {
   blue: 'bg-blue-600 shadow-blue-500/20',

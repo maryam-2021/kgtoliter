@@ -1,10 +1,14 @@
-const CACHE_NAME = 'kg-to-litre-pwa-v2';
+const CACHE_NAME = 'kg-to-litre-pwa-v3';
 const CORE_ASSETS = [
   '/',
   '/manifest.json',
   '/favicon.svg',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
+  '/data/substances.json',
+  '/standalone/',
+  '/standalone/database.js',
+  '/standalone/integration.js',
 ];
 
 self.addEventListener('install', (event) => {
