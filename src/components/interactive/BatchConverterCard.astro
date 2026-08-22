@@ -19,6 +19,26 @@
 
     <!-- Controls -->
     <div class="flex items-center gap-2.5 flex-wrap">
+      <div
+        class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
+        role="group"
+        aria-label="Batch conversion direction"
+      >
+        <button
+          id="batch-mode-kg-to-l"
+          type="button"
+          aria-pressed="true"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 transition-all"
+          >kg &rarr; litre</button
+        >
+        <button
+          id="batch-mode-l-to-kg"
+          type="button"
+          aria-pressed="false"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all"
+          >litre &rarr; kg</button
+        >
+      </div>
       <button
         id="homeAddBatchBtn"
         disabled
@@ -56,11 +76,11 @@
       <span id="homeBatchTotalItems" class="text-white font-bold">0</span>
     </div>
     <div>
-      <strong>Total Mass:</strong>
+      <strong id="homeBatchMassLabel">Total Mass:</strong>
       <span id="homeBatchTotalMass" class="text-blue-400 font-bold">0.00 kg</span>
     </div>
     <div>
-      <strong>Total Volume:</strong>
+      <strong id="homeBatchVolumeLabel">Total Volume:</strong>
       <span id="homeBatchTotalVolume" class="text-emerald-400 font-bold">0.000 L</span>
     </div>
   </div>
@@ -70,6 +90,7 @@
   import type { CatalogItem } from '../../data/catalog';
 
   let chemicals: CatalogItem[] = [];
+  let batchMode: 'kg-to-l' | 'l-to-kg' = 'kg-to-l';
 
   function createHomeBatchRow() {
     const container = document.getElementById('homeBatchRowsContainer');
@@ -84,12 +105,12 @@
         ${chemicals.map((c) => `<option value="${c.catalogKey}">${c.name} (${c.density} kg/L)</option>`).join('')}
       </select>
       <div class="relative">
-        <input type="number" aria-label="Mass in kilograms" class="batch-mass bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none focus:border-blue-500" value="1.0" step="0.1" min="0.01" placeholder="Mass (kg)">
-        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg</span>
+        <input type="number" aria-label="Mass in kilograms" class="batch-mass batch-input bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none focus:border-blue-500" value="1.0" step="0.1" min="0.01" placeholder="Mass (kg)">
+        <span class="batch-input-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg</span>
       </div>
       <div class="relative">
-        <input type="text" aria-label="Calculated volume in litres" class="batch-vol bg-slate-950 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none" readonly placeholder="Volume (L)">
-        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">L</span>
+        <input type="text" aria-label="Calculated volume in litres" class="batch-vol batch-output bg-slate-950 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm rounded-lg p-2.5 w-full outline-none" readonly placeholder="Volume (L)">
+        <span class="batch-output-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">L</span>
       </div>
       <button aria-label="Remove batch row" class="remove-row-btn p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors font-bold text-sm h-10 w-10 flex items-center justify-center">
         ✕
@@ -97,6 +118,7 @@
     `;
 
     container.appendChild(row);
+    updateBatchRowLabels(row);
 
     const selectEl = row.querySelector<HTMLSelectElement>('.batch-select');
     const massEl = row.querySelector<HTMLInputElement>('.batch-mass');
@@ -112,23 +134,63 @@
     updateRowAndSummary(row);
   }
 
-  function updateRowAndSummary(row: HTMLDivElement) {
+  function updateRowAndSummary(row: HTMLElement) {
     const select = row.querySelector<HTMLSelectElement>('.batch-select');
     const massInput = row.querySelector<HTMLInputElement>('.batch-mass');
     const volInput = row.querySelector<HTMLInputElement>('.batch-vol');
 
     const chemId = select?.value;
-    const mass = parseFloat(massInput?.value ?? '0') || 0;
+    const amount = parseFloat(massInput?.value ?? '0') || 0;
 
     const chem = chemicals.find((c) => c.catalogKey === chemId);
-    if (chem && mass > 0) {
-      const vol = mass / chem.density;
-      if (volInput) volInput.value = vol.toFixed(3);
+    if (chem && amount > 0) {
+      const result = batchMode === 'kg-to-l' ? amount / chem.density : amount * chem.density;
+      if (volInput) volInput.value = result.toFixed(3);
     } else {
       if (volInput) volInput.value = '0.000';
     }
 
     calculateTotals();
+  }
+
+  function updateBatchRowLabels(row: HTMLElement) {
+    const reverse = batchMode === 'l-to-kg';
+    const input = row.querySelector<HTMLInputElement>('.batch-input');
+    const output = row.querySelector<HTMLInputElement>('.batch-output');
+    const inputUnit = row.querySelector<HTMLElement>('.batch-input-unit');
+    const outputUnit = row.querySelector<HTMLElement>('.batch-output-unit');
+    if (input) {
+      input.setAttribute('aria-label', reverse ? 'Volume in litres' : 'Mass in kilograms');
+      input.placeholder = reverse ? 'Volume (L)' : 'Mass (kg)';
+    }
+    if (output) {
+      output.setAttribute(
+        'aria-label',
+        reverse ? 'Calculated mass in kilograms' : 'Calculated volume in litres',
+      );
+      output.placeholder = reverse ? 'Mass (kg)' : 'Volume (L)';
+    }
+    if (inputUnit) inputUnit.textContent = reverse ? 'L' : 'kg';
+    if (outputUnit) outputUnit.textContent = reverse ? 'kg' : 'L';
+  }
+
+  function setBatchMode(mode: 'kg-to-l' | 'l-to-kg') {
+    batchMode = mode;
+    const reverse = batchMode === 'l-to-kg';
+    const kgToLButton = document.getElementById('batch-mode-kg-to-l');
+    const lToKgButton = document.getElementById('batch-mode-l-to-kg');
+    kgToLButton?.setAttribute('aria-pressed', String(!reverse));
+    lToKgButton?.setAttribute('aria-pressed', String(reverse));
+    kgToLButton?.classList.toggle('bg-brand-500', !reverse);
+    kgToLButton?.classList.toggle('text-slate-950', !reverse);
+    kgToLButton?.classList.toggle('text-slate-400', reverse);
+    lToKgButton?.classList.toggle('bg-brand-500', reverse);
+    lToKgButton?.classList.toggle('text-slate-950', reverse);
+    lToKgButton?.classList.toggle('text-slate-400', !reverse);
+    document.querySelectorAll<HTMLElement>('.home-batch-row').forEach((row) => {
+      updateBatchRowLabels(row);
+      updateRowAndSummary(row);
+    });
   }
 
   function calculateTotals() {
@@ -143,10 +205,12 @@
       const volInput = r.querySelector<HTMLInputElement>('.batch-vol');
 
       const chemId = select?.value;
-      const mass = parseFloat(massInput?.value ?? '0') || 0;
-      const vol = parseFloat(volInput?.value ?? '0') || 0;
+      const amount = parseFloat(massInput?.value ?? '0') || 0;
+      const output = parseFloat(volInput?.value ?? '0') || 0;
+      const mass = batchMode === 'kg-to-l' ? amount : output;
+      const vol = batchMode === 'kg-to-l' ? output : amount;
 
-      if (chemId && mass > 0) {
+      if (chemId && amount > 0) {
         totalItems++;
         totalMass += mass;
         totalVolume += vol;
@@ -157,12 +221,16 @@
     const totalItemsEl = document.getElementById('homeBatchTotalItems');
     const totalMassEl = document.getElementById('homeBatchTotalMass');
     const totalVolEl = document.getElementById('homeBatchTotalVolume');
+    const massLabel = document.getElementById('homeBatchMassLabel');
+    const volumeLabel = document.getElementById('homeBatchVolumeLabel');
 
     if (totalItems > 0) {
       if (summaryBar) summaryBar.classList.remove('hidden');
       if (totalItemsEl) totalItemsEl.textContent = totalItems.toString();
       if (totalMassEl) totalMassEl.textContent = `${totalMass.toFixed(2)} kg`;
       if (totalVolEl) totalVolEl.textContent = `${totalVolume.toFixed(3)} L`;
+      if (massLabel) massLabel.textContent = 'Total Mass:';
+      if (volumeLabel) volumeLabel.textContent = 'Total Volume:';
     } else {
       if (summaryBar) summaryBar.classList.add('hidden');
     }
@@ -172,8 +240,12 @@
     const addBtn = document.getElementById('homeAddBatchBtn') as HTMLButtonElement | null;
     const clearBtn = document.getElementById('homeClearBatchBtn');
     const exportBtn = document.getElementById('homeExportBatchBtn');
+    const kgToLButton = document.getElementById('batch-mode-kg-to-l');
+    const lToKgButton = document.getElementById('batch-mode-l-to-kg');
 
     addBtn?.addEventListener('click', createHomeBatchRow);
+    kgToLButton?.addEventListener('click', () => setBatchMode('kg-to-l'));
+    lToKgButton?.addEventListener('click', () => setBatchMode('l-to-kg'));
 
     clearBtn?.addEventListener('click', () => {
       const container = document.getElementById('homeBatchRowsContainer');
@@ -195,8 +267,10 @@
         const volInput = r.querySelector<HTMLInputElement>('.batch-vol');
 
         const chemId = select?.value;
-        const mass = parseFloat(massInput?.value ?? '0') || 0;
-        const vol = parseFloat(volInput?.value ?? '0') || 0;
+        const amount = parseFloat(massInput?.value ?? '0') || 0;
+        const output = parseFloat(volInput?.value ?? '0') || 0;
+        const mass = batchMode === 'kg-to-l' ? amount : output;
+        const vol = batchMode === 'kg-to-l' ? output : amount;
         const chem = chemicals.find((c) => c.catalogKey === chemId);
 
         if (chem && mass > 0) {

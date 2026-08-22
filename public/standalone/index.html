@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Standalone mass-to-volume converter, density directory, category explorer, and comparison tool."
+      content="Standalone kg-to-litre and litre-to-kg converter, density directory, category explorer, and comparison tool."
     />
     <meta name="theme-color" content="#060a14" />
     <meta
@@ -154,6 +154,40 @@
         border: 1px solid var(--border);
         border-radius: 20px;
         background: var(--surface);
+      }
+      .converter-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .converter-heading h2 {
+        margin: 0;
+      }
+      .mode-toggle {
+        display: inline-flex;
+        flex-shrink: 0;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-raised);
+      }
+      .mode-button {
+        min-height: 36px;
+        padding: 6px 10px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .mode-button[aria-pressed='true'] {
+        background: var(--brand);
+        color: #03111f;
       }
       .converter-grid {
         display: grid;
@@ -338,6 +372,10 @@
           align-items: stretch;
           flex-direction: column;
         }
+        .converter-heading {
+          align-items: flex-start;
+          flex-direction: column;
+        }
         .search-box {
           width: 100%;
         }
@@ -381,10 +419,20 @@
       <section class="converter-section" aria-labelledby="converterHeading">
         <div class="container">
           <div class="converter-card">
-            <h2 id="converterHeading">Convert Mass to Volume</h2>
+            <div class="converter-heading">
+              <h2 id="converterHeading">Kg ↔ Litre Converter</h2>
+              <div class="mode-toggle" role="group" aria-label="Conversion direction">
+                <button id="standaloneKgToL" class="mode-button" type="button" aria-pressed="true">
+                  kg → litre
+                </button>
+                <button id="standaloneLToKg" class="mode-button" type="button" aria-pressed="false">
+                  litre → kg
+                </button>
+              </div>
+            </div>
             <div class="converter-grid">
               <div class="input-group">
-                <label for="massInput">Mass (kg)</label>
+                <label for="massInput" id="standaloneInputLabel">Mass (kg)</label>
                 <input type="number" id="massInput" value="1.0" step="0.1" min="0.01" />
               </div>
               <div class="input-group">
@@ -395,7 +443,7 @@
                 <label>Result</label>
                 <div class="result-display" aria-live="polite">
                   <span class="result-value" id="resultValue">1.000</span>
-                  <span class="result-unit">Litres</span>
+                  <span class="result-unit" id="standaloneResultUnit">Litres</span>
                 </div>
               </div>
             </div>
@@ -409,7 +457,8 @@
                 ><span class="detail-value" id="temperatureDisplay">20°C</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Formula</span><span class="detail-value">V = m ÷ ρ</span>
+                <span class="detail-label">Formula</span
+                ><span class="detail-value" id="standaloneFormula">V = m ÷ ρ</span>
               </div>
             </div>
           </div>

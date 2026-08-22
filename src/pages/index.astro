@@ -16,9 +16,9 @@ import { getToolPath, toolsData } from '../data/toolsData.ts';
 import { getCollection } from 'astro:content';
 
 // Title
-const title = 'Kg to litre | Free Mass to Volume Calculator';
+const title = 'Kg to litre & Litre to kg | Free Two-Way Calculator';
 const description =
-  'Convert kilograms to litres for water, milk, oil, diesel, and more using compiled reference density values.';
+  'Convert kilograms to litres or litres to kilograms for water, milk, oil, diesel, and more using compiled reference density values.';
 
 // Define the Schema Array
 const homepageSchema = [
@@ -31,7 +31,7 @@ const homepageSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Kg to Litre Calculator',
+    name: 'Kg to Litre and Litre to Kg Calculator',
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Any',
     offers: {
@@ -44,6 +44,14 @@ const homepageSchema = [
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do you convert litres to kilograms?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: "To convert litres to kilograms, multiply the volume by the substance's density. Formula: Mass (kg) = Volume (L) × Density (kg/L).",
+        },
+      },
       {
         '@type': 'Question',
         name: 'How do you convert kg to litres?',
@@ -126,9 +134,10 @@ const featureLinks = [
 
         <!-- Cleaned Up Paragraph -->
         <p class="text-lg text-slate-300 mb-8 leading-relaxed">
-          Instantly convert <strong>mass to volume</strong> for water, milk, oil, diesel, and more. Select
-          a substance below to apply its reference <strong>density value</strong> and estimate the corresponding
-          volume.
+          Instantly convert <strong>kg to litres</strong> or <strong>litres to kilograms</strong> for
+          water, milk, oil, diesel, and more. Select a substance below to apply its reference <strong
+            >density value</strong
+          > and estimate the corresponding mass or volume.
         </p>
 
         <!-- Calculator Widget -->
@@ -186,10 +195,12 @@ const featureLinks = [
     <section id="interactive-sliders" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
         <span class="badge badge-brand">Interactive Sliders</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white">How to Calculate Volume</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-white">
+          Kg to Litre and Litre to Kg Formulas
+        </h2>
         <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-          The formula is simple: divide mass by density. Drag the sliders below to see how changing
-          either value affects the resulting volume in real-time.
+          Divide mass by density for litres: V = m ÷ ρ. Multiply volume by density for kilograms: m
+          = V × ρ. Drag the sliders below to explore the relationship in real time.
         </p>
       </div>
       <div class="max-w-3xl mx-auto">

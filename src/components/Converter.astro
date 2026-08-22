@@ -18,27 +18,33 @@ const initialVolume = 1 / defaultSubstance.density;
     class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800"
   >
     <div>
-      <h3 class="text-xl font-bold text-white">Kg to Litre Converter</h3>
+      <h3 class="text-xl font-bold text-white">Kg ↔ Litre Converter</h3>
       <p class="text-xs text-slate-400 mt-1">
         Select mass and substance for instant volume calculation
       </p>
     </div>
 
     <!-- Mode Toggle -->
-    <div class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800">
+    <div
+      class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
+      role="group"
+      aria-label="Conversion direction"
+    >
       <button
         id="mode-kg-to-l"
         type="button"
+        aria-pressed="true"
         class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all"
       >
-        Kg &rarr; Litres
+        kg &rarr; litre
       </button>
       <button
         id="mode-l-to-kg"
         type="button"
+        aria-pressed="false"
         class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all"
       >
-        Litres &rarr; Kg
+        litre &rarr; kg
       </button>
     </div>
   </div>
@@ -301,6 +307,8 @@ const initialVolume = 1 / defaultSubstance.density;
           'px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
       if (inputLabel) inputLabel.textContent = 'Mass (kg)';
       if (inputUnit) inputUnit.textContent = 'kg';
+      modeKgToLBtn.setAttribute('aria-pressed', 'true');
+      modeLToKgBtn?.setAttribute('aria-pressed', 'false');
       calculateAndBroadcast();
     });
 
@@ -313,6 +321,8 @@ const initialVolume = 1 / defaultSubstance.density;
           'px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
       if (inputLabel) inputLabel.textContent = 'Volume (L)';
       if (inputUnit) inputUnit.textContent = 'L';
+      modeLToKgBtn.setAttribute('aria-pressed', 'true');
+      modeKgToLBtn?.setAttribute('aria-pressed', 'false');
       calculateAndBroadcast();
     });
 

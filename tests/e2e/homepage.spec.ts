@@ -50,6 +50,13 @@ test('all six feature groups are integrated and interactive', async ({ page }) =
   await page.locator('#substance').selectOption({ label: 'Acetone (0.784 kg/L)' });
   await expect(page.locator('#converter-density')).toHaveText('0.784 kg/L');
   await expect(page.locator('#converter-temperature')).toHaveText('20°C');
+  await page.locator('#mode-l-to-kg').click();
+  await expect(page.locator('#mode-l-to-kg')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('#mass').fill('2');
+  await expect(page.locator('#result')).toHaveText('1.568');
+  await expect(page.locator('#result-unit')).toHaveText('Kilograms');
+  await expect(page.locator('#converter-formula')).toHaveText('m = V × ρ');
+  await page.locator('#mode-kg-to-l').click();
 
   await expect(page.locator('.subcat-pill').first()).toContainText('772');
   await expect(page.locator('.subcat-card')).toHaveCount(34);
@@ -67,6 +74,10 @@ test('all six feature groups are integrated and interactive', async ({ page }) =
   await page.locator('.home-batch-row').first().locator('.batch-mass').fill('2');
   await expect(page.locator('#homeBatchTotalItems')).toHaveText('2');
   await expect(page.locator('#homeBatchTotalMass')).toHaveText('3.00 kg');
+  await page.locator('#batch-mode-l-to-kg').click();
+  await page.locator('.home-batch-row').first().locator('.batch-select').selectOption('diesel-2');
+  await page.locator('.home-batch-row').first().locator('.batch-mass').fill('2');
+  await expect(page.locator('.home-batch-row').first().locator('.batch-vol')).toHaveValue('1.664');
 
   await page.getByRole('button', { name: 'Ethanol Alcohol' }).click();
   await page.locator('#temp-range-slider').fill('50');
@@ -81,6 +92,16 @@ test('all six feature groups are integrated and interactive', async ({ page }) =
   await expect(
     advancedTools.getByRole('link', { name: /View All \d+ Specialised Calculators/ }),
   ).toBeVisible();
+});
+
+test('specialised calculator converts litres to kilograms', async ({ page }) => {
+  await page.goto('/kg-to-litre-calculator/');
+  await page.locator('#sc-substance-select').selectOption('0.832');
+  await page.locator('#sc-mode-l-to-kg').click();
+  await page.locator('#sc-mass-input').fill('2');
+  await expect(page.locator('#sc-primary-result')).toHaveText('1.664');
+  await expect(page.locator('#sc-primary-unit')).toHaveText('Kilograms');
+  await expect(page.locator('#sc-step-1')).toContainText('Mass (kg) = Volume (L) × Density');
 });
 
 test('homepage has no serious or critical automated accessibility violations', async ({ page }) => {

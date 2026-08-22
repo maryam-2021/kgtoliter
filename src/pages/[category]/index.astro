@@ -12,8 +12,8 @@ export async function getStaticPaths() {
 
 const { category } = Astro.props;
 const categorySubstances = substances.filter((s) => s.category === category.id);
-const title = `Kg to Litres of ${category.name} | Density & Volume Reference`;
-const description = `Mass-to-volume conversion tools and a reference directory for ${category.name.toLowerCase()}. Estimate kg to litres using compiled density values.`;
+const title = `Kg to Litres & Litres to Kg of ${category.name} | Density Reference`;
+const description = `Two-way mass and volume conversion tools for ${category.name.toLowerCase()}. Convert kg to litres or litres to kg using compiled density values.`;
 ---
 
 <BaseLayout title={title} description={description}>

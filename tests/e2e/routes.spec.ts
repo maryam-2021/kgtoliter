@@ -20,5 +20,14 @@ test('deployment checklist routes load their populated category tools', async ({
     await expect(page.getByRole('heading', { level: 1 })).toContainText(route.heading);
     await expect(page.locator('#cat-substance-select option')).toHaveCount(route.records);
     await expect(page.locator('#cat-result-val')).not.toBeEmpty();
+
+    if (route.path === '/industrial') {
+      const density = Number(await page.locator('#cat-substance-select').inputValue());
+      await page.locator('#cat-mode-l-to-kg').click();
+      await page.locator('#cat-mass-input').fill('2');
+      await expect(page.locator('#cat-result-val')).toHaveText((2 * density).toFixed(3));
+      await expect(page.locator('#cat-result-unit')).toHaveText('Kilograms');
+      await expect(page.locator('#cat-formula')).toHaveText('m = V × ρ');
+    }
   }
 });

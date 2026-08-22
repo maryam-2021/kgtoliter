@@ -25,6 +25,11 @@ test('standalone toolkit loads the canonical database and integrates every secti
   await page.locator('#substanceSelect').selectOption({ label: 'Acetone (0.784 kg/L)' });
   await expect(page.locator('#resultValue')).toHaveText('2.551');
   await expect(page.locator('#densityDisplay')).toHaveText('0.784 kg/L');
+  await page.locator('#standaloneLToKg').click();
+  await expect(page.locator('#standaloneLToKg')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#resultValue')).toHaveText('1.568');
+  await expect(page.locator('#standaloneResultUnit')).toHaveText('Kilograms');
+  await expect(page.locator('#standaloneFormula')).toHaveText('m = V × ρ');
 
   await page.locator('#searchInput').fill('honey');
   await expect(page.locator('#resultCount')).toContainText('772 total');

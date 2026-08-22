@@ -24,9 +24,15 @@ const elements = {
   tableBody: document.querySelector('#tableBody'),
   resultCount: document.querySelector('#resultCount'),
   comparison: document.querySelector('#comparisonChart'),
+  inputLabel: document.querySelector('#standaloneInputLabel'),
+  resultUnit: document.querySelector('#standaloneResultUnit'),
+  formula: document.querySelector('#standaloneFormula'),
+  kgToLButton: document.querySelector('#standaloneKgToL'),
+  lToKgButton: document.querySelector('#standaloneLToKg'),
 };
 
 let database = [];
+let conversionMode = 'kg-to-l';
 
 function productionUrl(pathname) {
   return new URL(pathname, PRODUCTION_ORIGIN).href;
@@ -97,15 +103,27 @@ function selectedRecord() {
 
 function updateConversion() {
   const record = selectedRecord();
-  const mass = Number.parseFloat(elements.mass.value);
-  if (!record || !Number.isFinite(mass) || mass <= 0) {
+  const amount = Number.parseFloat(elements.mass.value);
+  if (!record || !Number.isFinite(amount) || amount <= 0) {
     elements.result.textContent = '0.000';
     return;
   }
 
-  elements.result.textContent = (mass / record.density).toFixed(3);
+  const result = conversionMode === 'kg-to-l' ? amount / record.density : amount * record.density;
+  elements.result.textContent = result.toFixed(3);
+  elements.resultUnit.textContent = conversionMode === 'kg-to-l' ? 'Litres' : 'Kilograms';
+  elements.formula.textContent = conversionMode === 'kg-to-l' ? 'V = m ÷ ρ' : 'm = V × ρ';
   elements.density.textContent = `${formatDensity(record)} kg/L`;
   elements.temperature.textContent = `${record.temperature}°C`;
+}
+
+function setConversionMode(mode) {
+  conversionMode = mode;
+  const reverse = conversionMode === 'l-to-kg';
+  elements.inputLabel.textContent = reverse ? 'Volume (L)' : 'Mass (kg)';
+  elements.kgToLButton.setAttribute('aria-pressed', String(!reverse));
+  elements.lToKgButton.setAttribute('aria-pressed', String(reverse));
+  updateConversion();
 }
 
 function appendCell(row, text, className = '') {
@@ -196,6 +214,8 @@ async function initialize() {
 elements.mass.addEventListener('input', updateConversion);
 elements.substance.addEventListener('change', updateConversion);
 elements.search.addEventListener('input', renderDirectory);
+elements.kgToLButton.addEventListener('click', () => setConversionMode('kg-to-l'));
+elements.lToKgButton.addEventListener('click', () => setConversionMode('l-to-kg'));
 
 const isHostedApp = window.location.hostname.endsWith('kgtoliter.com');
 
