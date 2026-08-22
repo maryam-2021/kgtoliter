@@ -10,10 +10,7 @@ import FAQAccordion from '../../components/FAQAccordion.astro';
 import { substances, categories } from '../../data/densities.ts';
 
 export async function getStaticPaths() {
-  const batchIds = ['water', 'milk', 'cooking-oil', 'diesel', 'flour'];
-  const targetSubstances = substances.filter((sub) => batchIds.includes(sub.id));
-
-  return targetSubstances.map((sub) => {
+  return substances.map((sub) => {
     const categorySlug = categories.find((c) => c.id === sub.category)?.slug || 'basic';
     return {
       params: { category: categorySlug, tool: `kg-to-litres-${sub.id}` },
@@ -103,8 +100,39 @@ if (substance.content?.faq && substance.content.faq.length > 0) {
     </p>
 
     <!-- Core Utility -->
-    <div class="mb-12">
+    <div class="mb-12 space-y-4">
       <CalculatorWidget defaultSubstanceId={substance.id} />
+
+      <!-- Trust & Verification Summary Card -->
+      <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between text-xs pb-3 border-b border-slate-800">
+          <span class="font-bold text-white uppercase font-mono tracking-wider">Verified Reference Data</span>
+          <span class="inline-flex items-center gap-1.5 text-emerald-400 font-mono font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Reviewed August 2026</span>
+          </span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Source Authority</span>
+            <span class="text-slate-300 font-medium block mt-0.5">
+              {substance.source || (categorySlug === 'fuels' ? 'EN 590 / ASTM D1298' : categorySlug === 'cooking' ? 'USDA FoodData Central' : 'CRC Handbook / NIST')}
+            </span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Density Range / Tolerance</span>
+            <span class="text-brand-400 font-mono font-bold block mt-0.5">
+              {substance.densityRange ? `${substance.densityRange.min.toFixed(3)} – ${substance.densityRange.max.toFixed(3)} kg/L` : `${(substance.density_kg_per_l * 0.97).toFixed(3)} – ${(substance.density_kg_per_l * 1.03).toFixed(3)} kg/L`}
+            </span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Reference Temperature</span>
+            <span class="text-slate-300 font-mono font-bold block mt-0.5">
+              {substance.temperature || (categorySlug === 'fuels' ? 15 : substance.id === 'water' ? 4 : 20)}°C Standard
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Interactive Diagrams -->

@@ -1,5 +1,6 @@
 ---
 import { catalogItems, getCatalogItem } from '../data/catalog';
+import TemperatureDisclaimer from './TemperatureDisclaimer.astro';
 
 export interface Props {
   defaultSubstanceId?: string;
@@ -8,115 +9,173 @@ export interface Props {
 const { defaultSubstanceId = 'water' } = Astro.props;
 const defaultSubstance = getCatalogItem(defaultSubstanceId) ?? catalogItems[0];
 const initialVolume = 1 / defaultSubstance.density;
+
+const categoriesList = [
+  { id: 'all', name: 'All' },
+  { id: 'cooking', name: '🍳 Cooking' },
+  { id: 'fuels', name: '⛽ Fuel' },
+  { id: 'industrial', name: '🧪 Chemical' },
+  { id: 'automotive', name: '🚗 Auto' },
+  { id: 'construction', name: '🏗️ Construction' },
+  { id: 'agriculture', name: '🌾 Agri' },
+];
 ---
 
 <div
-  class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto"
+  class="glass-card rounded-2xl p-4 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto space-y-6"
   id="calculator-root"
 >
+  <!-- Converter Header & Direction Controls -->
   <div
-    class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800"
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800"
   >
     <div>
-      <h3 class="text-xl font-bold text-white">Kg ↔ Litre Converter</h3>
+      <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+        <span>Kg ↔ Litre Converter</span>
+        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">Two-Way</span>
+      </h3>
       <p class="text-xs text-slate-400 mt-1">
-        Select mass and substance for instant volume calculation
+        Convert mass to volume or volume to mass for 700+ materials
       </p>
     </div>
 
-    <!-- Mode Toggle -->
-    <div
-      class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
-      role="group"
-      aria-label="Conversion direction"
-    >
-      <button
-        id="mode-kg-to-l"
-        type="button"
-        aria-pressed="true"
-        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all"
+    <!-- Mode Toggle & Swap Button -->
+    <div class="flex items-center gap-2 self-start sm:self-auto">
+      <div
+        class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
+        role="group"
+        aria-label="Conversion direction"
       >
-        kg &rarr; litre
-      </button>
+        <button
+          id="mode-kg-to-l"
+          type="button"
+          aria-pressed="true"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all cursor-pointer"
+        >
+          kg &rarr; litre
+        </button>
+        <button
+          id="mode-l-to-kg"
+          type="button"
+          aria-pressed="false"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer"
+        >
+          litre &rarr; kg
+        </button>
+      </div>
+
+      <!-- Quick Swap Direction Button -->
       <button
-        id="mode-l-to-kg"
         type="button"
-        aria-pressed="false"
-        class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all"
+        id="swap-direction-btn"
+        class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-400 hover:border-brand-500/30 transition-all cursor-pointer"
+        title="Swap conversion direction (kg ↔ L)"
+        aria-label="Swap conversion direction"
       >
-        litre &rarr; kg
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+        </svg>
       </button>
     </div>
   </div>
 
-  <div class="space-y-4">
+  <div class="space-y-5">
+    <!-- Value Input & Quick Presets -->
     <div>
-      <label
-        id="input-label"
-        for="mass"
-        class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1"
-        >Mass (kg)</label
-      >
+      <div class="flex items-center justify-between mb-1.5">
+        <label
+          id="input-label"
+          for="mass"
+          class="block text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono"
+        >
+          Mass in Kilograms (kg)
+        </label>
+        <span id="input-helper-text" class="text-[11px] text-slate-400">Enter weight to convert</span>
+      </div>
+
       <div class="relative">
         <input
           type="number"
           id="mass"
           name="mass"
-          step="0.01"
+          step="any"
           min="0"
           value="1"
-          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-lg focus:ring-2 focus:ring-brand-500 outline-none"
+          placeholder="1.0"
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-lg sm:text-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
         />
         <span
           id="input-unit"
-          class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono"
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 font-mono bg-slate-800 px-2 py-1 rounded"
         >
           kg
         </span>
       </div>
 
       <!-- Quick Amount Preset Buttons -->
-      <div class="flex items-center gap-1.5 pt-2">
-        <span class="text-[11px] text-slate-400 font-mono">Quick:</span>
-        <button
-          type="button"
-          class="quick-amt text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-          data-val="1">1</button
-        >
-        <button
-          type="button"
-          class="quick-amt text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-          data-val="5">5</button
-        >
-        <button
-          type="button"
-          class="quick-amt text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-          data-val="10">10</button
-        >
-        <button
-          type="button"
-          class="quick-amt text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-          data-val="25">25</button
-        >
-        <button
-          type="button"
-          class="quick-amt text-xs px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-          data-val="100">100</button
-        >
+      <div class="flex flex-wrap items-center gap-1.5 pt-2">
+        <span class="text-[11px] text-slate-400 font-mono">Presets:</span>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="1">1</button>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="5">5</button>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="10">10</button>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="25">25</button>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="100">100</button>
+        <button type="button" class="quick-amt text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 transition-colors border border-white/[0.04] cursor-pointer font-mono" data-val="1000">1,000</button>
       </div>
     </div>
 
-    <div>
-      <label
-        for="substance"
-        class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1"
-        >Substance</label
-      >
+    <!-- Substance Search & Selection Module -->
+    <div class="space-y-2">
+      <div class="flex items-center justify-between">
+        <label
+          for="substance-search"
+          class="block text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono"
+        >
+          Select Material / Substance
+        </label>
+        <span id="substance-count-chip" class="text-[11px] text-slate-400 font-mono">700+ Available</span>
+      </div>
+
+      <!-- Search Input Filter -->
+      <div class="relative">
+        <input
+          type="text"
+          id="substance-search"
+          placeholder="Type to filter substances (e.g. diesel, milk, olive oil, acetone, concrete)..."
+          class="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all placeholder:text-slate-500"
+        />
+        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <button
+          type="button"
+          id="clear-search-btn"
+          class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white rounded cursor-pointer"
+          title="Clear search filter"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Quick Category Pills -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        {categoriesList.map((cat) => (
+          <button
+            type="button"
+            class="category-filter-btn text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition-all shrink-0 cursor-pointer"
+            data-category={cat.id}
+          >
+            {cat.name}
+          </button>
+        ))}
+      </div>
+
+      <!-- Substance Dropdown -->
       <div class="relative">
         <select
           id="substance"
           name="substance"
-          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer"
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer font-mono"
         >
           {
             (
@@ -127,6 +186,7 @@ const initialVolume = 1 / defaultSubstance.density;
                 data-id={defaultSubstance.id}
                 data-catalog-key={defaultSubstance.catalogKey}
                 data-temperature={defaultSubstance.temperature}
+                data-category={defaultSubstance.category}
                 selected
               >
                 {defaultSubstance.name} ({defaultSubstance.density} kg/L)
@@ -140,103 +200,152 @@ const initialVolume = 1 / defaultSubstance.density;
       </div>
     </div>
 
+    <!-- Conversion Result Card -->
     <div
-      class="mt-6 p-4 rounded-xl bg-slate-900/90 border border-brand-500/30 flex flex-col sm:flex-row items-center justify-between gap-4"
+      class="p-5 rounded-2xl bg-gradient-to-br from-slate-900/95 via-surface-900/90 to-slate-900/95 border border-brand-500/30 flex flex-col gap-4 shadow-lg shadow-brand-500/5"
     >
-      <div>
-        <p
-          id="result-label"
-          class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1"
-        >
-          Resulting Volume:
-        </p>
-        <p class="text-3xl font-extrabold text-brand-400 font-mono">
-          <span id="result">{initialVolume.toFixed(3)}</span>
-          <span id="result-unit" class="text-base font-bold text-slate-300 font-mono">Litres</span>
-        </p>
-        <p id="density-note" class="text-xs text-slate-400 mt-1">
-          Based on {defaultSubstance.name} density {defaultSubstance.density} kg/L ({
-            defaultSubstance.notes
-          })
-        </p>
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <p
+            id="result-label"
+            class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono"
+          >
+            Resulting Volume:
+          </p>
+          <p class="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight flex items-baseline gap-2">
+            <span id="result">{initialVolume.toFixed(3)}</span>
+            <span id="result-unit" class="text-base font-bold text-slate-300 font-mono">Litres</span>
+          </p>
+          <p id="density-note" class="text-xs text-slate-400">
+            Based on {defaultSubstance.name} density {defaultSubstance.density} kg/L ({
+              defaultSubstance.notes
+            })
+          </p>
+        </div>
+
+        <!-- Action Buttons: Copy & Share -->
+        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <!-- Copy Button -->
+          <button
+            type="button"
+            id="copy-btn"
+            class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            title="Copy formatted result to clipboard"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              ></path>
+            </svg>
+            <span id="copy-text">Copy Result</span>
+          </button>
+
+          <!-- Share Result Link Button -->
+          <button
+            type="button"
+            id="share-btn"
+            class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all active:scale-95 cursor-pointer"
+            title="Copy link to this exact calculation"
+          >
+            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            <span id="share-text">Share Link</span>
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        id="copy-btn"
-        class="px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-all shadow-md active:scale-95"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-          ></path>
-        </svg>
-        <span id="copy-text">Copy Result</span>
-      </button>
+      <!-- Real-World Variability & Tolerance Range Box -->
+      <div id="range-result-box" class="p-3 rounded-xl bg-slate-950/80 border border-brand-500/20 text-xs font-mono flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+        <span class="text-slate-400 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+          <span>Real-World Tolerance Span:</span>
+        </span>
+        <span id="range-result-value" class="text-brand-300 font-bold">
+          {(1 / (defaultSubstance.densityRange?.max || defaultSubstance.density * 1.03)).toFixed(3)} L – {(1 / (defaultSubstance.densityRange?.min || defaultSubstance.density * 0.97)).toFixed(3)} L
+        </span>
+      </div>
     </div>
 
-    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+    <!-- Live Physical Property Cards -->
+    <dl class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
       <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-        <dt class="text-slate-500 uppercase tracking-wider">Density</dt>
+        <dt class="text-slate-500 uppercase tracking-wider font-mono">Reference Density</dt>
         <dd id="converter-density" class="text-brand-400 font-mono font-bold mt-1">
           {defaultSubstance.density.toFixed(3)} kg/L
         </dd>
       </div>
       <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-        <dt class="text-slate-500 uppercase tracking-wider">Reference temperature</dt>
-        <dd id="converter-temperature" class="text-white font-mono font-bold mt-1">
+        <dt class="text-slate-500 uppercase tracking-wider font-mono">Density Range</dt>
+        <dd id="converter-density-range" class="text-white font-mono font-bold mt-1">
+          {defaultSubstance.densityRange ? `${defaultSubstance.densityRange.min.toFixed(3)}–${defaultSubstance.densityRange.max.toFixed(3)}` : `${(defaultSubstance.density * 0.97).toFixed(3)}–${(defaultSubstance.density * 1.03).toFixed(3)}`} kg/L
+        </dd>
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+        <dt class="text-slate-500 uppercase tracking-wider font-mono">Standard Temp</dt>
+        <dd id="converter-temperature" class="text-slate-300 font-mono font-bold mt-1">
           {defaultSubstance.temperature}°C
         </dd>
       </div>
       <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-        <dt class="text-slate-500 uppercase tracking-wider">Formula</dt>
-        <dd id="converter-formula" class="text-white font-mono font-bold mt-1">V = m ÷ ρ</dd>
+        <dt class="text-slate-500 uppercase tracking-wider font-mono">Active Formula</dt>
+        <dd id="converter-formula" class="text-emerald-400 font-mono font-bold mt-1">V = m ÷ ρ</dd>
       </div>
     </dl>
+    <TemperatureDisclaimer />
   </div>
 </div>
 
 <script>
   import type { CatalogItem } from '../data/catalog';
 
-  // Liquid color map by substance ID
   const liquidColors: Record<string, string> = {
-    water: '#60a5fa', // blue-400
-    milk: '#f3f4f6', // gray-100
-    'cooking-oil': '#facc15', // yellow-400
-    diesel: '#475569', // slate-600
-    flour: '#fef3c7', // amber-100
+    water: '#60a5fa',
+    milk: '#f3f4f6',
+    'cooking-oil': '#facc15',
+    diesel: '#475569',
+    flour: '#fef3c7',
   };
 
   document.addEventListener('DOMContentLoaded', () => {
     let mode = 'kg-to-l';
+    let fullCatalog: CatalogItem[] = [];
+    let activeCategory = 'all';
 
     const massInput = document.getElementById('mass') as HTMLInputElement;
     const substanceSelect = document.getElementById('substance') as HTMLSelectElement;
+    const substanceSearchInput = document.getElementById('substance-search') as HTMLInputElement;
+    const clearSearchBtn = document.getElementById('clear-search-btn') as HTMLButtonElement;
+    const substanceCountChip = document.getElementById('substance-count-chip') as HTMLSpanElement;
     const resultDisplay = document.getElementById('result') as HTMLSpanElement;
     const resultUnit = document.getElementById('result-unit') as HTMLSpanElement;
     const resultLabel = document.getElementById('result-label') as HTMLParagraphElement;
     const noteDisplay = document.getElementById('density-note') as HTMLParagraphElement;
     const inputLabel = document.getElementById('input-label') as HTMLLabelElement;
     const inputUnit = document.getElementById('input-unit') as HTMLSpanElement;
+    const inputHelperText = document.getElementById('input-helper-text') as HTMLSpanElement;
     const densityDisplay = document.getElementById('converter-density');
+    const densityRangeDisplay = document.getElementById('converter-density-range');
     const temperatureDisplay = document.getElementById('converter-temperature');
     const formulaDisplay = document.getElementById('converter-formula');
-
-    // Guard clause: If critical elements aren't found, stop execution safely
-    if (!massInput || !substanceSelect || !resultDisplay) {
-      console.warn('Converter elements not found. Skipping initialization.');
-      return;
-    }
+    const rangeResultValue = document.getElementById('range-result-value');
 
     const modeKgToLBtn = document.getElementById('mode-kg-to-l');
     const modeLToKgBtn = document.getElementById('mode-l-to-kg');
+    const swapDirectionBtn = document.getElementById('swap-direction-btn');
     const quickBtns = document.querySelectorAll('.quick-amt');
     const copyBtn = document.getElementById('copy-btn');
     const copyText = document.getElementById('copy-text');
+    const shareBtn = document.getElementById('share-btn');
+    const shareText = document.getElementById('share-text');
+    const categoryFilterBtns = document.querySelectorAll('.category-filter-btn');
+
+    if (!massInput || !substanceSelect || !resultDisplay) {
+      return;
+    }
 
     function calculateAndBroadcast() {
       const mass = parseFloat(massInput?.value || '0') || 0;
@@ -246,21 +355,29 @@ const initialVolume = 1 / defaultSubstance.density;
       const substanceName = selectedOption?.dataset.name || 'Water';
       const densityNote = selectedOption?.dataset.note || '';
       const temperature = selectedOption?.dataset.temperature || '20';
+      const minDensity = selectedOption?.dataset.min ? parseFloat(selectedOption.dataset.min) : density * 0.97;
+      const maxDensity = selectedOption?.dataset.max ? parseFloat(selectedOption.dataset.max) : density * 1.03;
       const liquidColor = liquidColors[substanceId] || '#60a5fa';
 
       if (densityDisplay) densityDisplay.textContent = `${density.toFixed(3)} kg/L`;
+      if (densityRangeDisplay) densityRangeDisplay.textContent = `${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L`;
       if (temperatureDisplay) temperatureDisplay.textContent = `${temperature}°C`;
 
       if (mode === 'kg-to-l') {
         const volume = density > 0 ? mass / density : 0;
+        const minVol = maxDensity > 0 ? mass / maxDensity : 0;
+        const maxVol = minDensity > 0 ? mass / minDensity : 0;
+
         if (resultDisplay) resultDisplay.textContent = volume.toFixed(3);
         if (resultUnit) resultUnit.textContent = 'Litres';
         if (resultLabel) resultLabel.textContent = 'Resulting Volume:';
+        if (rangeResultValue) {
+          rangeResultValue.textContent = `${minVol.toFixed(3)} L – ${maxVol.toFixed(3)} L (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
+        }
         if (noteDisplay)
           noteDisplay.textContent = `Based on ${substanceName} density ${density} kg/L (${densityNote})`;
         if (formulaDisplay) formulaDisplay.textContent = 'V = m ÷ ρ';
 
-        // Broadcast custom event to all listening diagrams
         window.dispatchEvent(
           new CustomEvent('kg-conversion-update', {
             detail: {
@@ -276,9 +393,15 @@ const initialVolume = 1 / defaultSubstance.density;
       } else {
         const massVal = mass * density;
         const volume = mass;
+        const minMass = mass * minDensity;
+        const maxMass = mass * maxDensity;
+
         if (resultDisplay) resultDisplay.textContent = massVal.toFixed(3);
         if (resultUnit) resultUnit.textContent = 'Kilograms';
         if (resultLabel) resultLabel.textContent = 'Resulting Mass:';
+        if (rangeResultValue) {
+          rangeResultValue.textContent = `${minMass.toFixed(3)} kg – ${maxMass.toFixed(3)} kg (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
+        }
         if (noteDisplay)
           noteDisplay.textContent = `Based on ${substanceName} density ${density} kg/L (${densityNote})`;
         if (formulaDisplay) formulaDisplay.textContent = 'm = V × ρ';
@@ -298,66 +421,160 @@ const initialVolume = 1 / defaultSubstance.density;
       }
     }
 
-    modeKgToLBtn?.addEventListener('click', () => {
-      mode = 'kg-to-l';
-      modeKgToLBtn.className =
-        'px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all';
-      if (modeLToKgBtn)
-        modeLToKgBtn.className =
-          'px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
-      if (inputLabel) inputLabel.textContent = 'Mass (kg)';
-      if (inputUnit) inputUnit.textContent = 'kg';
-      modeKgToLBtn.setAttribute('aria-pressed', 'true');
-      modeLToKgBtn?.setAttribute('aria-pressed', 'false');
+    function setMode(newMode: 'kg-to-l' | 'l-to-kg') {
+      mode = newMode;
+      if (mode === 'kg-to-l') {
+        if (modeKgToLBtn)
+          modeKgToLBtn.className =
+            'px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all cursor-pointer';
+        if (modeLToKgBtn)
+          modeLToKgBtn.className =
+            'px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer';
+        if (inputLabel) inputLabel.textContent = 'Mass in Kilograms (kg)';
+        if (inputUnit) inputUnit.textContent = 'kg';
+        if (inputHelperText) inputHelperText.textContent = 'Enter weight to convert';
+        modeKgToLBtn?.setAttribute('aria-pressed', 'true');
+        modeLToKgBtn?.setAttribute('aria-pressed', 'false');
+      } else {
+        if (modeLToKgBtn)
+          modeLToKgBtn.className =
+            'px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all cursor-pointer';
+        if (modeKgToLBtn)
+          modeKgToLBtn.className =
+            'px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer';
+        if (inputLabel) inputLabel.textContent = 'Volume in Litres (L)';
+        if (inputUnit) inputUnit.textContent = 'L';
+        if (inputHelperText) inputHelperText.textContent = 'Enter volume to convert';
+        modeLToKgBtn?.setAttribute('aria-pressed', 'true');
+        modeKgToLBtn?.setAttribute('aria-pressed', 'false');
+      }
       calculateAndBroadcast();
-    });
+    }
 
-    modeLToKgBtn?.addEventListener('click', () => {
-      mode = 'l-to-kg';
-      modeLToKgBtn.className =
-        'px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all';
-      if (modeKgToLBtn)
-        modeKgToLBtn.className =
-          'px-3.5 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
-      if (inputLabel) inputLabel.textContent = 'Volume (L)';
-      if (inputUnit) inputUnit.textContent = 'L';
-      modeLToKgBtn.setAttribute('aria-pressed', 'true');
-      modeKgToLBtn?.setAttribute('aria-pressed', 'false');
-      calculateAndBroadcast();
+    modeKgToLBtn?.addEventListener('click', () => setMode('kg-to-l'));
+    modeLToKgBtn?.addEventListener('click', () => setMode('l-to-kg'));
+    swapDirectionBtn?.addEventListener('click', () => {
+      setMode(mode === 'kg-to-l' ? 'l-to-kg' : 'kg-to-l');
     });
 
     massInput?.addEventListener('input', calculateAndBroadcast);
     substanceSelect?.addEventListener('change', calculateAndBroadcast);
 
+    // Search and filtering
+    function filterOptions() {
+      const query = (substanceSearchInput?.value || '').toLowerCase().trim();
+      if (clearSearchBtn) {
+        clearSearchBtn.classList.toggle('hidden', query.length === 0);
+      }
+
+      const filtered = fullCatalog.filter((item) => {
+        const matchesCategory =
+          activeCategory === 'all' || item.category.toLowerCase().includes(activeCategory);
+        const matchesQuery =
+          query.length === 0 ||
+          item.name.toLowerCase().includes(query) ||
+          item.category.toLowerCase().includes(query) ||
+          item.id.toLowerCase().includes(query);
+        return matchesCategory && matchesQuery;
+      });
+
+      const currentSelectedKey =
+        substanceSelect.options[substanceSelect.selectedIndex]?.dataset.catalogKey;
+      const frag = document.createDocumentFragment();
+
+      filtered.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = item.density.toString();
+        option.textContent = `${item.name} (${item.density} kg/L)`;
+        option.dataset.name = item.name;
+        option.dataset.note = item.notes;
+        option.dataset.id = item.id;
+        option.dataset.catalogKey = item.catalogKey;
+        option.dataset.temperature = item.temperature.toString();
+        option.dataset.category = item.category;
+        const minD = item.densityRange ? item.densityRange.min : item.density * 0.97;
+        const maxD = item.densityRange ? item.densityRange.max : item.density * 1.03;
+        option.dataset.min = minD.toString();
+        option.dataset.max = maxD.toString();
+        if (item.catalogKey === currentSelectedKey) {
+          option.selected = true;
+        }
+        frag.appendChild(option);
+      });
+
+      substanceSelect.replaceChildren(frag);
+      if (substanceCountChip) {
+        substanceCountChip.textContent = `${filtered.length} of ${fullCatalog.length} matched`;
+      }
+
+      if (substanceSelect.options.length > 0 && !substanceSelect.value) {
+        substanceSelect.selectedIndex = 0;
+      }
+      calculateAndBroadcast();
+    }
+
+    substanceSearchInput?.addEventListener('input', filterOptions);
+    clearSearchBtn?.addEventListener('click', () => {
+      if (substanceSearchInput) substanceSearchInput.value = '';
+      filterOptions();
+    });
+
+    categoryFilterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        categoryFilterBtns.forEach((b) => {
+          b.classList.remove('bg-brand-500/20', 'text-brand-300', 'border-brand-500/40');
+          b.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+        });
+        btn.classList.add('bg-brand-500/20', 'text-brand-300', 'border-brand-500/40');
+        btn.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
+        activeCategory = btn.getAttribute('data-category') || 'all';
+        filterOptions();
+      });
+    });
+
+    // Populate catalog
     async function loadCatalog() {
-      substanceSelect.setAttribute('aria-busy', 'true');
       try {
         const response = await fetch('/data/substances.json');
         if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
-        const items = (await response.json()) as CatalogItem[];
-        const selectedKey =
-          substanceSelect.options[substanceSelect.selectedIndex]?.dataset.catalogKey;
-        const options = document.createDocumentFragment();
+        fullCatalog = (await response.json()) as CatalogItem[];
 
-        for (const item of items) {
-          const option = document.createElement('option');
-          option.value = item.density.toString();
-          option.textContent = `${item.name} (${item.density} kg/L)`;
-          option.dataset.name = item.name;
-          option.dataset.note = item.notes;
-          option.dataset.id = item.id;
-          option.dataset.catalogKey = item.catalogKey;
-          option.dataset.temperature = item.temperature.toString();
-          option.selected = item.catalogKey === selectedKey;
-          options.appendChild(option);
+        // Check URL search parameters to pre-fill inputs if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramVal = urlParams.get('mass') || urlParams.get('volume') || urlParams.get('val');
+        const paramFrom = urlParams.get('from') || urlParams.get('unit');
+        const paramSub = urlParams.get('substance') || urlParams.get('material');
+
+        if (paramVal && massInput) {
+          massInput.value = paramVal;
+        }
+        if (paramFrom === 'l' || paramFrom === 'liter' || paramFrom === 'litres') {
+          setMode('l-to-kg');
+        } else if (paramFrom === 'kg') {
+          setMode('kg-to-l');
         }
 
-        substanceSelect.replaceChildren(options);
+        filterOptions();
+
+        if (paramSub) {
+          const match = fullCatalog.find(
+            (c) =>
+              c.id.toLowerCase() === paramSub.toLowerCase() ||
+              c.catalogKey.toLowerCase() === paramSub.toLowerCase() ||
+              c.name.toLowerCase().includes(paramSub.toLowerCase()),
+          );
+          if (match) {
+            substanceSelect.value = match.density.toString();
+            const opt = Array.from(substanceSelect.options).find(
+              (o) => o.dataset.catalogKey === match.catalogKey,
+            );
+            if (opt) opt.selected = true;
+          }
+        }
+
         calculateAndBroadcast();
       } catch (error) {
         console.error('Converter catalogue could not be loaded.', error);
-      } finally {
-        substanceSelect.removeAttribute('aria-busy');
       }
     }
 
@@ -371,9 +588,10 @@ const initialVolume = 1 / defaultSubstance.density;
       });
     });
 
+    // Copy Result
     copyBtn?.addEventListener('click', async () => {
       const selectedOption = substanceSelect.options[substanceSelect.selectedIndex];
-      const textToCopy = `${massInput.value} ${mode === 'kg-to-l' ? 'kg' : 'L'} of ${selectedOption?.dataset.name} = ${resultDisplay.textContent} ${resultUnit.textContent}`;
+      const textToCopy = `${massInput.value} ${mode === 'kg-to-l' ? 'kg' : 'L'} of ${selectedOption?.dataset.name} = ${resultDisplay.textContent} ${resultUnit.textContent} (density: ${selectedOption?.value} kg/L)`;
       try {
         await navigator.clipboard.writeText(textToCopy);
         if (copyText) copyText.textContent = 'Copied!';
@@ -385,7 +603,25 @@ const initialVolume = 1 / defaultSubstance.density;
       }
     });
 
-    // Listen for slider updates from FormulaPlayground (bidirectional sync)
+    // Share Result Link
+    shareBtn?.addEventListener('click', async () => {
+      const selectedOption = substanceSelect.options[substanceSelect.selectedIndex];
+      const subId = selectedOption?.dataset.id || 'water';
+      const fromUnit = mode === 'kg-to-l' ? 'kg' : 'liter';
+      const shareUrl = `${window.location.origin}${window.location.pathname}?mass=${massInput.value}&from=${fromUnit}&substance=${subId}`;
+
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        if (shareText) shareText.textContent = 'Link Copied!';
+        setTimeout(() => {
+          if (shareText) shareText.textContent = 'Share Link';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to share', err);
+      }
+    });
+
+    // Listen for slider updates from FormulaPlayground
     window.addEventListener('fp-slider-update', (e: Event) => {
       const detail = (e as CustomEvent<{ mass: number; density: number }>).detail;
       if (massInput) massInput.value = detail.mass.toString();

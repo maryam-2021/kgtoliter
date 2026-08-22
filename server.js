@@ -27,19 +27,107 @@ app.use(express.json());
 app.get('/api', (_req, res) => {
   res.json({
     name: 'KgToLitre Master REST API',
-    version: '1.0.0',
+    version: '1.1.0',
     stats: getMasterStats(),
     endpoints: [
+      'GET /api/convert?mass=10&from=kg&to=liter&substance=diesel',
+      'GET /api/convert/:id/:mass',
+      'POST /api/convert',
+      'POST /api/convert/batch',
       'GET /api/substances',
       'GET /api/substances/:id',
       'GET /api/categories',
-      'GET /api/convert/:id/:mass',
-      'POST /api/convert',
       'GET /api/search/:query',
       'GET /api/calculate/:type',
-      'POST /api/convert/batch',
       'POST /api/submissions',
     ],
+  });
+});
+
+// Convert mass to volume or volume to mass via query parameters
+// Example: GET /api/convert?mass=10&from=kg&to=liter&substance=diesel
+app.get('/api/convert', (req, res) => {
+  const { mass, volume, from = 'kg', substance } = req.query;
+
+  const substanceId = typeof substance === 'string' ? substance.toLowerCase().trim() : undefined;
+  if (!substanceId) {
+    return res.status(400).json({ error: 'Missing required query parameter: substance' });
+  }
+
+  const subObj = masterLookup(substanceId);
+  if (!subObj) {
+    return res.status(404).json({
+      error: `Substance '${substanceId}' not found. Search /api/substances for available identifiers.`,
+    });
+  }
+
+  const density = subObj.density;
+  const isFromVolume = from === 'l' || from === 'liter' || from === 'litres' || from === 'liters';
+  const rawMass = mass !== undefined ? parseFloat(String(mass)) : undefined;
+  const rawVol = volume !== undefined ? parseFloat(String(volume)) : undefined;
+
+  if (rawMass !== undefined && !isNaN(rawMass)) {
+    const vol = rawMass / density;
+    return res.json({
+      mass_kg: rawMass,
+      substance: subObj.id,
+      substance_name: subObj.name,
+      density_kg_per_l: density,
+      volume_l: Math.round(vol * 10000) / 10000,
+      formula: 'V = m / density',
+    });
+  } else if (rawVol !== undefined && !isNaN(rawVol)) {
+    const m = rawVol * density;
+    return res.json({
+      volume_l: rawVol,
+      substance: subObj.id,
+      substance_name: subObj.name,
+      density_kg_per_l: density,
+      mass_kg: Math.round(m * 10000) / 10000,
+      formula: 'm = V * density',
+    });
+  } else if (isFromVolume) {
+    return res.status(400).json({ error: 'Missing numeric volume parameter' });
+  } else {
+    return res.status(400).json({ error: 'Missing numeric mass parameter' });
+  }
+});
+
+// Convert mass to volume (GET endpoint with route params)
+app.get('/api/convert/:id/:mass', (req, res) => {
+  const { id, mass } = req.params;
+  const massKg = parseFloat(mass);
+  if (isNaN(massKg)) {
+    return res.status(400).json({ error: 'mass must be a valid number' });
+  }
+  const volume = masterVolume(massKg, id);
+  if (volume === null) {
+    return res.status(404).json({ error: 'Substance not found' });
+  }
+  const substance = masterLookup(id);
+  res.json({
+    substanceId: id,
+    substanceName: substance ? substance.name : id,
+    massKg: massKg,
+    volumeLiters: volume,
+    density: substance ? substance.density : null,
+  });
+});
+
+// Convert mass to volume (POST endpoint)
+app.post('/api/convert', (req, res) => {
+  const { substanceId, massKg } = req.body;
+  if (!substanceId || massKg === undefined) {
+    return res.status(400).json({ error: 'substanceId and massKg are required' });
+  }
+  const volume = masterVolume(massKg, substanceId);
+  if (volume === null) {
+    return res.status(404).json({ error: 'Substance not found' });
+  }
+  res.json({
+    substanceId,
+    massKg,
+    volumeLiters: volume,
   });
 });
 
@@ -95,44 +183,6 @@ app.get('/api/categories', (_req, res) => {
       max: Math.max(...categories.map((category) => category.maxDensity)),
     },
     categories,
-  });
-});
-
-// Convert mass to volume (GET endpoint)
-app.get('/api/convert/:id/:mass', (req, res) => {
-  const { id, mass } = req.params;
-  const massKg = parseFloat(mass);
-  if (isNaN(massKg)) {
-    return res.status(400).json({ error: 'mass must be a valid number' });
-  }
-  const volume = masterVolume(massKg, id);
-  if (volume === null) {
-    return res.status(404).json({ error: 'Substance not found' });
-  }
-  const substance = masterLookup(id);
-  res.json({
-    substanceId: id,
-    substanceName: substance ? substance.name : id,
-    massKg: massKg,
-    volumeLiters: volume,
-    density: substance ? substance.density : null,
-  });
-});
-
-// Convert mass to volume (POST endpoint)
-app.post('/api/convert', (req, res) => {
-  const { substanceId, massKg } = req.body;
-  if (!substanceId || massKg === undefined) {
-    return res.status(400).json({ error: 'substanceId and massKg are required' });
-  }
-  const volume = masterVolume(massKg, substanceId);
-  if (volume === null) {
-    return res.status(404).json({ error: 'Substance not found' });
-  }
-  res.json({
-    substanceId,
-    massKg,
-    volumeLiters: volume,
   });
 });
 

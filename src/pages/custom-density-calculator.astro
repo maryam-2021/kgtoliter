@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../components/interactive/CustomDensitySolver.astro';
+import FAQAccordion from '../components/interactive/FAQAccordion.astro';
+
+const title = 'Custom Density Calculator & 3-Way Unit Solver | Free Formula Tool';
+const description =
+  'Solve for volume from mass, mass from volume, or density from measurements with multi-unit support (kg, lb, L, gal, m³) and optional thermal expansion correction.';
+
+const solverFaqs = [
+  {
+    q: 'How do you calculate volume when mass and density are known?',
+    a: 'Use the volume formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For example, 10 kg of material with density 0.832 kg/L occupies 12.019 litres.',
+  },
+  {
+    q: 'How do you calculate mass when volume and density are known?',
+    a: 'Use the mass formula: Mass (kg) = Volume (L) × Density (kg/L). For example, 25 litres of substance with density 1.03 kg/L weighs 25.75 kg.',
+  },
+  {
+    q: 'How do you calculate density from laboratory measurements?',
+    a: 'Weigh the sample to determine mass, measure liquid displacement or container dimensions for volume, then divide: Density (kg/L) = Mass (kg) ÷ Volume (L).',
+  },
+  {
+    q: 'What is Specific Gravity (SG) and how does it relate to density?',
+    a: 'Specific Gravity is the dimensionless ratio of a substance density to the reference density of pure water at 4°C (1.000 kg/L). Since water is 1.000 kg/L, SG is numerically identical to density in kg/L or g/cm³.',
+  },
+  {
+    q: 'How does temperature affect liquid density?',
+    a: 'Most liquids expand when heated, reducing density according to ρ_T = ρ_0 / (1 + β ΔT), where β is the volumetric expansion coefficient.',
+  },
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Custom Density Calculator & 3-Way Unit Solver',
+    applicationCategory: 'UtilityApplication',
+    operatingSystem: 'Any',
+    description: description,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: solverFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description} schema={pageSchema} canonicalUrl="/custom-density-calculator/">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav categoryName="Tools" categorySlug="tools" substanceName="Custom Density Solver" />
+
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto space-y-4 animate-fade-in-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-brand-400 font-mono">3-Way Unit Equation Solver</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Custom Density Calculator &amp; 3-Way Solver
+      </h1>
+      <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        Seamlessly solve for Volume, Mass, or Density. Convert seamlessly across metric and imperial units with precision temperature density correction.
+      </p>
+    </header>
+
+    <!-- Interactive Solver Component -->
+    <section class="reveal-section">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Scientific Formula Guide -->
+    <section class="reveal-section glass-card p-6 sm:p-8 rounded-2xl space-y-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+          &fnof;
+        </span>
+        <span>The 3-Way Density Formula Triangle</span>
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-2">
+          <span class="badge badge-brand text-[10px]">1. Solve Volume</span>
+          <p class="font-mono text-sm font-bold text-white">V = m ÷ ρ</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Divide total mass by material density to determine the fluid or container space occupied in litres.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-2">
+          <span class="badge badge-brand text-[10px]">2. Solve Mass</span>
+          <p class="font-mono text-sm font-bold text-white">m = V × ρ</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Multiply volumetric capacity by substance density to find gross liquid payload in kilograms or pounds.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-2">
+          <span class="badge badge-brand text-[10px]">3. Solve Density</span>
+          <p class="font-mono text-sm font-bold text-white">ρ = m ÷ V</p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Divide measured mass by displaced volume to obtain laboratory specific gravity or material density in kg/L.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="reveal-section space-y-6">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <span class="badge badge-brand">Scientific FAQs</span>
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+      </div>
+      <FAQAccordion faqs={solverFaqs} />
+    </section>
+  </div>
+</BaseLayout>

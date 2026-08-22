@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BreadcrumbNav from '../components/BreadcrumbNav.astro';
+
+const title = 'Density Methodology, Standards & Accuracy Policy | Kg to Litre';
+const description =
+  'How reference density values are selected, standard temperature baselines, density ranges, cited sources (NIST, CRC, ASTM, USDA), and our accuracy verification policy.';
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'KgToLitre Density Methodology & Standards Policy',
+    description: description,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to litre',
+      url: 'https://kgtoliter.com/',
+    },
+  },
+];
+---
+
+<BaseLayout title={title} description={description} schema={pageSchema} canonicalUrl="/density-methodology/">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-12">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav categoryName="Standards" categorySlug="density-methodology" substanceName="Methodology & Accuracy" />
+
+    <!-- Hero Header -->
+    <header class="text-center max-w-3xl mx-auto space-y-4 animate-fade-in-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 mb-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-brand-400 font-mono">Scientific Standards &amp; Accuracy</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+        Density Data Methodology &amp; Standards
+      </h1>
+      <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        Our principles for compiling reference densities, temperature normalization, physical uncertainty ranges, and authoritative data sources.
+      </p>
+    </header>
+
+    <!-- Critical Commercial & Industrial Disclaimer Callout -->
+    <div class="p-6 rounded-2xl bg-amber-950/40 border border-amber-500/30 space-y-3 glow-line">
+      <div class="flex items-center gap-2.5 text-amber-400 font-bold text-sm">
+        <span class="text-lg">⚠️</span>
+        <span>Commercial &amp; Regulated Trade Disclaimer</span>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+        <strong>Density values are reference estimates for educational and planning purposes.</strong> Actual density can vary by temperature, concentration, grade, moisture, and formulation. For regulated trade, laboratory analysis, fuel custody transfer, or safety-critical engineering, verify with manufacturer supplier specifications (TDS/SDS) or calibrated laboratory measurement.
+      </p>
+    </div>
+
+    <!-- Main Methodology Content Sections -->
+    <article class="prose prose-invert prose-slate max-w-none space-y-10">
+      <!-- 1. How Densities Are Selected -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+            01
+          </span>
+          <span>How Reference Densities Are Selected</span>
+        </h2>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          Every substance in the 700+ item catalogue is assigned a nominal reference density (&rho;) in metric kilograms per litre (kg/L), numerically identical to grams per cubic centimetre (g/cm³). Nominal values represent the most common commercial grade or purest chemical state of the substance encountered in industry practice.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-1.5">
+            <strong class="text-white text-xs block font-mono">Pure Chemicals</strong>
+            <p class="text-[11px] text-slate-400">Assigned IUPAC standard densities for specified assay purities (e.g. 98% Sulfuric Acid, 99.5% Acetone).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-1.5">
+            <strong class="text-white text-xs block font-mono">Natural &amp; Culinary</strong>
+            <p class="text-[11px] text-slate-400">Derived from USDA FoodData Central averages for typical water/fat/sugar ratios at room temperature.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-1.5">
+            <strong class="text-white text-xs block font-mono">Petroleum &amp; Fuels</strong>
+            <p class="text-[11px] text-slate-400">Standardized to mid-point values governed by international refining standards (EN 590, ASTM D975).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Temperature Assumptions & Standardization -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+            02
+          </span>
+          <span>Temperature Baselines &amp; Assumptions</span>
+        </h2>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          Because volumetric thermal expansion causes density to decrease as temperature increases, all values are indexed to explicit baseline reference temperatures:
+        </p>
+        <div class="overflow-x-auto rounded-xl border border-white/[0.06]">
+          <table class="table-pro">
+            <thead>
+              <tr>
+                <th scope="col">Domain</th>
+                <th scope="col">Reference Temperature</th>
+                <th scope="col">Governing Standard / Baseline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-bold text-white">Pure Water Standard</td>
+                <td class="font-mono text-emerald-400 font-bold">4.0°C (39.2°F)</td>
+                <td class="text-slate-300 text-xs">Maximum density baseline: exactly 1.0000 kg/L</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-white">Culinary &amp; General Liquids</td>
+                <td class="font-mono text-brand-300 font-bold">20.0°C (68.0°F)</td>
+                <td class="text-slate-300 text-xs">Standard Room Temperature (IUPAC Ambient)</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-white">Automotive &amp; Marine Fuels</td>
+                <td class="font-mono text-blue-400 font-bold">15.0°C (59.0°F)</td>
+                <td class="text-slate-300 text-xs">Custody transfer standard: EN 590 / ASTM D1298 / API Gravity</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-white">Laboratory Reagents</td>
+                <td class="font-mono text-brand-400 font-bold">25.0°C (77.0°F)</td>
+                <td class="text-slate-300 text-xs">NIST Standard Temperature and Pressure (STP)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. Approximate vs Exact Values & Density Ranges -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+            03
+          </span>
+          <span>Approximate vs. Exact Values &amp; Density Ranges</span>
+        </h2>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          In real-world applications, material density exists across an acceptable tolerance range due to variable factors:
+        </p>
+        <div class="space-y-3 text-xs sm:text-sm text-slate-300">
+          <div class="p-4 rounded-xl bg-surface-900/40 border border-white/[0.04]">
+            <strong class="text-white font-mono block mb-1">1. Bulk Packing &amp; Aeration (Powders &amp; Granules):</strong>
+            <p class="text-slate-400">Dry ingredients such as all-purpose flour range from 0.52 kg/L (sifted/aerated) to 0.65 kg/L (settled/compacted). Our baseline uses 0.59 kg/L.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-surface-900/40 border border-white/[0.04]">
+            <strong class="text-white font-mono block mb-1">2. Grade &amp; Moisture Variance (Construction Aggregates):</strong>
+            <p class="text-slate-400">Dry silica sand averages 1.60 kg/L (1,600 kg/m³), but damp or compacted sand can exceed 1.90 kg/L.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-surface-900/40 border border-white/[0.04]">
+            <strong class="text-white font-mono block mb-1">3. Refining &amp; Bio-Blending Variations (Petroleum &amp; Fuels):</strong>
+            <p class="text-slate-400">Commercial EN 590 diesel legal density permits a range of 0.820 to 0.845 kg/L (standardized to 0.832 kg/L).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Cited Authoritative Sources -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+            04
+          </span>
+          <span>Primary Data Sources &amp; Literature</span>
+        </h2>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          Our catalogue values are compiled from peer-reviewed scientific literature, government research agencies, and governing industry standard organizations:
+        </p>
+        <ul class="space-y-2 text-xs sm:text-sm text-slate-300 font-mono">
+          <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] flex items-center gap-2">
+            <span class="text-brand-400 font-bold">&bull;</span>
+            <span><strong>NIST Chemistry WebBook:</strong> Thermophysical Properties of Fluid Systems (SRD 69).</span>
+          </li>
+          <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] flex items-center gap-2">
+            <span class="text-brand-400 font-bold">&bull;</span>
+            <span><strong>CRC Handbook of Chemistry and Physics:</strong> 104th Edition (Physical Constants of Organic &amp; Inorganic Compounds).</span>
+          </li>
+          <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] flex items-center gap-2">
+            <span class="text-brand-400 font-bold">&bull;</span>
+            <span><strong>ASTM International:</strong> Standards D1298 (Fuel Density), D975 (Diesel), and C29 (Aggregate Bulk Density).</span>
+          </li>
+          <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] flex items-center gap-2">
+            <span class="text-brand-400 font-bold">&bull;</span>
+            <span><strong>European Committee for Standardization:</strong> EN 590 Automotive Fuels Specifications.</span>
+          </li>
+          <li class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] flex items-center gap-2">
+            <span class="text-brand-400 font-bold">&bull;</span>
+            <span><strong>USDA FoodData Central:</strong> Standard Reference Legacy Database for Food and Agricultural Products.</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 5. Update Schedule & Review Process -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center text-sm font-mono font-bold">
+            05
+          </span>
+          <span>Update Schedule &amp; Data Review</span>
+        </h2>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          The database is maintained on a <strong>Quarterly Continuous Review Schedule</strong>. Corrections, newly characterized bio-fuel formulations, and laboratory density submissions undergo verification against published safety data sheets before deployment to the production static endpoints.
+        </p>
+      </section>
+    </article>
+  </div>
+</BaseLayout>

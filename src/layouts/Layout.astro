@@ -2,6 +2,7 @@
 import '../styles/global.css';
 
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 
 export interface Props {
   title: string;
@@ -101,26 +102,29 @@ const pageTitle = hasBrandInTitle ? title : `${title} | Kg to litre`;
               >All Tools</a
             >
             <a
-              href="/basic/"
+              href="/batch-converter/"
               class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
-              >Basic</a
+              >Batch &amp; CSV</a
             >
             <a
-              href="/cooking/"
+              href="/container-calculator/"
               class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
-              >Cooking</a
+              >Tank Solver</a
             >
             <a
-              href="/fuels/"
+              href="/custom-density-calculator/"
               class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
-              >Fuels</a
+              >Density Solver</a
             >
             <a
-              href="/guides/"
+              href="/api-docs/"
               class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 outline-none"
-              >Guides</a
+              >API</a
             >
           </nav>
+
+          <!-- Theme Toggle -->
+          <ThemeToggle />
 
           <!-- Language Selector -->
           <LanguageSwitcher />
@@ -154,24 +158,24 @@ const pageTitle = hasBrandInTitle ? title : `${title} | Kg to litre`;
             >All Tools</a
           >
           <a
-            href="/basic/"
+            href="/batch-converter/"
             class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
-            >Basic</a
+            >Batch &amp; CSV Converter</a
           >
           <a
-            href="/cooking/"
+            href="/container-calculator/"
             class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
-            >Cooking</a
+            >Container &amp; Tank Solver</a
           >
           <a
-            href="/fuels/"
+            href="/custom-density-calculator/"
             class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
-            >Fuels</a
+            >Custom Density Solver</a
           >
           <a
-            href="/guides/"
+            href="/api-docs/"
             class="px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.04] transition-all"
-            >Guides</a
+            >Developer REST API</a
           >
         </nav>
       </div>
@@ -217,12 +221,16 @@ const pageTitle = hasBrandInTitle ? title : `${title} | Kg to litre`;
                   >All Tools</a
                 >
                 <a
-                  href="/kg-to-litre-calculator/"
-                  class="text-slate-500 hover:text-brand-400 transition-colors">KG to Litre</a
+                  href="/batch-converter/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Batch &amp; CSV Converter</a
                 >
                 <a
-                  href="/basic/kg-to-litres-water/"
-                  class="text-slate-500 hover:text-brand-400 transition-colors">Water</a
+                  href="/container-calculator/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Container &amp; Tank Solver</a
+                >
+                <a
+                  href="/custom-density-calculator/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Custom Density Solver</a
                 >
               </nav>
             </div>
@@ -240,19 +248,25 @@ const pageTitle = hasBrandInTitle ? title : `${title} | Kg to litre`;
                 <a href="/fuels/" class="text-slate-500 hover:text-brand-400 transition-colors"
                   >Fuels &amp; Energy</a
                 >
+                <a href="/industrial/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >Industrial</a
+                >
               </nav>
             </div>
             <div class="space-y-3">
               <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
-                Resources
+                Resources &amp; API
               </h4>
               <nav class="flex flex-col gap-2">
+                <a href="/api-docs/" class="text-slate-500 hover:text-brand-400 transition-colors"
+                  >REST API &amp; Sandbox</a
+                >
                 <a href="/guides/" class="text-slate-500 hover:text-brand-400 transition-colors"
                   >Guides</a
                 >
                 <a
-                  href="/methodology/"
-                  class="text-slate-500 hover:text-brand-400 transition-colors">Data methodology</a
+                  href="/density-methodology/"
+                  class="text-slate-500 hover:text-brand-400 transition-colors">Density Methodology</a
                 >
               </nav>
             </div>

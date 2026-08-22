@@ -104,6 +104,23 @@ test('specialised calculator converts litres to kilograms', async ({ page }) => 
   await expect(page.locator('#sc-step-1')).toContainText('Mass (kg) = Volume (L) × Density');
 });
 
+test('calculators disclose the temperature basis for density values', async ({ page }) => {
+  const note =
+    'Density values are approximate and usually based on room temperature, around 20°C, unless otherwise stated.';
+
+  await page.goto('/');
+  await expect(page.getByText(note, { exact: true })).toHaveCount(2);
+
+  await page.goto('/industrial/');
+  await expect(page.getByText(note, { exact: true })).toBeVisible();
+
+  await page.goto('/kg-to-litre-calculator/');
+  await expect(page.getByText(note, { exact: true })).toBeVisible();
+
+  await page.goto('/standalone/');
+  await expect(page.getByText(note, { exact: true })).toBeVisible();
+});
+
 test('homepage has no serious or critical automated accessibility violations', async ({ page }) => {
   await page.goto('/');
   const results = await new AxeBuilder({ page }).analyze();

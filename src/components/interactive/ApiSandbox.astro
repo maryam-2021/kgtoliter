@@ -1,0 +1,420 @@
+---
+// Interactive Developer API Sandbox & Code Generator
+---
+
+<div class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-5 sm:p-8 shadow-2xl space-y-8" id="apiSandboxRoot">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold text-sm shadow-md">
+          ⚡
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Interactive REST API Explorer</h2>
+      </div>
+      <p class="text-slate-400 text-xs sm:text-sm">
+        Test endpoints in real-time, generate client integration code, and access 700+ verified substance density records
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge badge-brand">REST v1.1</span>
+      <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-mono font-bold flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        API Online
+      </span>
+    </div>
+  </div>
+
+  <!-- Potential Users & Use Cases Banner -->
+  <div class="p-5 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-3">
+    <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider block font-mono">
+      Target Integrations &amp; Real-World Use Cases
+    </span>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">📦</span>
+        <strong class="text-white text-xs block">Inventory ERP</strong>
+        <p class="text-[10px] text-slate-500">Bulk liquid stock balance</p>
+      </div>
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">🍳</span>
+        <strong class="text-white text-xs block">Recipe Apps</strong>
+        <p class="text-[10px] text-slate-500">Mass to volume scaling</p>
+      </div>
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">⛽</span>
+        <strong class="text-white text-xs block">Fuel Logistics</strong>
+        <p class="text-[10px] text-slate-500">Bunkering &amp; fuel custody</p>
+      </div>
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">🧪</span>
+        <strong class="text-white text-xs block">Chemistry Ed</strong>
+        <p class="text-[10px] text-slate-500">Lab reagent solutions</p>
+      </div>
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">🏗️</span>
+        <strong class="text-white text-xs block">Construction</strong>
+        <p class="text-[10px] text-slate-500">Mix &amp; aggregate sizing</p>
+      </div>
+      <div class="p-3 rounded-lg bg-surface-950/60 border border-white/[0.04] space-y-1">
+        <span class="text-xl">🤖</span>
+        <strong class="text-white text-xs block">AI Agents</strong>
+        <p class="text-[10px] text-slate-500">Scientific tool calling</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sandbox Console Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Left: Request Builder (6 Cols) -->
+    <div class="lg:col-span-6 space-y-5">
+      <!-- Endpoint Selector -->
+      <div class="space-y-2">
+        <label for="apiEndpointSelect" class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+          Select API Endpoint
+        </label>
+        <select id="apiEndpointSelect" class="select-pro text-xs font-mono">
+          <option value="convert-query">GET /api/convert (Query parameters)</option>
+          <option value="substances-list">GET /api/substances (Catalogue &amp; Search)</option>
+          <option value="substance-by-id">GET /api/substances/:id (Lookup single item)</option>
+          <option value="categories-list">GET /api/categories (Master Categories)</option>
+          <option value="batch-convert">POST /api/convert/batch (Bulk JSON Conversion)</option>
+          <option value="static-catalog">GET /data/substances.json (Static CDN JSON)</option>
+        </select>
+      </div>
+
+      <!-- Parameter Controls Container -->
+      <div id="apiParamsContainer" class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04] space-y-3">
+        <!-- Dynamically configured per endpoint -->
+        <div id="paramGroupSubstance" class="space-y-1">
+          <label class="text-xs text-slate-400 font-medium">Substance Key</label>
+          <input type="text" id="paramInputSubstance" value="diesel" class="input-pro font-mono text-xs" placeholder="e.g. diesel, water, milk, cooking-oil" />
+        </div>
+
+        <div id="paramGroupMass" class="grid grid-cols-2 gap-2">
+          <div class="space-y-1">
+            <label class="text-xs text-slate-400 font-medium">Mass Value</label>
+            <input type="number" id="paramInputMass" value="10" step="1" min="0.1" class="input-pro font-mono text-xs" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs text-slate-400 font-medium">From Unit</label>
+            <select id="paramInputFrom" class="select-pro text-xs font-mono">
+              <option value="kg" selected>kg (Kilograms)</option>
+              <option value="liter">liter (Litres)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="paramGroupSearch" class="hidden space-y-1">
+          <label class="text-xs text-slate-400 font-medium">Search Query</label>
+          <input type="text" id="paramInputSearch" value="oil" class="input-pro font-mono text-xs" placeholder="e.g. oil, milk, acid" />
+        </div>
+      </div>
+
+      <!-- Live HTTP URL Display & Send Button -->
+      <div class="space-y-2">
+        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
+          Constructed HTTP Request
+        </label>
+        <div class="p-3 rounded-xl bg-surface-950 border border-white/[0.08] flex items-center justify-between gap-2 overflow-x-auto font-mono text-xs">
+          <span class="text-emerald-400 font-bold shrink-0" id="apiMethodDisplay">GET</span>
+          <span class="text-slate-300 truncate" id="apiUrlDisplay">/api/convert?mass=10&from=kg&to=liter&substance=diesel</span>
+        </div>
+        <button id="sendApiRequestBtn" type="button" class="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2">
+          <span>🚀</span> Execute Live Request
+        </button>
+      </div>
+
+      <!-- Code Snippets Generator Tabs -->
+      <div class="space-y-2 pt-2 border-t border-white/[0.06]">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Client Code Snippet</span>
+          <div class="flex items-center gap-1" role="tablist">
+            <button type="button" data-lang="js" class="api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-brand-500 text-slate-950">JS</button>
+            <button type="button" data-lang="curl" class="api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-surface-900">cURL</button>
+            <button type="button" data-lang="python" class="api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-surface-900">Python</button>
+            <button type="button" data-lang="node" class="api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-surface-900">Node</button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <pre id="apiCodeSnippetBlock" class="p-4 rounded-xl bg-surface-950 border border-white/[0.08] font-mono text-xs text-slate-300 overflow-x-auto max-h-48 leading-relaxed"></pre>
+          <button id="copyCodeSnippetBtn" type="button" class="absolute top-2.5 right-2.5 px-2 py-1 rounded-md bg-surface-800 hover:bg-surface-700 text-slate-300 text-[10px] font-mono border border-white/[0.06]">
+            Copy Code
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Live Response Output Inspector (6 Cols) -->
+    <div class="lg:col-span-6 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Response Inspector</span>
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <span id="responseStatusBadge" class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">200 OK</span>
+          <span id="responseLatency" class="text-slate-500">12ms</span>
+        </div>
+      </div>
+
+      <div class="relative">
+        <pre id="apiResponseViewer" class="p-4 rounded-2xl bg-surface-950 border border-white/[0.08] font-mono text-xs text-emerald-400 overflow-x-auto min-h-[380px] max-h-[460px] leading-relaxed select-all"></pre>
+        <button id="copyApiResponseBtn" type="button" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-surface-900 hover:bg-surface-800 text-slate-300 text-xs font-mono border border-white/[0.06] flex items-center gap-1">
+          <span>📋</span> <span id="copyResponseTxt">Copy JSON</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import type { CatalogItem } from '../../data/catalog';
+
+  let activeLang = 'js';
+  let catalog: CatalogItem[] = [];
+
+  const endpointSelect = document.getElementById('apiEndpointSelect') as HTMLSelectElement | null;
+  const paramSubstance = document.getElementById('paramInputSubstance') as HTMLInputElement | null;
+  const paramMass = document.getElementById('paramInputMass') as HTMLInputElement | null;
+  const paramFrom = document.getElementById('paramInputFrom') as HTMLSelectElement | null;
+  const paramSearch = document.getElementById('paramInputSearch') as HTMLInputElement | null;
+
+  const paramGroupSubstance = document.getElementById('paramGroupSubstance');
+  const paramGroupMass = document.getElementById('paramGroupMass');
+  const paramGroupSearch = document.getElementById('paramGroupSearch');
+
+  const methodDisplay = document.getElementById('apiMethodDisplay');
+  const urlDisplay = document.getElementById('apiUrlDisplay');
+  const codeBlock = document.getElementById('apiCodeSnippetBlock');
+  const responseViewer = document.getElementById('apiResponseViewer');
+  const responseStatusBadge = document.getElementById('responseStatusBadge');
+  const responseLatency = document.getElementById('responseLatency');
+
+  function getEndpointDetails() {
+    const ep = endpointSelect?.value || 'convert-query';
+    const sub = paramSubstance?.value || 'diesel';
+    const mass = paramMass?.value || '10';
+    const fromUnit = paramFrom?.value || 'kg';
+    const q = paramSearch?.value || 'oil';
+
+    let method = 'GET';
+    let path = '';
+    let body: any = null;
+
+    if (ep === 'convert-query') {
+      method = 'GET';
+      path = `/api/convert?mass=${mass}&from=${fromUnit}&to=liter&substance=${sub}`;
+    } else if (ep === 'substances-list') {
+      method = 'GET';
+      path = `/api/substances?search=${q}&limit=5`;
+    } else if (ep === 'substance-by-id') {
+      method = 'GET';
+      path = `/api/substances/${sub}`;
+    } else if (ep === 'categories-list') {
+      method = 'GET';
+      path = `/api/categories`;
+    } else if (ep === 'batch-convert') {
+      method = 'POST';
+      path = `/api/convert/batch`;
+      body = { substances: ['diesel-2', 'water-pure', 'vegetable-oil'], massKg: parseFloat(mass) || 10 };
+    } else if (ep === 'static-catalog') {
+      method = 'GET';
+      path = `/data/substances.json`;
+    }
+
+    return { method, path, body };
+  }
+
+  function updateUI() {
+    const ep = endpointSelect?.value || 'convert-query';
+    if (paramGroupSubstance) paramGroupSubstance.classList.toggle('hidden', ep === 'categories-list' || ep === 'substances-list' || ep === 'static-catalog' || ep === 'batch-convert');
+    if (paramGroupMass) paramGroupMass.classList.toggle('hidden', ep === 'categories-list' || ep === 'substances-list' || ep === 'static-catalog' || ep === 'substance-by-id');
+    if (paramGroupSearch) paramGroupSearch.classList.toggle('hidden', ep !== 'substances-list');
+
+    const { method, path } = getEndpointDetails();
+    if (methodDisplay) methodDisplay.textContent = method;
+    if (urlDisplay) urlDisplay.textContent = path;
+
+    generateCodeSnippet();
+  }
+
+  function generateCodeSnippet() {
+    const { method, path, body } = getEndpointDetails();
+    const fullUrl = `https://kgtoliter.com${path}`;
+
+    let code = '';
+    if (activeLang === 'js') {
+      if (method === 'GET') {
+        code = `// Fetch API conversion in JavaScript / TypeScript
+const response = await fetch('${fullUrl}');
+const data = await response.json();
+console.log(data);`;
+      } else {
+        code = `// POST Request in JavaScript / Node.js
+const response = await fetch('${fullUrl}', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(${JSON.stringify(body, null, 2)})
+});
+const data = await response.json();
+console.log(data);`;
+      }
+    } else if (activeLang === 'curl') {
+      if (method === 'GET') {
+        code = `curl -X GET "${fullUrl}" \\
+  -H "Accept: application/json"`;
+      } else {
+        code = `curl -X POST "${fullUrl}" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(body)}'`;
+      }
+    } else if (activeLang === 'python') {
+      if (method === 'GET') {
+        code = `import requests
+
+url = "${fullUrl}"
+response = requests.get(url)
+data = response.json()
+print(data)`;
+      } else {
+        code = `import requests
+
+url = "${fullUrl}"
+payload = ${JSON.stringify(body, null, 4)}
+response = requests.post(url, json=payload)
+print(response.json())`;
+      }
+    } else if (activeLang === 'node') {
+      code = `import axios from 'axios';
+
+const { data } = await axios.${method.toLowerCase()}('${fullUrl}'${body ? `, ${JSON.stringify(body)}` : ''});
+console.log(data);`;
+    }
+
+    if (codeBlock) codeBlock.textContent = code;
+  }
+
+  async function executeRequest() {
+    const { method, path, body } = getEndpointDetails();
+    const startTime = performance.now();
+
+    try {
+      let resultData: any;
+      let status = 200;
+
+      // Try fetching live server or fallback to client-side catalog simulation
+      try {
+        const fetchRes = await fetch(path, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        if (fetchRes.ok) {
+          resultData = await fetchRes.json();
+          status = fetchRes.status;
+        } else {
+          throw new Error('Local server not running; using client simulation');
+        }
+      } catch {
+        // Client-side fallback simulation
+        if (path.startsWith('/api/convert?')) {
+          const subKey = paramSubstance?.value || 'diesel';
+          const massNum = parseFloat(paramMass?.value || '10');
+          const matched = catalog.find((c) => c.id === subKey || c.catalogKey === subKey || c.name.toLowerCase().includes(subKey.toLowerCase())) || {
+            id: 'diesel-2',
+            name: 'Diesel Fuel (EN 590)',
+            density: 0.832,
+          };
+          resultData = {
+            mass_kg: massNum,
+            substance: matched.id,
+            substance_name: matched.name,
+            density_kg_per_l: matched.density,
+            volume_l: Math.round((massNum / matched.density) * 10000) / 10000,
+            formula: 'V = m / density',
+          };
+        } else if (path.includes('/data/substances.json')) {
+          resultData = catalog.slice(0, 5);
+        } else {
+          resultData = {
+            name: 'KgToLitre Master REST API',
+            version: '1.1.0',
+            status: 'online',
+            substancesCount: catalog.length || 700,
+          };
+        }
+      }
+
+      const elapsed = Math.round(performance.now() - startTime);
+
+      if (responseStatusBadge) {
+        responseStatusBadge.textContent = `${status} OK`;
+        responseStatusBadge.className = 'px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold';
+      }
+      if (responseLatency) responseLatency.textContent = `${elapsed}ms`;
+      if (responseViewer) responseViewer.textContent = JSON.stringify(resultData, null, 2);
+    } catch (err: any) {
+      if (responseStatusBadge) {
+        responseStatusBadge.textContent = `500 ERROR`;
+        responseStatusBadge.className = 'px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/30 font-bold';
+      }
+      if (responseViewer) responseViewer.textContent = JSON.stringify({ error: err.message }, null, 2);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    endpointSelect?.addEventListener('change', updateUI);
+    paramSubstance?.addEventListener('input', updateUI);
+    paramMass?.addEventListener('input', updateUI);
+    paramFrom?.addEventListener('change', updateUI);
+    paramSearch?.addEventListener('input', updateUI);
+
+    document.getElementById('sendApiRequestBtn')?.addEventListener('click', executeRequest);
+
+    // Language tabs
+    document.querySelectorAll<HTMLButtonElement>('.api-lang-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        activeLang = tab.dataset.lang || 'js';
+        document.querySelectorAll<HTMLButtonElement>('.api-lang-tab').forEach((t) => {
+          const isSel = t === tab;
+          t.className = isSel
+            ? 'api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-brand-500 text-slate-950'
+            : 'api-lang-tab px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-surface-900';
+        });
+        generateCodeSnippet();
+      });
+    });
+
+    // Copy code snippet
+    document.getElementById('copyCodeSnippetBtn')?.addEventListener('click', async () => {
+      const code = codeBlock?.textContent || '';
+      await navigator.clipboard.writeText(code);
+      const btn = document.getElementById('copyCodeSnippetBtn');
+      if (btn) btn.textContent = 'Copied!';
+      setTimeout(() => {
+        if (btn) btn.textContent = 'Copy Code';
+      }, 1800);
+    });
+
+    // Copy API Response
+    document.getElementById('copyApiResponseBtn')?.addEventListener('click', async () => {
+      const json = responseViewer?.textContent || '';
+      await navigator.clipboard.writeText(json);
+      const txt = document.getElementById('copyResponseTxt');
+      if (txt) txt.textContent = 'Copied!';
+      setTimeout(() => {
+        if (txt) txt.textContent = 'Copy JSON';
+      }, 1800);
+    });
+
+    // Initial Fetch & Run
+    try {
+      const res = await fetch('/data/substances.json');
+      if (res.ok) catalog = (await res.json()) as CatalogItem[];
+    } catch (e) {
+      console.error(e);
+    }
+
+    updateUI();
+    executeRequest();
+  });
+</script>

@@ -1,5 +1,6 @@
 ---
 // Batch Converter Card Component
+import TemperatureDisclaimer from '../TemperatureDisclaimer.astro';
 ---
 
 <div class="glass-card bg-slate-950/90 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl">
@@ -83,6 +84,9 @@
       <strong id="homeBatchVolumeLabel">Total Volume:</strong>
       <span id="homeBatchTotalVolume" class="text-emerald-400 font-bold">0.000 L</span>
     </div>
+  </div>
+  <div class="mt-4">
+    <TemperatureDisclaimer />
   </div>
 </div>
 

@@ -301,6 +301,15 @@
 .overflow-auto {
   max-width: 100%;
   overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .table-pro thead {
   @apply text-xs uppercase font-mono tracking-wider;

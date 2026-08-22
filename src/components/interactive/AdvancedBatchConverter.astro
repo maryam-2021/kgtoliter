@@ -1,0 +1,772 @@
+---
+import TemperatureDisclaimer from '../TemperatureDisclaimer.astro';
+import IndustryModeSelector from './IndustryModeSelector.astro';
+---
+
+<div class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-5 sm:p-8 shadow-2xl space-y-6">
+  <!-- Top Header & Tabs -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold text-sm shadow-md">
+          ⚡
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Batch &amp; CSV Bulk Converter</h2>
+      </div>
+      <p class="text-slate-400 text-xs sm:text-sm">
+        Convert multiple materials simultaneously or upload full CSV data files for instantaneous batch processing
+      </p>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="inline-flex p-1 rounded-xl bg-surface-900 border border-white/[0.06] self-start md:self-auto" role="tablist" aria-label="Batch Tool View">
+      <button
+        id="batch-tab-interactive"
+        type="button"
+        role="tab"
+        aria-selected="true"
+        class="px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-sm transition-all"
+      >
+        <span>📝 Interactive Rows</span>
+      </button>
+      <button
+        id="batch-tab-csv"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        class="px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all"
+      >
+        <span>📂 CSV Upload</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Industry Mode Selector -->
+  <div class="space-y-2">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Filter By Industry Mode</span>
+    </div>
+    <IndustryModeSelector showDetails={false} />
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TAB 1: INTERACTIVE ROW-BY-ROW BATCH CONVERTER  -->
+  <!-- ============================================== -->
+  <div id="interactive-batch-section" class="space-y-5">
+    <!-- Controls Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold text-slate-400">Direction:</span>
+        <div class="inline-flex p-1 rounded-lg bg-surface-950 border border-white/[0.06]" role="group" aria-label="Batch conversion direction">
+          <button
+            id="batch-dir-kg-to-l"
+            type="button"
+            aria-pressed="true"
+            class="px-3 py-1 text-xs font-semibold rounded-md bg-brand-500 text-slate-950 transition-all"
+          >
+            kg &rarr; L
+          </button>
+          <button
+            id="batch-dir-l-to-kg"
+            type="button"
+            aria-pressed="false"
+            class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-white transition-all"
+          >
+            L &rarr; kg
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button
+          id="addBatchRowBtn"
+          type="button"
+          class="btn-primary py-2 px-3 text-xs flex items-center gap-1.5"
+        >
+          <span>+</span> Add Substance
+        </button>
+        <button
+          id="exportBatchCsvBtn"
+          type="button"
+          class="btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 border-emerald-500/30"
+        >
+          <span>📊</span> Export CSV
+        </button>
+        <button
+          id="exportBatchJsonBtn"
+          type="button"
+          class="btn-secondary py-2 px-3 text-xs flex items-center gap-1.5 text-blue-400 hover:text-blue-300 border-blue-500/30"
+        >
+          <span>{ }</span> Export JSON
+        </button>
+        <button
+          id="clearBatchRowsBtn"
+          type="button"
+          class="btn-secondary py-2 px-3 text-xs text-slate-400 hover:text-red-400"
+        >
+          <span>🗑️</span> Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- Rows List Container -->
+    <div id="batchRowsContainer" class="space-y-3 min-h-[120px]">
+      <!-- Dynamically filled via JavaScript -->
+    </div>
+
+    <!-- Live Aggregate Summary Bar -->
+    <div
+      id="batchSummaryBar"
+      class="p-5 rounded-xl bg-gradient-to-r from-surface-900 via-surface-900/90 to-surface-950 border border-brand-500/30 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center glow-brand-subtle"
+    >
+      <div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Total Items</span>
+        <span id="batchSummaryItems" class="text-xl sm:text-2xl font-extrabold font-mono text-white">0</span>
+      </div>
+      <div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Total Mass</span>
+        <span id="batchSummaryMass" class="text-xl sm:text-2xl font-extrabold font-mono text-blue-400">0.00 kg</span>
+      </div>
+      <div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Total Volume</span>
+        <span id="batchSummaryVolume" class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-400">0.000 L</span>
+      </div>
+      <div>
+        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Avg. Density</span>
+        <span id="batchSummaryAvgDensity" class="text-xl sm:text-2xl font-extrabold font-mono text-brand-300">0.000 kg/L</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TAB 2: CSV UPLOAD & BULK FILE PARSER           -->
+  <!-- ============================================== -->
+  <div id="csv-upload-section" class="hidden space-y-6">
+    <!-- Drag & Drop Zone -->
+    <div
+      id="csvDropZone"
+      class="border-2 border-dashed border-white/[0.15] hover:border-brand-400/50 rounded-2xl p-8 text-center transition-all bg-surface-900/30 hover:bg-surface-900/60 cursor-pointer space-y-3"
+    >
+      <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 border border-brand-500/20 flex items-center justify-center mx-auto text-2xl">
+        📁
+      </div>
+      <div class="space-y-1">
+        <p class="text-sm sm:text-base font-bold text-white">
+          Drop your CSV or TSV file here, or <span class="text-brand-400 underline">browse</span>
+        </p>
+        <p class="text-xs text-slate-500">
+          Supports columns: <code class="text-slate-400 font-mono">Substance</code>, <code class="text-slate-400 font-mono">Mass</code>, <code class="text-slate-400 font-mono">Density</code>, or <code class="text-slate-400 font-mono">Volume</code>
+        </p>
+      </div>
+      <input type="file" id="csvFileInput" accept=".csv,.tsv,.txt" class="hidden" />
+    </div>
+
+    <!-- Paste Raw CSV Text Option -->
+    <div class="space-y-2">
+      <div class="flex items-center justify-between">
+        <label for="csvPasteInput" class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          Or Paste Raw CSV / Tabular Text
+        </label>
+        <button id="loadSampleCsvBtn" type="button" class="text-xs text-brand-400 hover:text-brand-300 underline font-mono">
+          Load Sample Data
+        </button>
+      </div>
+      <textarea
+        id="csvPasteInput"
+        rows="4"
+        class="input-pro font-mono text-xs p-3 leading-relaxed"
+        placeholder="Substance, Mass (kg), Density (kg/L)&#10;Diesel, 50, 0.832&#10;Water, 100, 1.000&#10;Cooking Oil, 25, 0.920"
+      ></textarea>
+      <div class="flex justify-end gap-2 pt-1">
+        <button id="parseCsvTextBtn" type="button" class="btn-primary text-xs py-2 px-4">
+          Parse &amp; Calculate Conversions
+        </button>
+      </div>
+    </div>
+
+    <!-- Processed Results Table -->
+    <div id="csvResultsContainer" class="hidden space-y-4 pt-4 border-t border-white/[0.06]">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="badge badge-brand text-xs" id="csvResultCountBadge">0 Rows Processed</span>
+          <span class="text-xs text-slate-400" id="csvResultStats"></span>
+        </div>
+        <button id="downloadProcessedCsvBtn" type="button" class="btn-primary py-2 px-4 text-xs flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500">
+          <span>📥</span> Download Processed CSV
+        </button>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-white/[0.08] max-h-[380px] overflow-y-auto">
+        <table class="table-pro w-full text-left" id="csvPreviewTable">
+          <thead>
+            <tr>
+              <th scope="col">Status</th>
+              <th scope="col">Substance</th>
+              <th scope="col">Input Mass</th>
+              <th scope="col">Density</th>
+              <th scope="col">Calculated Volume</th>
+              <th scope="col">Notes / Category</th>
+            </tr>
+          </thead>
+          <tbody id="csvPreviewTbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclaimer Footer -->
+  <div class="pt-2">
+    <TemperatureDisclaimer />
+  </div>
+</div>
+
+<script>
+  import type { CatalogItem } from '../../data/catalog';
+  import { industryModes } from '../../data/industryModes';
+
+  let catalog: CatalogItem[] = [];
+  let currentIndustryMode = 'all';
+  let batchDirection: 'kg-to-l' | 'l-to-kg' = 'kg-to-l';
+
+  interface ParsedRow {
+    status: 'matched' | 'custom' | 'warning' | 'error';
+    statusText: string;
+    substanceName: string;
+    massKg: number;
+    density: number;
+    volumeL: number;
+    category: string;
+    rawInput: string;
+  }
+
+  let parsedCsvRows: ParsedRow[] = [];
+
+  // ============================================
+  // TAB NAVIGATION
+  // ============================================
+  const tabInteractive = document.getElementById('batch-tab-interactive');
+  const tabCsv = document.getElementById('batch-tab-csv');
+  const sectionInteractive = document.getElementById('interactive-batch-section');
+  const sectionCsv = document.getElementById('csv-upload-section');
+
+  tabInteractive?.addEventListener('click', () => {
+    tabInteractive.setAttribute('aria-selected', 'true');
+    tabInteractive.className = 'px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-sm transition-all';
+    tabCsv?.setAttribute('aria-selected', 'false');
+    if (tabCsv) tabCsv.className = 'px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
+    sectionInteractive?.classList.remove('hidden');
+    sectionCsv?.classList.add('hidden');
+  });
+
+  tabCsv?.addEventListener('click', () => {
+    tabCsv.setAttribute('aria-selected', 'true');
+    tabCsv.className = 'px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-sm transition-all';
+    tabInteractive?.setAttribute('aria-selected', 'false');
+    if (tabInteractive) tabInteractive.className = 'px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
+    sectionCsv?.classList.remove('hidden');
+    sectionInteractive?.classList.add('hidden');
+  });
+
+  // ============================================
+  // INDUSTRY MODE EVENT LISTENER
+  // ============================================
+  window.addEventListener('industry-mode-change', (e: Event) => {
+    const customEvent = e as CustomEvent<{ modeId: string }>;
+    currentIndustryMode = customEvent.detail.modeId;
+    updateAllDropdownOptions();
+  });
+
+  function getFilteredCatalog(): CatalogItem[] {
+    if (currentIndustryMode === 'all') return catalog;
+    const mode = industryModes.find((m) => m.id === currentIndustryMode);
+    if (!mode) return catalog;
+    return catalog.filter(
+      (item) =>
+        mode.primaryCategories.includes(item.category) ||
+        mode.popularSubstanceKeys.includes(item.catalogKey) ||
+        mode.popularSubstanceKeys.includes(item.id),
+    );
+  }
+
+  function updateAllDropdownOptions() {
+    const filtered = getFilteredCatalog();
+    document.querySelectorAll<HTMLSelectElement>('.batch-row-select').forEach((sel) => {
+      const currentVal = sel.value;
+      sel.innerHTML = filtered
+        .map((c) => `<option value="${c.catalogKey}" ${c.catalogKey === currentVal ? 'selected' : ''}>${c.name} (${c.density} kg/L)</option>`)
+        .join('');
+      if (!filtered.some((c) => c.catalogKey === currentVal) && filtered.length > 0) {
+        sel.value = filtered[0].catalogKey;
+      }
+    });
+    calculateInteractiveTotals();
+  }
+
+  // ============================================
+  // INTERACTIVE BATCH ROW GENERATOR
+  // ============================================
+  function createBatchRow(preselectedKey?: string, defaultAmount = 1) {
+    const container = document.getElementById('batchRowsContainer');
+    if (!container) return;
+
+    const filtered = getFilteredCatalog();
+    const row = document.createElement('div');
+    row.className =
+      'batch-row grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-2.5 items-center bg-surface-900/60 p-3 sm:p-4 rounded-xl border border-white/[0.05] animate-fade-in hover:border-brand-500/20 transition-colors';
+
+    const isKgToL = batchDirection === 'kg-to-l';
+
+    row.innerHTML = `
+      <div>
+        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Substance</label>
+        <select aria-label="Select substance" class="batch-row-select select-pro text-xs py-2">
+          ${filtered.map((c) => `<option value="${c.catalogKey}" ${c.catalogKey === preselectedKey ? 'selected' : ''}>${c.name} (${c.density} kg/L)</option>`).join('')}
+        </select>
+      </div>
+
+      <div>
+        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Density (kg/L)</label>
+        <div class="relative">
+          <input type="number" step="0.001" min="0.01" class="batch-row-density input-pro text-xs py-2 font-mono" placeholder="Density" value="1.000" />
+          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg/L</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Mass (kg)' : 'Volume (L)'}</label>
+        <div class="relative">
+          <input type="number" step="0.1" min="0.01" value="${defaultAmount}" class="batch-row-amount input-pro text-xs py-2 font-mono" placeholder="${isKgToL ? 'Mass' : 'Volume'}" />
+          <span class="batch-row-amount-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'kg' : 'L'}</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Volume Output' : 'Mass Output'}</label>
+        <div class="relative">
+          <input type="text" readonly class="batch-row-output bg-surface-950 border border-white/[0.08] text-emerald-400 font-mono font-bold text-xs rounded-xl p-2.5 w-full outline-none" placeholder="Result" />
+          <span class="batch-row-output-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'L' : 'kg'}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="button" aria-label="Remove row" class="batch-row-remove p-2 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 transition-colors font-bold text-sm w-9 h-9 flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+    `;
+
+    container.appendChild(row);
+
+    const selectEl = row.querySelector<HTMLSelectElement>('.batch-row-select');
+    const densityEl = row.querySelector<HTMLInputElement>('.batch-row-density');
+    const amountEl = row.querySelector<HTMLInputElement>('.batch-row-amount');
+    const removeBtn = row.querySelector<HTMLButtonElement>('.batch-row-remove');
+
+    // Auto-fill density from catalog
+    if (selectEl && densityEl) {
+      const selected = catalog.find((c) => c.catalogKey === selectEl.value);
+      if (selected) densityEl.value = selected.density.toString();
+    }
+
+    selectEl?.addEventListener('change', () => {
+      const selected = catalog.find((c) => c.catalogKey === selectEl.value);
+      if (selected && densityEl) {
+        densityEl.value = selected.density.toString();
+      }
+      updateRowCalculation(row);
+    });
+
+    densityEl?.addEventListener('input', () => updateRowCalculation(row));
+    amountEl?.addEventListener('input', () => updateRowCalculation(row));
+
+    removeBtn?.addEventListener('click', () => {
+      row.remove();
+      calculateInteractiveTotals();
+    });
+
+    updateRowCalculation(row);
+  }
+
+  function updateRowCalculation(row: HTMLElement) {
+    const densityEl = row.querySelector<HTMLInputElement>('.batch-row-density');
+    const amountEl = row.querySelector<HTMLInputElement>('.batch-row-amount');
+    const outputEl = row.querySelector<HTMLInputElement>('.batch-row-output');
+
+    const density = parseFloat(densityEl?.value || '1.0') || 1.0;
+    const amount = parseFloat(amountEl?.value || '0') || 0;
+
+    if (density > 0 && amount > 0) {
+      const result = batchDirection === 'kg-to-l' ? amount / density : amount * density;
+      if (outputEl) outputEl.value = result.toFixed(3);
+    } else {
+      if (outputEl) outputEl.value = '0.000';
+    }
+
+    calculateInteractiveTotals();
+  }
+
+  function calculateInteractiveTotals() {
+    const rows = document.querySelectorAll<HTMLElement>('.batch-row');
+    let totalItems = 0;
+    let totalMass = 0;
+    let totalVolume = 0;
+
+    rows.forEach((r) => {
+      const densityEl = r.querySelector<HTMLInputElement>('.batch-row-density');
+      const amountEl = r.querySelector<HTMLInputElement>('.batch-row-amount');
+      const outputEl = r.querySelector<HTMLInputElement>('.batch-row-output');
+
+      const density = parseFloat(densityEl?.value || '1.0') || 1.0;
+      const amount = parseFloat(amountEl?.value || '0') || 0;
+      const output = parseFloat(outputEl?.value || '0') || 0;
+
+      if (amount > 0 && density > 0) {
+        totalItems++;
+        if (batchDirection === 'kg-to-l') {
+          totalMass += amount;
+          totalVolume += output;
+        } else {
+          totalVolume += amount;
+          totalMass += output;
+        }
+      }
+    });
+
+    const itemsEl = document.getElementById('batchSummaryItems');
+    const massEl = document.getElementById('batchSummaryMass');
+    const volEl = document.getElementById('batchSummaryVolume');
+    const avgEl = document.getElementById('batchSummaryAvgDensity');
+
+    if (itemsEl) itemsEl.textContent = totalItems.toString();
+    if (massEl) massEl.textContent = `${totalMass.toFixed(2)} kg`;
+    if (volEl) volEl.textContent = `${totalVolume.toFixed(3)} L`;
+    if (avgEl) {
+      const avg = totalVolume > 0 ? totalMass / totalVolume : 0;
+      avgEl.textContent = `${avg.toFixed(3)} kg/L`;
+    }
+  }
+
+  function setBatchDirection(dir: 'kg-to-l' | 'l-to-kg') {
+    batchDirection = dir;
+    const isKgToL = dir === 'kg-to-l';
+
+    const btnKgToL = document.getElementById('batch-dir-kg-to-l');
+    const btnLToKg = document.getElementById('batch-dir-l-to-kg');
+
+    btnKgToL?.setAttribute('aria-pressed', String(isKgToL));
+    btnLToKg?.setAttribute('aria-pressed', String(!isKgToL));
+    btnKgToL?.classList.toggle('bg-brand-500', isKgToL);
+    btnKgToL?.classList.toggle('text-slate-950', isKgToL);
+    btnKgToL?.classList.toggle('text-slate-400', !isKgToL);
+    btnLToKg?.classList.toggle('bg-brand-500', !isKgToL);
+    btnLToKg?.classList.toggle('text-slate-950', !isKgToL);
+    btnLToKg?.classList.toggle('text-slate-400', isKgToL);
+
+    document.querySelectorAll<HTMLElement>('.batch-row').forEach((row) => {
+      const amountUnit = row.querySelector<HTMLElement>('.batch-row-amount-unit');
+      const outputUnit = row.querySelector<HTMLElement>('.batch-row-output-unit');
+      if (amountUnit) amountUnit.textContent = isKgToL ? 'kg' : 'L';
+      if (outputUnit) outputUnit.textContent = isKgToL ? 'L' : 'kg';
+      updateRowCalculation(row);
+    });
+  }
+
+  // ============================================
+  // CSV UPLOAD & BULK PARSER LOGIC
+  // ============================================
+  function parseAndCalculateCsv(csvText: string) {
+    if (!csvText.trim()) return;
+
+    const lines = csvText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    if (lines.length === 0) return;
+
+    parsedCsvRows = [];
+
+    // Check if line 0 is a header
+    let startIndex = 0;
+    const firstLineLower = lines[0].toLowerCase();
+    if (
+      firstLineLower.includes('substance') ||
+      firstLineLower.includes('material') ||
+      firstLineLower.includes('mass') ||
+      firstLineLower.includes('density') ||
+      firstLineLower.includes('volume') ||
+      firstLineLower.includes('name')
+    ) {
+      startIndex = 1;
+    }
+
+    for (let i = startIndex; i < lines.length; i++) {
+      const rawLine = lines[i];
+      // Delimiter detection: comma, tab, semicolon
+      const delimiter = rawLine.includes('\t') ? '\t' : rawLine.includes(';') ? ';' : ',';
+      const parts = rawLine.split(delimiter).map((p) => p.replace(/^["']|["']$/g, '').trim());
+
+      if (parts.length < 1 || parts.every((p) => !p)) continue;
+
+      let nameInput = parts[0] || 'Unknown';
+      let massVal = 1;
+      let densityVal = 1.0;
+      let category = 'General';
+      let status: ParsedRow['status'] = 'matched';
+      let statusText = 'Matched';
+
+      // Fuzzy lookup in catalog
+      const matchedChem = catalog.find(
+        (c) =>
+          c.name.toLowerCase() === nameInput.toLowerCase() ||
+          c.id.toLowerCase() === nameInput.toLowerCase() ||
+          c.catalogKey.toLowerCase() === nameInput.toLowerCase() ||
+          c.name.toLowerCase().includes(nameInput.toLowerCase()),
+      );
+
+      // Parse numerical columns
+      const num1 = parseFloat(parts[1] || '');
+      const num2 = parseFloat(parts[2] || '');
+
+      if (matchedChem) {
+        nameInput = matchedChem.name;
+        densityVal = matchedChem.density;
+        category = matchedChem.categoryLabel;
+        massVal = !isNaN(num1) && num1 > 0 ? num1 : 1;
+        if (!isNaN(num2) && num2 > 0) {
+          densityVal = num2; // override density if provided
+          status = 'custom';
+          statusText = 'Custom Density';
+        }
+      } else {
+        // Substance not found by name
+        if (!isNaN(num1) && !isNaN(num2)) {
+          massVal = num1;
+          densityVal = num2;
+          status = 'custom';
+          statusText = 'Custom';
+        } else if (!isNaN(num1)) {
+          massVal = num1;
+          densityVal = 1.0;
+          status = 'warning';
+          statusText = 'Default (1.0 kg/L)';
+        } else {
+          status = 'error';
+          statusText = 'Invalid Data';
+        }
+      }
+
+      const volumeL = densityVal > 0 ? massVal / densityVal : 0;
+
+      parsedCsvRows.push({
+        status,
+        statusText,
+        substanceName: nameInput,
+        massKg: massVal,
+        density: densityVal,
+        volumeL,
+        category,
+        rawInput: rawLine,
+      });
+    }
+
+    renderCsvResultsTable();
+  }
+
+  function renderCsvResultsTable() {
+    const container = document.getElementById('csvResultsContainer');
+    const tbody = document.getElementById('csvPreviewTbody');
+    const badge = document.getElementById('csvResultCountBadge');
+    const stats = document.getElementById('csvResultStats');
+
+    if (!container || !tbody) return;
+
+    container.classList.remove('hidden');
+    tbody.innerHTML = '';
+
+    let totalMass = 0;
+    let totalVol = 0;
+
+    parsedCsvRows.forEach((row) => {
+      totalMass += row.massKg;
+      totalVol += row.volumeL;
+
+      const tr = document.createElement('tr');
+      let badgeClass = 'badge badge-brand';
+      if (row.status === 'matched') badgeClass = 'px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30';
+      if (row.status === 'custom') badgeClass = 'px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-mono text-[10px] font-bold border border-blue-500/30';
+      if (row.status === 'warning') badgeClass = 'px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-mono text-[10px] font-bold border border-amber-500/30';
+      if (row.status === 'error') badgeClass = 'px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-mono text-[10px] font-bold border border-red-500/30';
+
+      tr.innerHTML = `
+        <td><span class="${badgeClass}">${row.statusText}</span></td>
+        <td class="font-bold text-white">${row.substanceName}</td>
+        <td class="font-mono text-slate-300">${row.massKg.toFixed(2)} kg</td>
+        <td class="font-mono text-brand-300">${row.density.toFixed(3)} kg/L</td>
+        <td class="font-mono font-bold text-emerald-400">${row.volumeL.toFixed(3)} L</td>
+        <td class="text-xs text-slate-500">${row.category}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (badge) badge.textContent = `${parsedCsvRows.length} Rows Processed`;
+    if (stats) stats.textContent = `Total Mass: ${totalMass.toFixed(2)} kg • Total Volume: ${totalVol.toFixed(3)} L`;
+  }
+
+  // ============================================
+  // DOM READY SETUP & EVENT ATTACHMENTS
+  // ============================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Direction toggles
+    document.getElementById('batch-dir-kg-to-l')?.addEventListener('click', () => setBatchDirection('kg-to-l'));
+    document.getElementById('batch-dir-l-to-kg')?.addEventListener('click', () => setBatchDirection('l-to-kg'));
+
+    // Add Row
+    document.getElementById('addBatchRowBtn')?.addEventListener('click', () => createBatchRow());
+
+    // Clear Rows
+    document.getElementById('clearBatchRowsBtn')?.addEventListener('click', () => {
+      const container = document.getElementById('batchRowsContainer');
+      if (container) container.innerHTML = '';
+      calculateInteractiveTotals();
+    });
+
+    // Export Interactive CSV
+    document.getElementById('exportBatchCsvBtn')?.addEventListener('click', () => {
+      const rows = document.querySelectorAll<HTMLElement>('.batch-row');
+      if (rows.length === 0) {
+        alert('Please add at least one row to export.');
+        return;
+      }
+
+      let csv = 'Substance,Density (kg/L),Input Amount,Output Result,Direction\n';
+      rows.forEach((r) => {
+        const select = r.querySelector<HTMLSelectElement>('.batch-row-select');
+        const density = r.querySelector<HTMLInputElement>('.batch-row-density')?.value || '1';
+        const amount = r.querySelector<HTMLInputElement>('.batch-row-amount')?.value || '0';
+        const output = r.querySelector<HTMLInputElement>('.batch-row-output')?.value || '0';
+        const text = select?.options[select.selectedIndex]?.text || '';
+        csv += `"${text}",${density},${amount},${output},${batchDirection}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `batch_conversions_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    });
+
+    // Export Interactive JSON
+    document.getElementById('exportBatchJsonBtn')?.addEventListener('click', () => {
+      const rows = document.querySelectorAll<HTMLElement>('.batch-row');
+      const data: any[] = [];
+      rows.forEach((r) => {
+        const select = r.querySelector<HTMLSelectElement>('.batch-row-select');
+        const density = parseFloat(r.querySelector<HTMLInputElement>('.batch-row-density')?.value || '1');
+        const amount = parseFloat(r.querySelector<HTMLInputElement>('.batch-row-amount')?.value || '0');
+        const output = parseFloat(r.querySelector<HTMLInputElement>('.batch-row-output')?.value || '0');
+        data.push({
+          substance: select?.value,
+          substanceName: select?.options[select.selectedIndex]?.text,
+          densityKgPerL: density,
+          input: amount,
+          output: output,
+          direction: batchDirection,
+        });
+      });
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `batch_conversions_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+    });
+
+    // Drag and Drop Zone
+    const dropZone = document.getElementById('csvDropZone');
+    const fileInput = document.getElementById('csvFileInput') as HTMLInputElement | null;
+
+    dropZone?.addEventListener('click', () => fileInput?.click());
+
+    dropZone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-brand-400', 'bg-surface-900/80');
+    });
+
+    dropZone?.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-brand-400', 'bg-surface-900/80');
+    });
+
+    dropZone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-brand-400', 'bg-surface-900/80');
+      if (e.dataTransfer?.files && e.dataTransfer.files[0]) {
+        handleCsvFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput?.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files[0]) {
+        handleCsvFile(fileInput.files[0]);
+      }
+    });
+
+    function handleCsvFile(file: File) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        parseAndCalculateCsv(text);
+      };
+      reader.readAsText(file);
+    }
+
+    // Paste parse button
+    document.getElementById('parseCsvTextBtn')?.addEventListener('click', () => {
+      const pasteInput = document.getElementById('csvPasteInput') as HTMLTextAreaElement | null;
+      if (pasteInput && pasteInput.value) {
+        parseAndCalculateCsv(pasteInput.value);
+      }
+    });
+
+    // Sample data button
+    document.getElementById('loadSampleCsvBtn')?.addEventListener('click', () => {
+      const sample = `Substance,Mass (kg),Density (kg/L)
+Diesel Fuel,250,0.832
+Pure Water,1000,1.000
+Olive Oil,50,0.918
+Whole Milk,200,1.030
+Sulfuric Acid 98%,150,1.840
+Ethanol,80,0.789
+Portland Cement,500,1.500
+Ready-mix Concrete,2400,2.400`;
+      const pasteInput = document.getElementById('csvPasteInput') as HTMLTextAreaElement | null;
+      if (pasteInput) pasteInput.value = sample;
+      parseAndCalculateCsv(sample);
+    });
+
+    // Download Processed CSV button
+    document.getElementById('downloadProcessedCsvBtn')?.addEventListener('click', () => {
+      if (parsedCsvRows.length === 0) return;
+      let csv = 'Substance,Mass (kg),Density (kg/L),Calculated Volume (L),Category,Status\n';
+      parsedCsvRows.forEach((r) => {
+        csv += `"${r.substanceName}",${r.massKg},${r.density},${r.volumeL.toFixed(4)},"${r.category}","${r.statusText}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `bulk_processed_conversions_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    });
+
+    // Fetch Catalog Data
+    try {
+      const response = await fetch('/data/substances.json');
+      if (response.ok) {
+        catalog = (await response.json()) as CatalogItem[];
+        createBatchRow('diesel-2', 50);
+        createBatchRow('water-pure', 100);
+        createBatchRow('vegetable-oil', 25);
+      }
+    } catch (err) {
+      console.error('Failed to load substances catalog', err);
+    }
+  });
+</script>

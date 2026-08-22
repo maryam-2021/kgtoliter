@@ -1,0 +1,123 @@
+---
+import { industryModes } from '../../data/industryModes';
+
+export interface Props {
+  activeModeId?: string;
+  showDetails?: boolean;
+}
+
+const { activeModeId = 'all', showDetails = false } = Astro.props;
+---
+
+<div class="industry-mode-selector-root space-y-4" data-active-mode={activeModeId}>
+  <!-- Mode Buttons -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" role="tablist" aria-label="Industry Modes">
+    <button
+      type="button"
+      role="tab"
+      aria-selected={activeModeId === 'all' ? 'true' : 'false'}
+      data-mode="all"
+      class="industry-mode-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border shadow-sm bg-brand-500 text-slate-950 border-brand-400 font-sans cursor-pointer"
+    >
+      <span>🌐</span>
+      <span>All Substances</span>
+    </button>
+
+    {
+      industryModes.map((mode) => (
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeModeId === mode.id ? 'true' : 'false'}
+          data-mode={mode.id}
+          class="industry-mode-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border shadow-sm bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 hover:bg-surface-800 font-sans cursor-pointer"
+        >
+          <span>{mode.icon}</span>
+          <span>{mode.name}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <!-- Mode Info Card -->
+  {
+    showDetails && (
+      <div id="industryModeInfoBanner" class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.06] text-xs text-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span id="industryModeActiveBadge" class="badge badge-brand text-[10px]">Universal Mode</span>
+            <span id="industryModeTagline" class="text-white font-medium">All 700+ compiled density records available</span>
+          </div>
+          <p id="industryModeDesc" class="text-slate-400 text-[11px] leading-relaxed">
+            Select an industry mode above to auto-filter relevant materials, preset domain units, and standard reference conditions.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-[10px] font-mono text-slate-500 shrink-0">
+          <span>Ref Temp:</span>
+          <span id="industryModeRefTemp" class="text-brand-400 font-bold">Standard</span>
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  import { industryModes } from '../../data/industryModes';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const roots = document.querySelectorAll<HTMLElement>('.industry-mode-selector-root');
+
+    roots.forEach((root) => {
+      const buttons = root.querySelectorAll<HTMLButtonElement>('.industry-mode-btn');
+      const badge = root.querySelector<HTMLElement>('#industryModeActiveBadge');
+      const tagline = root.querySelector<HTMLElement>('#industryModeTagline');
+      const desc = root.querySelector<HTMLElement>('#industryModeDesc');
+      const refTemp = root.querySelector<HTMLElement>('#industryModeRefTemp');
+
+      function setActive(modeId: string) {
+        buttons.forEach((btn) => {
+          const isSelected = btn.dataset.mode === modeId;
+          btn.setAttribute('aria-selected', String(isSelected));
+          if (isSelected) {
+            btn.className =
+              'industry-mode-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border shadow-sm bg-brand-500 text-slate-950 border-brand-400 font-sans cursor-pointer';
+          } else {
+            btn.className =
+              'industry-mode-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border shadow-sm bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 hover:bg-surface-800 font-sans cursor-pointer';
+          }
+        });
+
+        if (modeId === 'all') {
+          if (badge) badge.textContent = 'Universal Mode';
+          if (tagline) tagline.textContent = 'All 700+ compiled density records available';
+          if (desc)
+            desc.textContent =
+              'Select an industry mode above to auto-filter relevant materials, preset domain units, and standard reference conditions.';
+          if (refTemp) refTemp.textContent = 'Standard';
+        } else {
+          const modeObj = industryModes.find((m) => m.id === modeId);
+          if (modeObj) {
+            if (badge) badge.textContent = modeObj.badge;
+            if (tagline) tagline.textContent = modeObj.tagline;
+            if (desc) desc.textContent = modeObj.description;
+            if (refTemp) refTemp.textContent = modeObj.referenceTemp;
+          }
+        }
+
+        // Dispatch custom event for calculators on the page
+        window.dispatchEvent(
+          new CustomEvent('industry-mode-change', {
+            detail: { modeId },
+          }),
+        );
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const modeId = btn.dataset.mode || 'all';
+          setActive(modeId);
+        });
+      });
+    });
+  });
+</script>

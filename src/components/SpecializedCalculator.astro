@@ -1,5 +1,6 @@
 ---
 import type { ToolData } from '../data/toolsData';
+import TemperatureDisclaimer from './TemperatureDisclaimer.astro';
 
 export interface Props {
   tool: ToolData;
@@ -272,6 +273,7 @@ const { tool } = Astro.props;
         3. Result: 1.000 Litres (1,000 mL)
       </p>
     </div>
+    <TemperatureDisclaimer />
   </div>
 </div>
 

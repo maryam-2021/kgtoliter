@@ -1,0 +1,584 @@
+---
+import TemperatureDisclaimer from '../TemperatureDisclaimer.astro';
+import IndustryModeSelector from './IndustryModeSelector.astro';
+---
+
+<div class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-5 sm:p-8 shadow-2xl space-y-8" id="containerCalcRoot">
+  <!-- Top Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold text-sm shadow-md">
+          🛢️
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Container &amp; Tank Volume-to-Mass Calculator</h2>
+      </div>
+      <p class="text-slate-400 text-xs sm:text-sm">
+        Calculate liquid capacity, partial fill volume, and total payload mass for industrial tanks, drums, and totes
+      </p>
+    </div>
+    <span class="badge badge-brand self-start md:self-auto">3D Geometry Solver</span>
+  </div>
+
+  <!-- Industry Mode Selector -->
+  <div class="space-y-2">
+    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Filter Substance by Industry</span>
+    <IndustryModeSelector showDetails={false} />
+  </div>
+
+  <!-- Main Calculator Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Left: Inputs & Parameters (7 Cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      <!-- 1. Geometry Shape Selection -->
+      <div class="space-y-2.5">
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          1. Select Container Geometry
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="Container Shape">
+          <button
+            type="button"
+            data-shape="rectangular"
+            class="container-shape-btn p-3 rounded-xl border text-center transition-all bg-brand-500 text-slate-950 border-brand-400 font-semibold text-xs flex flex-col items-center gap-1 shadow-sm"
+          >
+            <span class="text-lg">📦</span>
+            <span>Rectangular</span>
+          </button>
+          <button
+            type="button"
+            data-shape="vertical-cylinder"
+            class="container-shape-btn p-3 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 text-xs flex flex-col items-center gap-1"
+          >
+            <span class="text-lg">🛢️</span>
+            <span>Vertical Cyl.</span>
+          </button>
+          <button
+            type="button"
+            data-shape="horizontal-cylinder"
+            class="container-shape-btn p-3 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 text-xs flex flex-col items-center gap-1"
+          >
+            <span class="text-lg">🚛</span>
+            <span>Horizontal Cyl.</span>
+          </button>
+          <button
+            type="button"
+            data-shape="conical"
+            class="container-shape-btn p-3 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:border-brand-500/30 text-xs flex flex-col items-center gap-1"
+          >
+            <span class="text-lg">🔻</span>
+            <span>Cone / Hopper</span>
+          </button>
+        </div>
+
+        <!-- Preset Quick Selectors -->
+        <div class="flex items-center gap-2 pt-1 flex-wrap">
+          <span class="text-[10px] text-slate-500 font-mono">Standard Presets:</span>
+          <button type="button" id="presetIbcTote" class="text-[11px] px-2.5 py-1 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 border border-white/[0.06] hover:border-brand-500/30 font-mono transition-all">
+            1000L IBC Tote
+          </button>
+          <button type="button" id="preset55GalDrum" class="text-[11px] px-2.5 py-1 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 border border-white/[0.06] hover:border-brand-500/30 font-mono transition-all">
+            208L (55 Gal) Drum
+          </button>
+          <button type="button" id="presetFuelTanker" class="text-[11px] px-2.5 py-1 rounded-lg bg-surface-900 hover:bg-brand-500/15 text-brand-400 border border-white/[0.06] hover:border-brand-500/30 font-mono transition-all">
+            30,000L Fuel Tanker
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Dimensions & Units -->
+      <div class="space-y-4 p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04]">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">2. Dimensions</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-slate-500">Unit:</span>
+            <select id="dimensionUnitSelect" class="select-pro py-1 px-2 text-xs font-mono">
+              <option value="m" selected>Meters (m)</option>
+              <option value="cm">Centimeters (cm)</option>
+              <option value="mm">Millimeters (mm)</option>
+              <option value="ft">Feet (ft)</option>
+              <option value="in">Inches (in)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="dimensionInputsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Dynamically configured based on shape -->
+          <div id="dimGroup1" class="space-y-1">
+            <label id="dimLabel1" class="text-xs text-slate-400 font-medium">Length</label>
+            <div class="relative">
+              <input type="number" id="dimInput1" value="1.2" step="0.01" min="0.01" class="input-pro font-mono text-xs" />
+              <span class="dimUnitLabel absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">m</span>
+            </div>
+          </div>
+
+          <div id="dimGroup2" class="space-y-1">
+            <label id="dimLabel2" class="text-xs text-slate-400 font-medium">Width</label>
+            <div class="relative">
+              <input type="number" id="dimInput2" value="1.0" step="0.01" min="0.01" class="input-pro font-mono text-xs" />
+              <span class="dimUnitLabel absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">m</span>
+            </div>
+          </div>
+
+          <div id="dimGroup3" class="space-y-1">
+            <label id="dimLabel3" class="text-xs text-slate-400 font-medium">Height</label>
+            <div class="relative">
+              <input type="number" id="dimInput3" value="1.0" step="0.01" min="0.01" class="input-pro font-mono text-xs" />
+              <span class="dimUnitLabel absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Fill Level Slider -->
+      <div class="space-y-3 p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04]">
+        <div class="flex items-center justify-between">
+          <label for="fillLevelSlider" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            3. Liquid Fill Level
+          </label>
+          <span class="font-mono text-sm font-bold text-brand-400" id="fillLevelDisplay">85%</span>
+        </div>
+        <input
+          type="range"
+          id="fillLevelSlider"
+          min="0"
+          max="100"
+          value="85"
+          step="1"
+          class="w-full accent-brand-500 cursor-pointer h-2 bg-surface-800 rounded-lg appearance-none"
+        />
+        <div class="flex justify-between text-[10px] font-mono text-slate-500">
+          <span>0% (Empty)</span>
+          <span>50%</span>
+          <span>85% (Transport Fill)</span>
+          <span>100% (Full)</span>
+        </div>
+      </div>
+
+      <!-- 4. Substance & Density -->
+      <div class="space-y-3 p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04]">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+          4. Substance &amp; Density
+        </span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="containerSubstanceSelect" class="text-xs text-slate-400 block mb-1">Select Substance</label>
+            <select id="containerSubstanceSelect" class="select-pro text-xs">
+              <!-- Dynamically populated from catalog -->
+            </select>
+          </div>
+          <div>
+            <label for="containerDensityInput" class="text-xs text-slate-400 block mb-1">Density (kg/L)</label>
+            <div class="relative">
+              <input type="number" id="containerDensityInput" value="0.832" step="0.001" min="0.01" class="input-pro font-mono text-xs" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">kg/L</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Visualizer & Calculated Results (5 Cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- 2D Dynamic Tank SVG Visualizer -->
+      <div class="p-5 rounded-2xl bg-surface-900/80 border border-white/[0.06] text-center space-y-3 relative overflow-hidden glow-brand-subtle">
+        <div class="flex items-center justify-between border-b border-white/[0.04] pb-2">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 font-mono">2D Tank Level Schematic</span>
+          <span id="svgStatusBadge" class="badge badge-brand text-[9px]">Rectangular Tank</span>
+        </div>
+
+        <div class="h-44 w-full flex items-center justify-center relative my-2" id="tankSvgContainer">
+          <!-- Dynamically updated SVG rendered via JS -->
+          <svg id="tankSvg" width="220" height="150" viewBox="0 0 220 150" class="overflow-visible">
+            <defs>
+              <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.85" />
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.95" />
+              </linearGradient>
+            </defs>
+            <!-- Tank Outline -->
+            <rect id="svgTankOutline" x="35" y="15" width="150" height="120" rx="8" fill="#0f172a" stroke="#475569" stroke-width="2.5" />
+            <!-- Liquid Rect -->
+            <rect id="svgLiquidBody" x="37" y="33" width="146" height="100" rx="6" fill="url(#liquidGradient)" />
+            <!-- Dimension Guides -->
+            <text id="svgDimText" x="110" y="85" text-anchor="middle" fill="#ffffff" font-size="12" font-family="monospace" font-weight="bold">85% Fill</text>
+          </svg>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-left pt-2 border-t border-white/[0.04] text-[11px] font-mono">
+          <div>
+            <span class="text-slate-500 block">Total Capacity:</span>
+            <strong id="cardTotalCapacity" class="text-white">1,200.0 L</strong>
+          </div>
+          <div>
+            <span class="text-slate-500 block">Ullage / Free:</span>
+            <strong id="cardUllage" class="text-slate-400">180.0 L</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Result Cards -->
+      <div class="p-6 rounded-2xl bg-gradient-to-br from-surface-900 to-surface-950 border border-brand-500/30 space-y-4 glow-brand-strong">
+        <div>
+          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">
+            Total Liquid Mass
+          </span>
+          <p class="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white">
+            <span id="resMassKg" class="gradient-text">848.64</span>
+            <span class="text-sm font-bold text-slate-400 font-mono ml-1">kg</span>
+          </p>
+          <p id="resMassSecondary" class="text-xs text-slate-500 font-mono mt-1">
+            Equal to 0.849 Metric Tonnes (1,870.9 lbs)
+          </p>
+        </div>
+
+        <div class="border-t border-white/[0.06] pt-4 space-y-1">
+          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">
+            Filled Liquid Volume
+          </span>
+          <p class="text-2xl font-extrabold font-mono text-emerald-400">
+            <span id="resVolLitres">1,020.00</span>
+            <span class="text-xs text-slate-400 font-mono">Litres</span>
+          </p>
+          <p id="resVolSecondary" class="text-xs text-slate-500 font-mono">
+            Equal to 1.020 m³ (269.45 US Gal)
+          </p>
+        </div>
+
+        <button
+          type="button"
+          id="copyContainerResultBtn"
+          class="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
+        >
+          <span>📋</span> <span id="copyContainerResultTxt">Copy Container Breakdown</span>
+        </button>
+      </div>
+
+      <!-- Step Calculation Math Box -->
+      <div class="p-4 rounded-xl bg-surface-950 border border-white/[0.04] space-y-1 text-xs font-mono text-slate-400">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Calculation Breakdown</span>
+        <p id="mathStep1" class="text-slate-300">1. Geometric Volume = L × W × H = 1.200 m³ (1,200 L)</p>
+        <p id="mathStep2" class="text-slate-300">2. Liquid Volume (85%) = 1,020.00 L</p>
+        <p id="mathStep3" class="text-brand-300 font-bold">3. Liquid Mass = 1,020.00 L × 0.832 kg/L = 848.64 kg</p>
+      </div>
+    </div>
+  </div>
+
+  <TemperatureDisclaimer />
+</div>
+
+<script>
+  import type { CatalogItem } from '../../data/catalog';
+  import { industryModes } from '../../data/industryModes';
+
+  let catalog: CatalogItem[] = [];
+  let currentShape = 'rectangular';
+  let currentIndustryMode = 'all';
+
+  // Shapes configuration
+  const shapeConfigs: Record<string, { label1: string; label2?: string; label3?: string; def1: number; def2?: number; def3?: number }> = {
+    rectangular: { label1: 'Length', label2: 'Width', label3: 'Height', def1: 1.2, def2: 1.0, def3: 1.0 },
+    'vertical-cylinder': { label1: 'Diameter', label2: 'Height', def1: 1.0, def2: 1.5 },
+    'horizontal-cylinder': { label1: 'Diameter', label2: 'Length', def1: 1.2, def2: 3.0 },
+    conical: { label1: 'Top Diameter', label2: 'Bottom Diameter', label3: 'Height', def1: 1.5, def2: 0.4, def3: 1.8 },
+  };
+
+  function updateShapeUI() {
+    const cfg = shapeConfigs[currentShape] || shapeConfigs['rectangular'];
+    const g2 = document.getElementById('dimGroup2');
+    const g3 = document.getElementById('dimGroup3');
+    const l1 = document.getElementById('dimLabel1');
+    const l2 = document.getElementById('dimLabel2');
+    const l3 = document.getElementById('dimLabel3');
+    const i1 = document.getElementById('dimInput1') as HTMLInputElement | null;
+    const i2 = document.getElementById('dimInput2') as HTMLInputElement | null;
+    const i3 = document.getElementById('dimInput3') as HTMLInputElement | null;
+    const badge = document.getElementById('svgStatusBadge');
+
+    if (badge) {
+      if (currentShape === 'rectangular') badge.textContent = 'Rectangular Tank';
+      if (currentShape === 'vertical-cylinder') badge.textContent = 'Vertical Cylinder';
+      if (currentShape === 'horizontal-cylinder') badge.textContent = 'Horizontal Cylinder';
+      if (currentShape === 'conical') badge.textContent = 'Cone / Hopper';
+    }
+
+    if (l1) l1.textContent = cfg.label1;
+    if (i1) i1.value = cfg.def1.toString();
+
+    if (cfg.label2) {
+      if (g2) g2.classList.remove('hidden');
+      if (l2) l2.textContent = cfg.label2;
+      if (i2 && cfg.def2 !== undefined) i2.value = cfg.def2.toString();
+    } else {
+      if (g2) g2.classList.add('hidden');
+    }
+
+    if (cfg.label3) {
+      if (g3) g3.classList.remove('hidden');
+      if (l3) l3.textContent = cfg.label3;
+      if (i3 && cfg.def3 !== undefined) i3.value = cfg.def3.toString();
+    } else {
+      if (g3) g3.classList.add('hidden');
+    }
+
+    calculateContainer();
+  }
+
+  function getUnitToMeterFactor(unit: string): number {
+    switch (unit) {
+      case 'cm': return 0.01;
+      case 'mm': return 0.001;
+      case 'ft': return 0.3048;
+      case 'in': return 0.0254;
+      default: return 1.0; // meters
+    }
+  }
+
+  function calculateContainer() {
+    const unitSelect = document.getElementById('dimensionUnitSelect') as HTMLSelectElement | null;
+    const unit = unitSelect?.value || 'm';
+    const factor = getUnitToMeterFactor(unit);
+
+    const i1 = parseFloat((document.getElementById('dimInput1') as HTMLInputElement)?.value || '0') * factor;
+    const i2 = parseFloat((document.getElementById('dimInput2') as HTMLInputElement)?.value || '0') * factor;
+    const i3 = parseFloat((document.getElementById('dimInput3') as HTMLInputElement)?.value || '0') * factor;
+
+    const fillPercent = parseFloat((document.getElementById('fillLevelSlider') as HTMLInputElement)?.value || '85') / 100;
+    const density = parseFloat((document.getElementById('containerDensityInput') as HTMLInputElement)?.value || '1.0') || 1.0;
+
+    let totalVolumeM3 = 0;
+    let formulaDesc = '';
+
+    if (currentShape === 'rectangular') {
+      // Length * Width * Height
+      totalVolumeM3 = i1 * i2 * i3;
+      formulaDesc = `Volume = L × W × H = ${i1.toFixed(2)}m × ${i2.toFixed(2)}m × ${i3.toFixed(2)}m`;
+    } else if (currentShape === 'vertical-cylinder') {
+      // Diameter i1, Height i2
+      const radius = i1 / 2;
+      totalVolumeM3 = Math.PI * Math.pow(radius, 2) * i2;
+      formulaDesc = `Volume = π × r² × H = π × (${radius.toFixed(2)}m)² × ${i2.toFixed(2)}m`;
+    } else if (currentShape === 'horizontal-cylinder') {
+      // Diameter i1, Length i2
+      const radius = i1 / 2;
+      totalVolumeM3 = Math.PI * Math.pow(radius, 2) * i2;
+      formulaDesc = `Volume = π × r² × L = π × (${radius.toFixed(2)}m)² × ${i2.toFixed(2)}m`;
+    } else if (currentShape === 'conical') {
+      // Top Dia i1, Bottom Dia i2, Height i3
+      const R = i1 / 2;
+      const r = i2 / 2;
+      totalVolumeM3 = (1 / 3) * Math.PI * i3 * (Math.pow(R, 2) + R * r + Math.pow(r, 2));
+      formulaDesc = `Volume = ⅓πH(R² + Rr + r²) = ⅓π × ${i3.toFixed(2)}m × (${R.toFixed(2)}² + ${R.toFixed(2)}×${r.toFixed(2)} + ${r.toFixed(2)}²)`;
+    }
+
+    const totalLitres = totalVolumeM3 * 1000;
+    const liquidLitres = totalLitres * fillPercent;
+    const liquidM3 = liquidLitres / 1000;
+    const liquidMassKg = liquidLitres * density;
+    const liquidMassTonnes = liquidMassKg / 1000;
+    const liquidMassLbs = liquidMassKg * 2.20462;
+    const liquidUsGal = liquidLitres * 0.264172;
+    const ullageLitres = totalLitres - liquidLitres;
+
+    // Display updates
+    const resMassKgEl = document.getElementById('resMassKg');
+    const resMassSecondaryEl = document.getElementById('resMassSecondary');
+    const resVolLitresEl = document.getElementById('resVolLitres');
+    const resVolSecondaryEl = document.getElementById('resVolSecondary');
+    const cardTotalCapEl = document.getElementById('cardTotalCapacity');
+    const cardUllageEl = document.getElementById('cardUllage');
+    const fillLevelDisplay = document.getElementById('fillLevelDisplay');
+
+    if (fillLevelDisplay) fillLevelDisplay.textContent = `${Math.round(fillPercent * 100)}%`;
+    if (resMassKgEl) resMassKgEl.textContent = liquidMassKg.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (resMassSecondaryEl) resMassSecondaryEl.textContent = `Equal to ${liquidMassTonnes.toFixed(3)} Metric Tonnes (${liquidMassLbs.toLocaleString(undefined, { maximumFractionDigits: 1 })} lbs)`;
+    if (resVolLitresEl) resVolLitresEl.textContent = liquidLitres.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (resVolSecondaryEl) resVolSecondaryEl.textContent = `Equal to ${liquidM3.toFixed(3)} m³ (${liquidUsGal.toLocaleString(undefined, { maximumFractionDigits: 1 })} US Gal)`;
+    if (cardTotalCapEl) cardTotalCapEl.textContent = `${totalLitres.toLocaleString(undefined, { maximumFractionDigits: 1 })} L`;
+    if (cardUllageEl) cardUllageEl.textContent = `${ullageLitres.toLocaleString(undefined, { maximumFractionDigits: 1 })} L`;
+
+    // Math breakdown steps
+    const step1 = document.getElementById('mathStep1');
+    const step2 = document.getElementById('mathStep2');
+    const step3 = document.getElementById('mathStep3');
+    if (step1) step1.textContent = `1. ${formulaDesc} = ${totalLitres.toFixed(1)} Litres`;
+    if (step2) step2.textContent = `2. Liquid Volume (${Math.round(fillPercent * 100)}%) = ${liquidLitres.toFixed(2)} L (${liquidM3.toFixed(3)} m³)`;
+    if (step3) step3.textContent = `3. Liquid Mass = ${liquidLitres.toFixed(2)} L × ${density.toFixed(3)} kg/L = ${liquidMassKg.toFixed(2)} kg`;
+
+    // SVG update
+    updateSvgGraphic(fillPercent);
+  }
+
+  function updateSvgGraphic(fillPercent: number) {
+    const liquidBody = document.getElementById('svgLiquidBody');
+    const dimText = document.getElementById('svgDimText');
+    const tankOutline = document.getElementById('svgTankOutline');
+
+    const totalHeight = 116;
+    const bottomY = 133;
+    const liquidH = Math.max(0, Math.min(totalHeight, totalHeight * fillPercent));
+    const liquidY = bottomY - liquidH;
+
+    if (liquidBody) {
+      liquidBody.setAttribute('y', liquidY.toString());
+      liquidBody.setAttribute('height', liquidH.toString());
+    }
+
+    if (dimText) {
+      dimText.textContent = `${Math.round(fillPercent * 100)}% Fill`;
+    }
+
+    if (tankOutline) {
+      if (currentShape === 'conical') {
+        tankOutline.setAttribute('rx', '20');
+      } else {
+        tankOutline.setAttribute('rx', '8');
+      }
+    }
+  }
+
+  // Populate Substances Select
+  function populateSubstanceSelect() {
+    const sel = document.getElementById('containerSubstanceSelect') as HTMLSelectElement | null;
+    if (!sel) return;
+
+    let items = catalog;
+    if (currentIndustryMode !== 'all') {
+      const mode = industryModes.find((m) => m.id === currentIndustryMode);
+      if (mode) {
+        items = catalog.filter(
+          (c) =>
+            mode.primaryCategories.includes(c.category) ||
+            mode.popularSubstanceKeys.includes(c.catalogKey) ||
+            mode.popularSubstanceKeys.includes(c.id),
+        );
+      }
+    }
+
+    sel.innerHTML = items
+      .map((c) => `<option value="${c.density}" data-key="${c.catalogKey}">${c.name} (${c.density} kg/L)</option>`)
+      .join('');
+
+    // Preselect diesel if present
+    const dieselOpt = items.find((c) => c.catalogKey === 'diesel-2' || c.id === 'diesel-2');
+    if (dieselOpt) {
+      sel.value = dieselOpt.density.toString();
+      const densInput = document.getElementById('containerDensityInput') as HTMLInputElement | null;
+      if (densInput) densInput.value = dieselOpt.density.toString();
+    }
+  }
+
+  window.addEventListener('industry-mode-change', (e: Event) => {
+    const customEvent = e as CustomEvent<{ modeId: string }>;
+    currentIndustryMode = customEvent.detail.modeId;
+    populateSubstanceSelect();
+    calculateContainer();
+  });
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Shape Buttons
+    const shapeBtns = document.querySelectorAll<HTMLButtonElement>('.container-shape-btn');
+    shapeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentShape = btn.dataset.shape || 'rectangular';
+        shapeBtns.forEach((b) => {
+          const isSel = b === btn;
+          b.className = isSel
+            ? 'container-shape-btn p-3 rounded-xl border text-center transition-all bg-brand-500 text-slate-950 border-brand-400 font-semibold text-xs flex flex-col items-center gap-1 shadow-sm'
+            : 'container-shape-btn p-3 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 text-xs flex flex-col items-center gap-1';
+        });
+        updateShapeUI();
+      });
+    });
+
+    // Preset Buttons
+    document.getElementById('presetIbcTote')?.addEventListener('click', () => {
+      currentShape = 'rectangular';
+      shapeBtns.forEach((b) => {
+        if (b.dataset.shape === 'rectangular') b.click();
+      });
+      const i1 = document.getElementById('dimInput1') as HTMLInputElement | null;
+      const i2 = document.getElementById('dimInput2') as HTMLInputElement | null;
+      const i3 = document.getElementById('dimInput3') as HTMLInputElement | null;
+      if (i1) i1.value = '1.2';
+      if (i2) i2.value = '1.0';
+      if (i3) i3.value = '1.0'; // 1.2 m3 = 1200L gross / 1000L net
+      calculateContainer();
+    });
+
+    document.getElementById('preset55GalDrum')?.addEventListener('click', () => {
+      currentShape = 'vertical-cylinder';
+      shapeBtns.forEach((b) => {
+        if (b.dataset.shape === 'vertical-cylinder') b.click();
+      });
+      const i1 = document.getElementById('dimInput1') as HTMLInputElement | null;
+      const i2 = document.getElementById('dimInput2') as HTMLInputElement | null;
+      if (i1) i1.value = '0.585'; // dia
+      if (i2) i2.value = '0.88'; // height = ~208L
+      calculateContainer();
+    });
+
+    document.getElementById('presetFuelTanker')?.addEventListener('click', () => {
+      currentShape = 'horizontal-cylinder';
+      shapeBtns.forEach((b) => {
+        if (b.dataset.shape === 'horizontal-cylinder') b.click();
+      });
+      const i1 = document.getElementById('dimInput1') as HTMLInputElement | null;
+      const i2 = document.getElementById('dimInput2') as HTMLInputElement | null;
+      if (i1) i1.value = '2.2'; // dia
+      if (i2) i2.value = '8.0'; // length = ~30,400L
+      calculateContainer();
+    });
+
+    // Inputs event listeners
+    const inputs = document.querySelectorAll('#containerCalcRoot input, #containerCalcRoot select');
+    inputs.forEach((el) => {
+      el.addEventListener('input', calculateContainer);
+      el.addEventListener('change', calculateContainer);
+    });
+
+    // Unit Change
+    document.getElementById('dimensionUnitSelect')?.addEventListener('change', () => {
+      const u = (document.getElementById('dimensionUnitSelect') as HTMLSelectElement)?.value || 'm';
+      document.querySelectorAll('.dimUnitLabel').forEach((el) => (el.textContent = u));
+      calculateContainer();
+    });
+
+    // Substance Select change
+    document.getElementById('containerSubstanceSelect')?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      const densInput = document.getElementById('containerDensityInput') as HTMLInputElement | null;
+      if (densInput && val) densInput.value = val;
+      calculateContainer();
+    });
+
+    // Copy Result
+    document.getElementById('copyContainerResultBtn')?.addEventListener('click', async () => {
+      const mass = document.getElementById('resMassKg')?.textContent;
+      const vol = document.getElementById('resVolLitres')?.textContent;
+      const cap = document.getElementById('cardTotalCapacity')?.textContent;
+      const txt = `Container Calculation:\n• Total Capacity: ${cap}\n• Liquid Volume: ${vol} L\n• Liquid Mass: ${mass} kg`;
+      try {
+        await navigator.clipboard.writeText(txt);
+        const copyTxt = document.getElementById('copyContainerResultTxt');
+        if (copyTxt) copyTxt.textContent = 'Copied to Clipboard!';
+        setTimeout(() => {
+          if (copyTxt) copyTxt.textContent = 'Copy Container Breakdown';
+        }, 2000);
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    // Fetch catalog
+    try {
+      const response = await fetch('/data/substances.json');
+      if (response.ok) {
+        catalog = (await response.json()) as CatalogItem[];
+        populateSubstanceSelect();
+        calculateContainer();
+      }
+    } catch (err) {
+      console.error('Failed to load substances', err);
+    }
+  });
+</script>

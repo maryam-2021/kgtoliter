@@ -1,5 +1,6 @@
 ---
 import { SUBSTANCE_DATABASE, categories, getDensityDisplay } from '../../data/densities.ts';
+import TemperatureDisclaimer from '../TemperatureDisclaimer.astro';
 
 export interface Props {
   categorySlug: string;
@@ -193,6 +194,7 @@ const maxCategoryVolume = volumes.length > 0 ? Math.max(...volumes) : 1;
           <span id="cat-formula" class="text-emerald-400 font-bold">V = m &divide; &rho;</span>
         </div>
       </div>
+      <TemperatureDisclaimer />
     </div>
   </section>
 

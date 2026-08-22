@@ -5,7 +5,7 @@ import HeroDensityVisualizer from '../components/interactive/HeroDensityVisualiz
 import FormulaPlayground from '../components/interactive/FormulaPlayground.astro';
 import VolumeComparisonSlider from '../components/interactive/VolumeComparisonSlider.astro';
 import IndustrialVolumeComparisonCard from '../components/interactive/IndustrialVolumeComparisonCard.astro';
-import BatchConverterCard from '../components/interactive/BatchConverterCard.astro';
+import AdvancedBatchConverter from '../components/interactive/AdvancedBatchConverter.astro';
 import SubcategoriesGridCard from '../components/interactive/SubcategoriesGridCard.astro';
 import EngineOilViscosityChartCard from '../components/interactive/EngineOilViscosityChartCard.astro';
 import TemperatureDensitySlider from '../components/interactive/TemperatureDensitySlider.astro';
@@ -76,40 +76,40 @@ const allGuides = await getCollection('guides');
 
 const featureLinks = [
   {
-    href: '#interactive-sliders',
-    eyebrow: 'Model',
-    title: 'Interactive Sliders',
-    description: 'Adjust mass and density in real time.',
+    href: '/batch-converter/',
+    eyebrow: 'Batch & CSV',
+    title: 'Bulk Converter',
+    description: 'Convert multiple substances or upload CSV files.',
   },
   {
-    href: '#batch-conversion',
-    eyebrow: 'Convert',
-    title: 'Batch Conversion',
-    description: 'Calculate and export multiple results.',
+    href: '/container-calculator/',
+    eyebrow: '3D Geometry',
+    title: 'Container & Tank Solver',
+    description: 'Calculate volume and liquid weight for tanks & drums.',
   },
   {
-    href: '#temperature-simulator',
-    eyebrow: 'Simulate',
-    title: 'Temperature Simulator',
-    description: 'Explore thermal density changes.',
+    href: '/custom-density-calculator/',
+    eyebrow: '3-Way Solver',
+    title: 'Custom Density Solver',
+    description: 'Solve for mass, volume, or density with temperature correction.',
   },
   {
-    href: '#visual-comparisons',
-    eyebrow: 'Compare',
-    title: 'Visual Comparisons',
-    description: 'See equal masses at different volumes.',
+    href: '/api-docs/',
+    eyebrow: 'Developer API',
+    title: 'REST API & Sandbox',
+    description: 'Live test console with code snippets for JS, Python, & cURL.',
   },
   {
     href: '#density-directory',
-    eyebrow: 'Search',
-    title: 'Density Directory',
-    description: `Filter all ${catalogItems.length} catalogue records.`,
+    eyebrow: 'Directory',
+    title: 'Density Catalogue',
+    description: `Filter all ${catalogItems.length} verified substance records.`,
   },
   {
-    href: '#advanced-calculators',
-    eyebrow: 'Solve',
-    title: 'Advanced Calculators',
-    description: `Open ${toolsData.length} dedicated tools.`,
+    href: '/tools/',
+    eyebrow: 'Directory',
+    title: 'All Specialised Tools',
+    description: `Access our complete suite of unit converters.`,
   },
 ];
 ---
@@ -229,7 +229,7 @@ const featureLinks = [
 
     <!-- Batch Conversion Calculator Section -->
     <section class="reveal-section max-w-5xl mx-auto">
-      <BatchConverterCard />
+      <AdvancedBatchConverter />
     </section>
 
     <!-- Master Subcategories & Density Filter Grid Section -->

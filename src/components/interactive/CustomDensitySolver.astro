@@ -1,0 +1,462 @@
+---
+import TemperatureDisclaimer from '../TemperatureDisclaimer.astro';
+import IndustryModeSelector from './IndustryModeSelector.astro';
+---
+
+<div class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-5 sm:p-8 shadow-2xl space-y-8" id="customDensitySolverRoot">
+  <!-- Top Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold text-sm shadow-md">
+          ⚖️
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Custom Density &amp; 3-Way Unit Solver</h2>
+      </div>
+      <p class="text-slate-400 text-xs sm:text-sm">
+        Solve for Volume, Mass, or Density with comprehensive multi-unit conversions and temperature compensation
+      </p>
+    </div>
+    <span class="badge badge-brand self-start md:self-auto">Universal Unit Engine</span>
+  </div>
+
+  <!-- Industry Mode Selector -->
+  <div class="space-y-2">
+    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Filter Density Reference by Industry</span>
+    <IndustryModeSelector showDetails={false} />
+  </div>
+
+  <!-- 3-Way Mode Tabs -->
+  <div class="space-y-2">
+    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+      1. Select What to Solve For
+    </label>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" role="tablist" aria-label="Solver Variable">
+      <button
+        type="button"
+        data-target="volume"
+        class="solver-mode-tab p-3.5 rounded-xl border text-center transition-all bg-brand-500 text-slate-950 border-brand-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm"
+      >
+        <span>💧</span> Solve Volume (V = m ÷ ρ)
+      </button>
+      <button
+        type="button"
+        data-target="mass"
+        class="solver-mode-tab p-3.5 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2"
+      >
+        <span>⚖️</span> Solve Mass (m = V × ρ)
+      </button>
+      <button
+        type="button"
+        data-target="density"
+        class="solver-mode-tab p-3.5 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2"
+      >
+        <span>🧪</span> Solve Density (ρ = m ÷ V)
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Grid: Inputs vs Results -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Left: Inputs (7 Cols) -->
+    <div class="lg:col-span-7 space-y-5">
+      <!-- Input Group 1: Mass Input -->
+      <div id="solverGroupMass" class="p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04] space-y-2">
+        <label for="solverInputMass" class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+          Mass Amount &amp; Unit
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="sm:col-span-2">
+            <input type="number" id="solverInputMass" value="10" step="0.1" min="0.001" class="input-pro font-mono text-sm" placeholder="Enter Mass" />
+          </div>
+          <div>
+            <select id="solverUnitMass" class="select-pro text-xs font-mono">
+              <option value="kg" selected>Kilograms (kg)</option>
+              <option value="g">Grams (g)</option>
+              <option value="mg">Milligrams (mg)</option>
+              <option value="lb">Pounds (lb)</option>
+              <option value="oz">Ounces (oz)</option>
+              <option value="tonne">Metric Tonnes (t)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Group 2: Volume Input -->
+      <div id="solverGroupVolume" class="hidden p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04] space-y-2">
+        <label for="solverInputVolume" class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+          Volume Amount &amp; Unit
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="sm:col-span-2">
+            <input type="number" id="solverInputVolume" value="10" step="0.1" min="0.001" class="input-pro font-mono text-sm" placeholder="Enter Volume" />
+          </div>
+          <div>
+            <select id="solverUnitVolume" class="select-pro text-xs font-mono">
+              <option value="L" selected>Litres (L)</option>
+              <option value="mL">Millilitres (mL)</option>
+              <option value="m3">Cubic Meters (m³)</option>
+              <option value="cm3">Cubic Centimeters (cm³)</option>
+              <option value="us_gal">US Gallons (gal)</option>
+              <option value="imp_gal">UK Gallons (gal)</option>
+              <option value="fl_oz">Fluid Ounces (fl oz)</option>
+              <option value="cup">Cups (US)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Group 3: Density Input -->
+      <div id="solverGroupDensity" class="p-4 sm:p-5 rounded-xl bg-surface-900/50 border border-white/[0.04] space-y-3">
+        <div class="flex items-center justify-between">
+          <label for="solverInputDensity" class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+            Material Density &amp; Unit
+          </label>
+          <button type="button" id="toggleCatalogueModalBtn" class="text-xs text-brand-400 hover:text-brand-300 font-mono underline">
+            Load from Catalogue
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="sm:col-span-2">
+            <input type="number" id="solverInputDensity" value="0.832" step="0.001" min="0.001" class="input-pro font-mono text-sm" placeholder="Enter Density" />
+          </div>
+          <div>
+            <select id="solverUnitDensity" class="select-pro text-xs font-mono">
+              <option value="kg_per_l" selected>kg/L (g/cm³)</option>
+              <option value="kg_per_m3">kg/m³</option>
+              <option value="g_per_ml">g/mL</option>
+              <option value="lb_per_gal">lb/US gal</option>
+              <option value="lb_per_ft3">lb/ft³</option>
+              <option value="sg">Specific Gravity (SG)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Substance Quick Dropdown -->
+        <div class="pt-1">
+          <label for="solverSubstanceSelect" class="text-[11px] text-slate-500 block mb-1">Quick Select Substance Reference:</label>
+          <select id="solverSubstanceSelect" class="select-pro text-xs">
+            <!-- Populated via JavaScript -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Temperature Compensation Section Toggle -->
+      <div class="p-4 sm:p-5 rounded-xl bg-surface-900/40 border border-white/[0.04] space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">🌡️</span>
+            <span class="text-xs font-bold text-slate-300">Temperature Density Correction (Optional)</span>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="tempCompensationToggle" class="sr-only peer" />
+            <div class="w-9 h-5 bg-surface-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-500"></div>
+          </label>
+        </div>
+
+        <div id="tempCompensationPanel" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-white/[0.04]">
+          <div>
+            <label for="tempInputWorking" class="text-[11px] text-slate-400 block mb-1">Operating Temperature (°C)</label>
+            <input type="number" id="tempInputWorking" value="40" step="1" class="input-pro font-mono text-xs" />
+          </div>
+          <div>
+            <label for="tempInputExpansion" class="text-[11px] text-slate-400 block mb-1">Expansion Coeff β (/°C)</label>
+            <input type="number" id="tempInputExpansion" value="0.00085" step="0.00001" class="input-pro font-mono text-xs" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Result & Scientific Breakdown (5 Cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Calculated Output Hero Card -->
+      <div class="p-6 rounded-2xl bg-gradient-to-br from-surface-900 to-surface-950 border border-brand-500/30 space-y-4 glow-brand-strong relative overflow-hidden">
+        <div class="space-y-1">
+          <span id="resPrimaryLabel" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">
+            Calculated Output Volume
+          </span>
+          <p class="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white">
+            <span id="resPrimaryVal" class="gradient-text">12.019</span>
+            <span id="resPrimaryUnit" class="text-sm font-bold text-slate-400 font-mono ml-1">Litres</span>
+          </p>
+          <p id="resSecondaryVal" class="text-xs text-slate-500 font-mono mt-1">
+            Equal to 12,019.23 mL (3.175 US Gal)
+          </p>
+        </div>
+
+        <div class="border-t border-white/[0.06] pt-4 grid grid-cols-2 gap-3 text-xs font-mono">
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Effective Density:</span>
+            <strong id="resEffectiveDensity" class="text-brand-300">0.832 kg/L</strong>
+          </div>
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Specific Gravity:</span>
+            <strong id="resSpecificGravity" class="text-emerald-400">0.832 SG</strong>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="copySolverResultBtn"
+          class="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-2"
+        >
+          <span>📋</span> <span id="copySolverResultTxt">Copy Calculation Result</span>
+        </button>
+      </div>
+
+      <!-- Step-by-Step Algebraic Derivation Box -->
+      <div class="p-5 rounded-xl bg-surface-950 border border-white/[0.04] space-y-2 text-xs font-mono text-slate-300">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+          Mathematical Derivation &amp; Steps
+        </span>
+        <div class="divider-glow mb-2"></div>
+        <p id="stepFormula" class="text-slate-400">1. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L)</p>
+        <p id="stepSubstitution" class="text-slate-400">2. Substitution: 10.00 kg ÷ 0.832 kg/L</p>
+        <p id="stepFinalResult" class="text-brand-300 font-bold">3. Final Result = 12.019 Litres</p>
+      </div>
+    </div>
+  </div>
+
+  <TemperatureDisclaimer />
+</div>
+
+<script>
+  import type { CatalogItem } from '../../data/catalog';
+  import { industryModes } from '../../data/industryModes';
+
+  let currentTarget: 'volume' | 'mass' | 'density' = 'volume';
+  let catalog: CatalogItem[] = [];
+  let currentIndustryMode = 'all';
+
+  // Unit Conversion Factors to SI (Mass -> kg, Volume -> L, Density -> kg/L)
+  const massToKg: Record<string, number> = {
+    kg: 1.0,
+    g: 0.001,
+    mg: 0.000001,
+    lb: 0.45359237,
+    oz: 0.0283495,
+    tonne: 1000.0,
+  };
+
+  const volToLitres: Record<string, number> = {
+    L: 1.0,
+    mL: 0.001,
+    m3: 1000.0,
+    cm3: 0.001,
+    us_gal: 3.78541,
+    imp_gal: 4.54609,
+    fl_oz: 0.0295735,
+    cup: 0.236588,
+  };
+
+  const densityToKgPerL: Record<string, number> = {
+    kg_per_l: 1.0,
+    kg_per_m3: 0.001,
+    g_per_ml: 1.0,
+    lb_per_gal: 0.119826,
+    lb_per_ft3: 0.0160185,
+    sg: 1.0, // Water reference density ~ 1.0 kg/L
+  };
+
+  function updateTargetModeUI() {
+    const groupMass = document.getElementById('solverGroupMass');
+    const groupVol = document.getElementById('solverGroupVolume');
+    const groupDens = document.getElementById('solverGroupDensity');
+
+    if (currentTarget === 'volume') {
+      groupMass?.classList.remove('hidden');
+      groupVol?.classList.add('hidden');
+      groupDens?.classList.remove('hidden');
+    } else if (currentTarget === 'mass') {
+      groupMass?.classList.add('hidden');
+      groupVol?.classList.remove('hidden');
+      groupDens?.classList.remove('hidden');
+    } else if (currentTarget === 'density') {
+      groupMass?.classList.remove('hidden');
+      groupVol?.classList.remove('hidden');
+      groupDens?.classList.add('hidden');
+    }
+
+    calculateSolver();
+  }
+
+  function calculateSolver() {
+    const massRaw = parseFloat((document.getElementById('solverInputMass') as HTMLInputElement)?.value || '0') || 0;
+    const massUnit = (document.getElementById('solverUnitMass') as HTMLSelectElement)?.value || 'kg';
+    const massKg = massRaw * (massToKg[massUnit] || 1.0);
+
+    const volRaw = parseFloat((document.getElementById('solverInputVolume') as HTMLInputElement)?.value || '0') || 0;
+    const volUnit = (document.getElementById('solverUnitVolume') as HTMLSelectElement)?.value || 'L';
+    const volL = volRaw * (volToLitres[volUnit] || 1.0);
+
+    let densRaw = parseFloat((document.getElementById('solverInputDensity') as HTMLInputElement)?.value || '1.0') || 1.0;
+    const densUnit = (document.getElementById('solverUnitDensity') as HTMLSelectElement)?.value || 'kg_per_l';
+    let densityKgPerL = densRaw * (densityToKgPerL[densUnit] || 1.0);
+
+    // Temperature compensation
+    const isTempCompActive = (document.getElementById('tempCompensationToggle') as HTMLInputElement)?.checked;
+    if (isTempCompActive) {
+      const workingT = parseFloat((document.getElementById('tempInputWorking') as HTMLInputElement)?.value || '20');
+      const beta = parseFloat((document.getElementById('tempInputExpansion') as HTMLInputElement)?.value || '0.00085');
+      const deltaT = workingT - 20; // 20°C reference
+      densityKgPerL = densityKgPerL / (1 + beta * deltaT);
+    }
+
+    const resPrimaryLabel = document.getElementById('resPrimaryLabel');
+    const resPrimaryVal = document.getElementById('resPrimaryVal');
+    const resPrimaryUnit = document.getElementById('resPrimaryUnit');
+    const resSecondaryVal = document.getElementById('resSecondaryVal');
+    const resEffDens = document.getElementById('resEffectiveDensity');
+    const resSg = document.getElementById('resSpecificGravity');
+
+    const stepFormula = document.getElementById('stepFormula');
+    const stepSub = document.getElementById('stepSubstitution');
+    const stepFinal = document.getElementById('stepFinalResult');
+
+    if (currentTarget === 'volume') {
+      const calculatedVolL = densityKgPerL > 0 ? massKg / densityKgPerL : 0;
+      const calcML = calculatedVolL * 1000;
+      const calcUsGal = calculatedVolL * 0.264172;
+
+      if (resPrimaryLabel) resPrimaryLabel.textContent = 'Calculated Output Volume';
+      if (resPrimaryVal) resPrimaryVal.textContent = calculatedVolL.toFixed(3);
+      if (resPrimaryUnit) resPrimaryUnit.textContent = 'Litres';
+      if (resSecondaryVal) resSecondaryVal.textContent = `Equal to ${calcML.toLocaleString(undefined, { maximumFractionDigits: 1 })} mL (${calcUsGal.toFixed(3)} US Gal)`;
+
+      if (stepFormula) stepFormula.textContent = `1. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L)`;
+      if (stepSub) stepSub.textContent = `2. Substitution: ${massKg.toFixed(3)} kg ÷ ${densityKgPerL.toFixed(4)} kg/L`;
+      if (stepFinal) stepFinal.textContent = `3. Final Volume = ${calculatedVolL.toFixed(3)} Litres (${calcML.toFixed(1)} mL)`;
+    } else if (currentTarget === 'mass') {
+      const calculatedMassKg = volL * densityKgPerL;
+      const calcGrams = calculatedMassKg * 1000;
+      const calcLbs = calculatedMassKg * 2.20462;
+
+      if (resPrimaryLabel) resPrimaryLabel.textContent = 'Calculated Output Mass';
+      if (resPrimaryVal) resPrimaryVal.textContent = calculatedMassKg.toFixed(3);
+      if (resPrimaryUnit) resPrimaryUnit.textContent = 'Kilograms';
+      if (resSecondaryVal) resSecondaryVal.textContent = `Equal to ${calcGrams.toLocaleString(undefined, { maximumFractionDigits: 1 })} g (${calcLbs.toFixed(3)} lbs)`;
+
+      if (stepFormula) stepFormula.textContent = `1. Formula: Mass (kg) = Volume (L) × Density (kg/L)`;
+      if (stepSub) stepSub.textContent = `2. Substitution: ${volL.toFixed(3)} L × ${densityKgPerL.toFixed(4)} kg/L`;
+      if (stepFinal) stepFinal.textContent = `3. Final Mass = ${calculatedMassKg.toFixed(3)} Kilograms (${calcGrams.toFixed(1)} g)`;
+    } else if (currentTarget === 'density') {
+      const calculatedDensity = volL > 0 ? massKg / volL : 0;
+      const densGPerCm3 = calculatedDensity;
+      const densLbPerGal = calculatedDensity * 8.3454;
+
+      if (resPrimaryLabel) resPrimaryLabel.textContent = 'Calculated Output Density';
+      if (resPrimaryVal) resPrimaryVal.textContent = calculatedDensity.toFixed(4);
+      if (resPrimaryUnit) resPrimaryUnit.textContent = 'kg/L';
+      if (resSecondaryVal) resSecondaryVal.textContent = `Equal to ${densGPerCm3.toFixed(4)} g/cm³ (${densLbPerGal.toFixed(2)} lb/gal)`;
+
+      if (stepFormula) stepFormula.textContent = `1. Formula: Density (kg/L) = Mass (kg) ÷ Volume (L)`;
+      if (stepSub) stepSub.textContent = `2. Substitution: ${massKg.toFixed(3)} kg ÷ ${volL.toFixed(3)} L`;
+      if (stepFinal) stepFinal.textContent = `3. Final Density = ${calculatedDensity.toFixed(4)} kg/L`;
+      densityKgPerL = calculatedDensity;
+    }
+
+    if (resEffDens) resEffDens.textContent = `${densityKgPerL.toFixed(4)} kg/L`;
+    if (resSg) resSg.textContent = `${(densityKgPerL / 1.0).toFixed(4)} SG`;
+  }
+
+  function populateSubstanceSelect() {
+    const sel = document.getElementById('solverSubstanceSelect') as HTMLSelectElement | null;
+    if (!sel) return;
+
+    let items = catalog;
+    if (currentIndustryMode !== 'all') {
+      const mode = industryModes.find((m) => m.id === currentIndustryMode);
+      if (mode) {
+        items = catalog.filter(
+          (c) =>
+            mode.primaryCategories.includes(c.category) ||
+            mode.popularSubstanceKeys.includes(c.catalogKey) ||
+            mode.popularSubstanceKeys.includes(c.id),
+        );
+      }
+    }
+
+    sel.innerHTML = items
+      .map((c) => `<option value="${c.density}" data-key="${c.catalogKey}">${c.name} (${c.density} kg/L)</option>`)
+      .join('');
+  }
+
+  window.addEventListener('industry-mode-change', (e: Event) => {
+    const customEvent = e as CustomEvent<{ modeId: string }>;
+    currentIndustryMode = customEvent.detail.modeId;
+    populateSubstanceSelect();
+    calculateSolver();
+  });
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Mode tabs
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.solver-mode-tab');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        currentTarget = (tab.dataset.target as any) || 'volume';
+        tabs.forEach((t) => {
+          const isSel = t === tab;
+          t.className = isSel
+            ? 'solver-mode-tab p-3.5 rounded-xl border text-center transition-all bg-brand-500 text-slate-950 border-brand-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm'
+            : 'solver-mode-tab p-3.5 rounded-xl border text-center transition-all bg-surface-900/80 text-slate-400 border-white/[0.06] hover:text-white hover:border-brand-500/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2';
+        });
+        updateTargetModeUI();
+      });
+    });
+
+    // Inputs
+    const inputs = document.querySelectorAll('#customDensitySolverRoot input, #customDensitySolverRoot select');
+    inputs.forEach((el) => {
+      el.addEventListener('input', calculateSolver);
+      el.addEventListener('change', calculateSolver);
+    });
+
+    // Substance Select change
+    document.getElementById('solverSubstanceSelect')?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      const densInput = document.getElementById('solverInputDensity') as HTMLInputElement | null;
+      if (densInput && val) {
+        densInput.value = val;
+        calculateSolver();
+      }
+    });
+
+    // Temperature toggle
+    document.getElementById('tempCompensationToggle')?.addEventListener('change', (e) => {
+      const panel = document.getElementById('tempCompensationPanel');
+      if ((e.target as HTMLInputElement).checked) {
+        panel?.classList.remove('hidden');
+      } else {
+        panel?.classList.add('hidden');
+      }
+      calculateSolver();
+    });
+
+    // Copy Result
+    document.getElementById('copySolverResultBtn')?.addEventListener('click', async () => {
+      const val = document.getElementById('resPrimaryVal')?.textContent;
+      const unit = document.getElementById('resPrimaryUnit')?.textContent;
+      const eff = document.getElementById('resEffectiveDensity')?.textContent;
+      const txt = `Custom Density Calculation: ${val} ${unit} (Density: ${eff})`;
+      await navigator.clipboard.writeText(txt);
+      const copyTxt = document.getElementById('copySolverResultTxt');
+      if (copyTxt) copyTxt.textContent = 'Copied!';
+      setTimeout(() => {
+        if (copyTxt) copyTxt.textContent = 'Copy Calculation Result';
+      }, 1800);
+    });
+
+    // Fetch Catalog
+    try {
+      const res = await fetch('/data/substances.json');
+      if (res.ok) {
+        catalog = (await res.json()) as CatalogItem[];
+        populateSubstanceSelect();
+        calculateSolver();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  });
+</script>
