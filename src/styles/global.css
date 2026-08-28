@@ -870,4 +870,34 @@ html.dark .equivalence-item.no {
   }
 }
 
+/* ========================================================================
+   QUICK LINKS (HERO & NAVIGATION)
+   ======================================================================== */
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.quick-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.quick-links a:hover {
+  color: var(--accent);
+  border-color: rgba(41, 165, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+
 
