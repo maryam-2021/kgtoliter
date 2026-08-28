@@ -376,6 +376,49 @@ const categoriesList = [
       return;
     }
 
+    function updateConversions(volumeL: number) {
+      if (mode === 'kg-to-l') {
+        // Millilitres
+        if (resultML) {
+          resultML.textContent = (volumeL * 1000).toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          });
+        }
+        // US Gallons (1 US gal = 3.78541 L)
+        if (resultGal) {
+          resultGal.textContent = (volumeL / 3.78541).toFixed(3);
+        }
+        // UK Gallons (1 UK gal = 4.54609 L)
+        if (resultUKGal) {
+          resultUKGal.textContent = (volumeL / 4.54609).toFixed(3);
+        }
+        if (convLabel1) convLabel1.textContent = 'Millilitres';
+        if (convLabel2) convLabel2.textContent = 'US Gallons';
+        if (convLabel3) convLabel3.textContent = 'UK Gallons';
+      } else {
+        const massKg = volumeL;
+        // Grams
+        if (resultML) {
+          resultML.textContent = (massKg * 1000).toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          });
+        }
+        // Pounds (1 lb = 0.45359237 kg)
+        if (resultGal) {
+          resultGal.textContent = (massKg / 0.45359237).toFixed(3);
+        }
+        // Ounces (1 oz = 0.028349523 kg)
+        if (resultUKGal) {
+          resultUKGal.textContent = (massKg / 0.028349523).toFixed(2);
+        }
+        if (convLabel1) convLabel1.textContent = 'Grams (g)';
+        if (convLabel2) convLabel2.textContent = 'Pounds (lbs)';
+        if (convLabel3) convLabel3.textContent = 'Ounces (oz)';
+      }
+    }
+
     function calculateAndBroadcast() {
       const mass = parseFloat(massInput?.value || '0') || 0;
       const density = parseFloat(substanceSelect?.value || '1.000') || 1.0;
@@ -402,13 +445,8 @@ const categoriesList = [
         if (resultUnit) resultUnit.textContent = 'Litres';
         if (resultLabel) resultLabel.textContent = 'Resulting Volume:';
 
-        // Expanded equivalents
-        if (resultML) resultML.textContent = (volume * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 });
-        if (resultGal) resultGal.textContent = (volume * 0.264172).toFixed(3);
-        if (resultUKGal) resultUKGal.textContent = (volume * 0.219969).toFixed(3);
-        if (convLabel1) convLabel1.textContent = 'Millilitres';
-        if (convLabel2) convLabel2.textContent = 'US Gallons';
-        if (convLabel3) convLabel3.textContent = 'UK Gallons';
+        // Update expanded conversions
+        updateConversions(volume);
 
         if (rangeResultValue) {
           rangeResultValue.textContent = `${minVol.toFixed(3)} L – ${maxVol.toFixed(3)} L (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
@@ -440,13 +478,8 @@ const categoriesList = [
         if (resultUnit) resultUnit.textContent = 'Kilograms';
         if (resultLabel) resultLabel.textContent = 'Resulting Mass:';
 
-        // Expanded equivalents (Mass)
-        if (resultML) resultML.textContent = (massVal * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 });
-        if (resultGal) resultGal.textContent = (massVal * 2.20462).toFixed(3);
-        if (resultUKGal) resultUKGal.textContent = (massVal * 35.274).toFixed(2);
-        if (convLabel1) convLabel1.textContent = 'Grams (g)';
-        if (convLabel2) convLabel2.textContent = 'Pounds (lbs)';
-        if (convLabel3) convLabel3.textContent = 'Ounces (oz)';
+        // Update expanded conversions (Mass)
+        updateConversions(massVal);
 
         if (rangeResultValue) {
           rangeResultValue.textContent = `${minMass.toFixed(3)} kg – ${maxMass.toFixed(3)} kg (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
