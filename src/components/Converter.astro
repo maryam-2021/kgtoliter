@@ -198,6 +198,56 @@ const categoriesList = [
           ▼
         </div>
       </div>
+
+      <!-- Custom Density Override Section -->
+      <div class="custom-density-section p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+        <div class="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            id="customDensityToggle"
+            class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-slate-700 focus:ring-brand-500 focus:ring-2 cursor-pointer accent-sky-400"
+          />
+          <label for="customDensityToggle" class="text-xs font-semibold text-slate-300 font-mono cursor-pointer">
+            Enter custom density
+          </label>
+        </div>
+
+        <div id="customDensityInput" class="hidden space-y-3 pt-2 border-t border-slate-800/80">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="customDensityValue" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono mb-1">
+                Density Value
+              </label>
+              <input
+                type="number"
+                id="customDensityValue"
+                value="1.0"
+                step="any"
+                min="0.0001"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+              />
+            </div>
+            <div>
+              <label for="customDensityUnit" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono mb-1">
+                Density Unit
+              </label>
+              <select
+                id="customDensityUnit"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer"
+              >
+                <option value="kg/L">kg/L (kg per litre)</option>
+                <option value="g/mL">g/mL (g per millilitre)</option>
+                <option value="lb/ft3">lb/ft³ (pounds per cu ft)</option>
+                <option value="kg/m3">kg/m³ (kg per cu meter)</option>
+              </select>
+            </div>
+          </div>
+          <div class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+            <span id="customDensityNote">Enter density in kg/L (water = 1.0 kg/L)</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Conversion Result Card -->
@@ -372,6 +422,12 @@ const categoriesList = [
     const shareText = document.getElementById('share-text');
     const categoryFilterBtns = document.querySelectorAll('.category-filter-btn');
 
+    const customDensityToggle = document.getElementById('customDensityToggle') as HTMLInputElement;
+    const customDensityInput = document.getElementById('customDensityInput') as HTMLDivElement;
+    const customDensityValue = document.getElementById('customDensityValue') as HTMLInputElement;
+    const customDensityUnit = document.getElementById('customDensityUnit') as HTMLSelectElement;
+    const customDensityNote = document.getElementById('customDensityNote') as HTMLSpanElement;
+
     if (!massInput || !substanceSelect || !resultDisplay) {
       return;
     }
@@ -421,14 +477,34 @@ const categoriesList = [
 
     function calculateAndBroadcast() {
       const mass = parseFloat(massInput?.value || '0') || 0;
-      const density = parseFloat(substanceSelect?.value || '1.000') || 1.0;
       const selectedOption = substanceSelect.options[substanceSelect.selectedIndex];
-      const substanceId = selectedOption?.dataset.id || 'water';
-      const substanceName = selectedOption?.dataset.name || 'Water';
-      const densityNote = selectedOption?.dataset.note || '';
-      const temperature = selectedOption?.dataset.temperature || '20';
-      const minDensity = selectedOption?.dataset.min ? parseFloat(selectedOption.dataset.min) : density * 0.97;
-      const maxDensity = selectedOption?.dataset.max ? parseFloat(selectedOption.dataset.max) : density * 1.03;
+      let density = parseFloat(substanceSelect?.value || '1.000') || 1.0;
+      let substanceId = selectedOption?.dataset.id || 'water';
+      let substanceName = selectedOption?.dataset.name || 'Water';
+      let densityNote = selectedOption?.dataset.note || '';
+      let temperature = selectedOption?.dataset.temperature || '20';
+      let minDensity = selectedOption?.dataset.min ? parseFloat(selectedOption.dataset.min) : density * 0.97;
+      let maxDensity = selectedOption?.dataset.max ? parseFloat(selectedOption.dataset.max) : density * 1.03;
+
+      if (customDensityToggle?.checked) {
+        const rawVal = parseFloat(customDensityValue?.value || '1.0') || 1.0;
+        const unit = customDensityUnit?.value || 'kg/L';
+        let densityKgL = rawVal;
+        if (unit === 'g/mL') densityKgL = rawVal;
+        else if (unit === 'lb/ft3') densityKgL = rawVal * 0.016018463;
+        else if (unit === 'kg/m3') densityKgL = rawVal * 0.001;
+
+        density = densityKgL > 0 ? densityKgL : 1.0;
+        minDensity = density * 0.98;
+        maxDensity = density * 1.02;
+        substanceId = 'custom';
+        substanceName = 'Custom Substance';
+        densityNote = `Custom input: ${rawVal} ${unit}`;
+        if (customDensityNote) {
+          customDensityNote.textContent = `Effective density: ${density.toFixed(4)} kg/L (water = 1.000 kg/L)`;
+        }
+      }
+
       const liquidColor = liquidColors[substanceId] || '#60a5fa';
 
       if (densityDisplay) densityDisplay.textContent = `${density.toFixed(3)} kg/L`;
@@ -541,6 +617,14 @@ const categoriesList = [
 
     massInput?.addEventListener('input', calculateAndBroadcast);
     substanceSelect?.addEventListener('change', calculateAndBroadcast);
+
+    customDensityToggle?.addEventListener('change', () => {
+      const isCustom = customDensityToggle.checked;
+      customDensityInput?.classList.toggle('hidden', !isCustom);
+      calculateAndBroadcast();
+    });
+    customDensityValue?.addEventListener('input', calculateAndBroadcast);
+    customDensityUnit?.addEventListener('change', calculateAndBroadcast);
 
     // Search and filtering
     function filterOptions() {
