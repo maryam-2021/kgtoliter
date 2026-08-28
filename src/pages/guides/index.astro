@@ -26,6 +26,18 @@ const allGuides = await getCollection('guides');
         </p>
       </div>
 
+      <!-- Featured Master Guide -->
+      <div class="mb-8 p-6 rounded-2xl bg-gradient-to-r from-brand-900/30 to-surface-900 border border-brand-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase text-brand-400 font-bold tracking-wider">Featured Master Guide</span>
+          <h2 class="text-xl font-bold text-white mt-1">Kg to Litres Complete Conversion Guide</h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Step-by-step calculations, density lookups, gallon/ml tables, and FAQs.</p>
+        </div>
+        <a href="/kg-to-litres-guide/" class="btn-primary flex-shrink-0 text-xs py-2 px-4 inline-flex items-center gap-1.5">
+          Read Master Guide &rarr;
+        </a>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         {
           allGuides.map((guide) => (

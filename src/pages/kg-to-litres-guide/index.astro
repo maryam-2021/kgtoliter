@@ -1,87 +1,300 @@
 ---
 // src/pages/kg-to-litres-guide/index.astro
 import BaseLayout from '@layouts/BaseLayout.astro';
+import FAQAccordion from '@components/interactive/FAQAccordion.astro';
 import { getCollection } from 'astro:content';
 
 const allGuides = await getCollection('guides');
 
-const pageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Kg to Litres Complete Guide & Engineering Hub',
-  description: 'Complete guide and reference collection for converting kilograms to litres across chemical, culinary, and automotive substances.',
-  url: 'https://kgtoliter.com/kg-to-litres-guide/',
-};
+const guideFaqs = [
+  {
+    q: 'How do you convert kilograms to litres?',
+    a: "To convert kilograms (kg) to litres (L), divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For water (density 1.0 kg/L), 1 kg = 1 L.",
+  },
+  {
+    q: 'How many kg are in 1 litre of water?',
+    a: '1 litre of pure water weighs exactly 1 kilogram at 4°C and approximately 0.998 kg at room temperature (20°C).',
+  },
+  {
+    q: 'Why does 1 kg of olive oil equal more than 1 litre?',
+    a: 'Olive oil is less dense than water (density ~0.910 kg/L). Because density is less than 1, dividing 1 kg by 0.910 gives 1.099 litres.',
+  },
+  {
+    q: 'How do you convert litres to US gallons and UK gallons?',
+    a: '1 US gallon equals 3.78541 litres (1 L = 0.26417 US gal). 1 UK (Imperial) gallon equals 4.54609 litres (1 L = 0.21997 UK gal).',
+  },
+  {
+    q: 'How many millilitres (ml) are in a litre?',
+    a: 'There are exactly 1,000 millilitres (ml) in 1 litre (L). To convert litres to ml, multiply by 1,000.',
+  },
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Kg to Litres Complete Conversion Guide: Formula, Physics, & Tables',
+    description: 'The definitive guide to converting kilograms to litres across liquids, fuels, cooking ingredients, and industrial chemicals.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/kg-to-litres-guide/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guideFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
 ---
 
 <BaseLayout 
-  title="Kg to Litres Complete Guide & Engineering Hub"
-  description="Complete guide and reference collection for converting kilograms to litres across chemical, culinary, and automotive substances."
+  title="Kg to Litres Complete Conversion Guide & Engineering Reference"
+  description="Master kg to litres conversion: step-by-step formulas, density lookup tables, gallon/ml charts, and FAQ answers for 772+ substances."
   canonicalUrl="https://kgtoliter.com/kg-to-litres-guide/"
   schema={pageSchema}
 >
-  <div class="container mx-auto px-4 py-12 max-w-5xl">
-    <div class="mb-10 text-center">
-      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider mb-4 inline-block">
-        Technical Knowledge Hub
+  <div class="container mx-auto px-4 py-12 max-w-4xl space-y-12">
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider inline-block">
+        Comprehensive Technical Guide
       </span>
-      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 section-title">
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white section-title">
         Kg to Litres Conversion Guide
       </h1>
       <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-        Everything you need to know about mass-to-volume math, temperature variations, and industry density values.
+        Everything you need to convert mass (kg) to volume (litres, gallons, ml) with exact density formulas and industry standards.
       </p>
-    </div>
 
-    <!-- Guides Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-      {
-        allGuides.map((guide) => (
-          <a
-            href={`/guides/${guide.id}/`}
-            class="group glass-card glass-card-hover rounded-2xl p-6 border border-slate-800 block transition-all"
-          >
-            <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-2">
-              <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20 capitalize font-sans">
+      <!-- Quick Nav Anchor Pills -->
+      <nav aria-label="Guide quick links" class="flex flex-wrap justify-center gap-2 pt-4">
+        <a href="#how-to-convert-kg-to-litres" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How to Convert</a>
+        <a href="#how-many-kg-to-litre" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Kg to a Litre</a>
+        <a href="#how-much-litre-to-gallon" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Litre to Gallon</a>
+        <a href="#how-much-litre-to-ml" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Litre to ml</a>
+        <a href="#related-guides" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Related Articles</a>
+        <a href="#faq" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">FAQ</a>
+      </nav>
+    </header>
+
+    <!-- Content Block 1: How to Convert kg to Litres -->
+    <section class="content-block scroll-mt-24" id="how-to-convert-kg-to-litres">
+      <h2 class="text-2xl font-bold text-white">How to Convert kg to Litres</h2>
+      <p class="text-slate-300">Follow this simple 3-step method to convert any mass measurement into exact spatial volume:</p>
+      
+      <div class="step-by-step">
+        <div class="step">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <h4>Identify the substance</h4>
+            <p>Determine the liquid or material you are converting (water, milk, diesel, honey, engine oil, etc.).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <h4>Find its density</h4>
+            <p>Look up the reference density in kg/L from our <a href="/#density-directory">density directory</a> or material safety datasheet (MSDS).</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <h4>Apply the formula</h4>
+            <div class="formula-box">
+              Volume (L) = Mass (kg) ÷ Density (kg/L)
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="example-calculation">
+        <h4>Example: Convert 5 kg of olive oil</h4>
+        <ul>
+          <li><strong>Mass:</strong> 5 kg</li>
+          <li><strong>Density of olive oil:</strong> 0.910 kg/L</li>
+          <li><strong>Volume:</strong> 5 ÷ 0.910 = <strong class="text-brand-400 font-mono">5.495 L</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Content Block 2: How Many kg to a Litre? -->
+    <section class="content-block scroll-mt-24" id="how-many-kg-to-litre">
+      <h2 class="text-2xl font-bold text-white">How Many kg to a Litre?</h2>
+      <p class="text-slate-300">The number of kilograms in one litre depends directly on the material's specific density. The formula is:</p>
+      <div class="formula-box">
+        Mass (kg) = Volume (L) &times; Density (kg/L)
+      </div>
+      
+      <div class="example-grid">
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Water</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 1.000 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(1.000 kg/L)</span>
+        </div>
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Milk</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 1.030 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(1.030 kg/L)</span>
+        </div>
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Olive Oil</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 0.910 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(0.910 kg/L)</span>
+        </div>
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Honey</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 1.420 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(1.420 kg/L)</span>
+        </div>
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Diesel</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 0.832 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(0.832 kg/L)</span>
+        </div>
+        <div class="example-item">
+          <span class="substance font-bold text-white block">Gasoline</span>
+          <span class="result font-mono text-brand-400 font-bold block">1 L = 0.748 kg</span>
+          <span class="density text-xs text-slate-500 font-mono block">(0.748 kg/L)</span>
+        </div>
+      </div>
+      
+      <p class="text-slate-300 mt-4"><strong>Quick Rule:</strong> For water, 1 litre = 1 kg. Denser liquids (like honey) weigh more than 1 kg per litre, while lighter liquids (like oils and fuels) weigh less than 1 kg per litre.</p>
+    </section>
+
+    <!-- Content Block 3: How Much Litre to Gallon? -->
+    <section class="content-block scroll-mt-24" id="how-much-litre-to-gallon">
+      <h2 class="text-2xl font-bold text-white">How Much Litre to Gallon?</h2>
+      <p class="text-slate-300">Liquid gallons vary depending on the regional measurement system:</p>
+      
+      <div class="conversion-cards">
+        <div class="conversion-card">
+          <h3 class="text-lg font-bold text-white mb-2">US Liquid Gallon</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 US gal = 3.78541 L</div>
+          <div class="conversion-value text-slate-300 font-mono text-sm">1 L = 0.26417 US gal</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="text-lg font-bold text-white mb-2">UK (Imperial) Gallon</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 UK gal = 4.54609 L</div>
+          <div class="conversion-value text-slate-300 font-mono text-sm">1 L = 0.21997 UK gal</div>
+        </div>
+      </div>
+      
+      <div class="example-calculation">
+        <h4 class="text-base font-bold text-white mb-2">Example: 5 Litres to Gallons</h4>
+        <p class="text-slate-300">5 L &times; 0.26417 = <strong class="text-white font-mono">1.321 US gallons</strong></p>
+        <p class="text-slate-300 mt-1">5 L &times; 0.21997 = <strong class="text-white font-mono">1.100 UK gallons</strong></p>
+      </div>
+    </section>
+
+    <!-- Content Block 4: How Much Litre to ml? -->
+    <section class="content-block scroll-mt-24" id="how-much-litre-to-ml">
+      <h2 class="text-2xl font-bold text-white">How Much Litre to ml?</h2>
+      <p class="text-slate-300 mt-2"><strong class="text-white">1 litre = 1,000 millilitres (ml)</strong></p>
+      
+      <div class="conversion-table my-4 overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Litres (L)</th>
+              <th>Millilitres (ml)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="font-mono">0.1 L</td><td class="font-mono text-brand-400 font-semibold">100 ml</td></tr>
+            <tr><td class="font-mono">0.25 L</td><td class="font-mono text-brand-400 font-semibold">250 ml</td></tr>
+            <tr><td class="font-mono">0.5 L</td><td class="font-mono text-brand-400 font-semibold">500 ml</td></tr>
+            <tr><td class="font-mono">0.75 L</td><td class="font-mono text-brand-400 font-semibold">750 ml</td></tr>
+            <tr><td class="font-mono">1 L</td><td class="font-mono text-brand-400 font-semibold">1,000 ml</td></tr>
+            <tr><td class="font-mono">1.5 L</td><td class="font-mono text-brand-400 font-semibold">1,500 ml</td></tr>
+            <tr><td class="font-mono">2 L</td><td class="font-mono text-brand-400 font-semibold">2,000 ml</td></tr>
+            <tr><td class="font-mono">5 L</td><td class="font-mono text-brand-400 font-semibold">5,000 ml</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p class="text-slate-300 mt-3"><strong>Formula:</strong> <span class="font-mono text-brand-400">ml = Litres &times; 1,000</span></p>
+    </section>
+
+    <!-- Related Articles Section -->
+    <section class="scroll-mt-24 space-y-6" id="related-guides">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white section-title">Specific Conversion Guides</h2>
+          <p class="text-slate-400 text-sm mt-1">Deep-dive technical guides by material domain.</p>
+        </div>
+        <a href="/guides/" class="text-xs font-semibold text-brand-400 hover:underline">View all guides &rarr;</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {
+          allGuides.map((guide) => (
+            <a
+              href={`/guides/${guide.id}/`}
+              class="group glass-card glass-card-hover rounded-2xl p-5 border border-slate-800 block transition-all"
+            >
+              <span class="text-[10px] font-mono uppercase tracking-wider text-brand-400">
                 {guide.data.category}
               </span>
-              <span>•</span>
-              <span>
-                {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </span>
-            </div>
-            <h2 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors mb-2">
-              {guide.data.title}
-            </h2>
-            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
-              {guide.data.description}
-            </p>
-            <div class="mt-4">
-              <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform">
-                Read Guide &rarr;
-              </span>
-            </div>
-          </a>
-        ))
-      }
-    </div>
+              <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors mt-1 mb-1.5">
+                {guide.data.title}
+              </h3>
+              <p class="text-slate-400 text-xs leading-relaxed line-clamp-2">
+                {guide.data.description}
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
 
-    <!-- CTA -->
-    <div class="p-8 rounded-2xl bg-surface-900/60 border border-white/[0.08] text-center space-y-4">
-      <h2 class="text-2xl font-bold text-white">Need Real-Time Conversion?</h2>
+    <!-- FAQ Section with Schema -->
+    <section class="scroll-mt-24 space-y-6" id="faq">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Frequently Asked Questions</h2>
+        <p class="text-slate-400 text-sm">Common questions regarding kg to litre conversion calculations.</p>
+      </div>
+
+      <FAQAccordion faqs={guideFaqs} />
+    </section>
+
+    <!-- CTA Box -->
+    <section class="p-8 rounded-2xl bg-gradient-to-r from-brand-900/40 via-surface-900/80 to-brand-900/40 border border-brand-500/30 text-center space-y-4">
+      <h2 class="text-2xl font-bold text-white">Convert Any Substance Right Now</h2>
       <p class="text-slate-400 text-sm max-w-lg mx-auto">
-        Calculate mass and volume across 772+ substances with automatic temperature corrections and bulk CSV processing.
+        Access our real-time converter with 772+ substances, custom density support, and bulk file downloads.
       </p>
-      <div class="pt-2">
+      <div class="pt-2 flex flex-wrap justify-center gap-3">
         <a href="/" class="btn-primary inline-flex items-center gap-2">
-          <span>Explore Calculator</span>
+          <span>Open Main Converter</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
         </a>
+        <a href="/kg-to-l/" class="btn-secondary inline-flex items-center gap-2">
+          <span>Kg to L Quick Reference</span>
+        </a>
       </div>
-    </div>
+    </section>
   </div>
 </BaseLayout>
