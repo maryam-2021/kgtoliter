@@ -9,5 +9,8 @@ Allow: /substances/olive-oil
 Allow: /substances/honey
 Allow: /substances/diesel
 Allow: /substances/gasoline
+# Allow quick reference pages
+Allow: /kg-to-l/
 
 Sitemap: https://kgtoliter.com/sitemap-index.xml
+

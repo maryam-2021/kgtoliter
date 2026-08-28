@@ -1,0 +1,141 @@
+---
+// src/pages/kg-to-l/index.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const { locale = 'en' } = Astro.params;
+
+const quickConversions = [
+  { name: 'Water', result: '1 kg = 1.000 L', density: '1.000 kg/L', icon: '💧' },
+  { name: 'Milk', result: '1 kg = 0.971 L', density: '1.030 kg/L', icon: '🥛' },
+  { name: 'Olive Oil', result: '1 kg = 1.099 L', density: '0.910 kg/L', icon: '🫒' },
+  { name: 'Honey', result: '1 kg = 0.704 L', density: '1.420 kg/L', icon: '🍯' },
+  { name: 'Diesel', result: '1 kg = 1.202 L', density: '0.832 kg/L', icon: '⛽' },
+  { name: 'Gasoline', result: '1 kg = 1.337 L', density: '0.748 kg/L', icon: '🚗' },
+];
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Kg to L - Kilograms to Liters Quick Reference',
+  description: 'Quick reference for kg to L conversion. 1 kg water = 1 L. Use our converter for 772 substances.',
+  url: 'https://kgtoliter.com/kg-to-l/',
+};
+---
+
+<BaseLayout 
+  title="Kg to L - Kilograms to Liters Quick Reference"
+  description="Quick reference for kg to L conversion. 1 kg water = 1 L. Use our converter for 772 substances."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/kg-to-l/"
+  schema={pageSchema}
+>
+  <div class="container mx-auto px-4 py-12 max-w-4xl">
+    <!-- Header -->
+    <div class="mb-10 text-center">
+      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider mb-4 inline-block">
+        Quick Conversion Guide
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 section-title">
+        Kg to L: Quick Reference
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+        Quick reference and formula rules for converting kilograms (kg) to litres (L) across liquids and bulk materials.
+      </p>
+    </div>
+
+    <!-- Quick Conversion Summary Grid -->
+    <div class="glass-card p-6 sm:p-8 rounded-2xl mb-10 border border-white/[0.08] shadow-xl">
+      <div class="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
+        <div>
+          <h2 class="text-xl font-bold text-white">Quick Conversion Summary</h2>
+          <p class="text-xs text-slate-400 mt-1">1 Kilogram converted to litres at standard reference densities (20°C)</p>
+        </div>
+        <span class="badge badge-brand text-[10px]">1 kg &rarr; Litres</span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {
+          quickConversions.map((item) => (
+            <div class="bg-surface-950/80 p-4 rounded-xl border border-white/[0.06] text-center hover:border-brand-500/30 transition-colors">
+              <div class="text-2xl mb-1">{item.icon}</div>
+              <div class="text-sm font-semibold text-slate-300">{item.name}</div>
+              <div class="font-bold text-base sm:text-lg text-brand-400 font-mono mt-1">{item.result}</div>
+              <div class="text-[11px] text-slate-500 font-mono mt-0.5">({item.density})</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Informational Content -->
+    <div class="space-y-8 text-slate-300">
+      <!-- Section 1 -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">What Does "Kg to L" Mean?</h2>
+        <p class="leading-relaxed">
+          <strong class="text-white">"Kg to L"</strong> is shorthand for converting kilograms (kg) to litres (L). This conversion translates mass into volume based on a substance's density and is essential for culinary recipes, fuel management, industrial batch dosing, and laboratory calculations.
+        </p>
+      </section>
+
+      <!-- Section 2: The Formula -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">The Formula</h2>
+        <div class="p-5 rounded-xl bg-surface-950/90 border border-brand-500/20 text-center font-mono text-lg sm:text-xl font-bold text-brand-400 shadow-inner">
+          Volume (L) = Mass (kg) ÷ Density (kg/L)
+        </div>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          To calculate litres from kilograms, simply divide the weight in kg by the material's specific density in kg/L. Pure water has a density of 1.000 kg/L, meaning 1 kg of water equals exactly 1 litre.
+        </p>
+      </section>
+
+      <!-- Section 3: Why It Matters -->
+      <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Why Kg to L Conversion Matters</h2>
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+            <span class="text-xl">🍳</span>
+            <div>
+              <strong class="text-white block text-sm mb-0.5">Cooking &amp; Baking</strong>
+              <span class="text-xs text-slate-400 leading-relaxed">Recipes often specify liquid volume while ingredients are bought by weight.</span>
+            </div>
+          </li>
+          <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+            <span class="text-xl">⛽</span>
+            <div>
+              <strong class="text-white block text-sm mb-0.5">Fuel &amp; Energy</strong>
+              <span class="text-xs text-slate-400 leading-relaxed">Fuel is dispensed by volume but weighed during bulk transport logistics.</span>
+            </div>
+          </li>
+          <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+            <span class="text-xl">🧪</span>
+            <div>
+              <strong class="text-white block text-sm mb-0.5">Industrial Chemistry</strong>
+              <span class="text-xs text-slate-400 leading-relaxed">Chemical dosing requires precise volumetric concentration control.</span>
+            </div>
+          </li>
+          <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+            <span class="text-xl">🔬</span>
+            <div>
+              <strong class="text-white block text-sm mb-0.5">Scientific Labs</strong>
+              <span class="text-xs text-slate-400 leading-relaxed">Assays require accurate conversions between gravitational mass and volumetric flasks.</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- CTA -->
+      <div class="p-8 rounded-2xl bg-gradient-to-r from-brand-900/40 via-surface-900/60 to-brand-900/40 border border-brand-500/30 text-center space-y-4">
+        <h3 class="text-xl font-bold text-white">Need to Convert Another Substance?</h3>
+        <p class="text-sm text-slate-400 max-w-lg mx-auto">
+          Our calculator features 772+ validated density records, two-way conversion, custom density input, and multi-unit outputs.
+        </p>
+        <div class="pt-2">
+          <a href="/" class="btn-primary inline-flex items-center gap-2">
+            <span>Open Interactive Converter</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
