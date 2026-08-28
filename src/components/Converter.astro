@@ -489,19 +489,22 @@ const categoriesList = [
       if (customDensityToggle?.checked) {
         const rawVal = parseFloat(customDensityValue?.value || '1.0') || 1.0;
         const unit = customDensityUnit?.value || 'kg/L';
-        let densityKgL = rawVal;
-        if (unit === 'g/mL') densityKgL = rawVal;
-        else if (unit === 'lb/ft3') densityKgL = rawVal * 0.016018463;
-        else if (unit === 'kg/m3') densityKgL = rawVal * 0.001;
+        const unitConversions: Record<string, number> = {
+          'kg/L': 1,
+          'g/mL': 1,
+          'lb/ft3': 0.0160185,
+          'kg/m3': 0.001,
+        };
+        const densityInKgL = rawVal * (unitConversions[unit] || 1);
 
-        density = densityKgL > 0 ? densityKgL : 1.0;
+        density = densityInKgL > 0 ? densityInKgL : 1.0;
         minDensity = density * 0.98;
         maxDensity = density * 1.02;
         substanceId = 'custom';
         substanceName = 'Custom Substance';
         densityNote = `Custom input: ${rawVal} ${unit}`;
         if (customDensityNote) {
-          customDensityNote.textContent = `Effective density: ${density.toFixed(4)} kg/L (water = 1.000 kg/L)`;
+          customDensityNote.textContent = `Density: ${rawVal} ${unit} = ${densityInKgL.toFixed(3)} kg/L`;
         }
       }
 
@@ -621,6 +624,11 @@ const categoriesList = [
     customDensityToggle?.addEventListener('change', () => {
       const isCustom = customDensityToggle.checked;
       customDensityInput?.classList.toggle('hidden', !isCustom);
+      if (substanceSelect) {
+        substanceSelect.disabled = isCustom;
+        substanceSelect.classList.toggle('opacity-50', isCustom);
+        substanceSelect.classList.toggle('cursor-not-allowed', isCustom);
+      }
       calculateAndBroadcast();
     });
     customDensityValue?.addEventListener('input', calculateAndBroadcast);
