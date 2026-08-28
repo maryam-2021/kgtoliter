@@ -214,6 +214,7 @@ const categoriesList = [
           </p>
           <p class="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight flex items-baseline gap-2">
             <span id="result">{initialVolume.toFixed(3)}</span>
+            <span id="resultValue" class="hidden">{initialVolume.toFixed(3)}</span>
             <span id="result-unit" class="text-base font-bold text-slate-300 font-mono">Litres</span>
           </p>
           <p id="density-note" class="text-xs text-slate-400">
@@ -268,6 +269,27 @@ const categoriesList = [
           {(1 / (defaultSubstance.densityRange?.max || defaultSubstance.density * 1.03)).toFixed(3)} L – {(1 / (defaultSubstance.densityRange?.min || defaultSubstance.density * 0.97)).toFixed(3)} L
         </span>
       </div>
+
+      <!-- Expanded Conversions Box -->
+      <div class="converter-result-expanded p-3.5 rounded-xl bg-slate-950/80 border border-brand-500/20 space-y-2">
+        <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+          <span>Alternative Units &amp; Equivalents:</span>
+        </div>
+        <div class="result-conversions grid grid-cols-3 gap-2 sm:gap-3 text-center font-mono">
+          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
+            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-1">Millilitres</span>
+            <span class="conversion-value text-sm sm:text-base font-bold text-sky-400" id="resultML">{(initialVolume * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 })}</span>
+          </div>
+          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
+            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-2">US Gallons</span>
+            <span class="conversion-value text-sm sm:text-base font-bold text-indigo-400" id="resultGal">{(initialVolume * 0.264172).toFixed(3)}</span>
+          </div>
+          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
+            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-3">UK Gallons</span>
+            <span class="conversion-value text-sm sm:text-base font-bold text-purple-400" id="resultUKGal">{(initialVolume * 0.219969).toFixed(3)}</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Live Physical Property Cards -->
@@ -321,6 +343,13 @@ const categoriesList = [
     const clearSearchBtn = document.getElementById('clear-search-btn') as HTMLButtonElement;
     const substanceCountChip = document.getElementById('substance-count-chip') as HTMLSpanElement;
     const resultDisplay = document.getElementById('result') as HTMLSpanElement;
+    const resultValue = document.getElementById('resultValue') as HTMLSpanElement;
+    const resultML = document.getElementById('resultML') as HTMLSpanElement;
+    const resultGal = document.getElementById('resultGal') as HTMLSpanElement;
+    const resultUKGal = document.getElementById('resultUKGal') as HTMLSpanElement;
+    const convLabel1 = document.getElementById('conv-label-1') as HTMLSpanElement;
+    const convLabel2 = document.getElementById('conv-label-2') as HTMLSpanElement;
+    const convLabel3 = document.getElementById('conv-label-3') as HTMLSpanElement;
     const resultUnit = document.getElementById('result-unit') as HTMLSpanElement;
     const resultLabel = document.getElementById('result-label') as HTMLParagraphElement;
     const noteDisplay = document.getElementById('density-note') as HTMLParagraphElement;
@@ -369,8 +398,18 @@ const categoriesList = [
         const maxVol = minDensity > 0 ? mass / minDensity : 0;
 
         if (resultDisplay) resultDisplay.textContent = volume.toFixed(3);
+        if (resultValue) resultValue.textContent = volume.toFixed(3);
         if (resultUnit) resultUnit.textContent = 'Litres';
         if (resultLabel) resultLabel.textContent = 'Resulting Volume:';
+
+        // Expanded equivalents
+        if (resultML) resultML.textContent = (volume * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 });
+        if (resultGal) resultGal.textContent = (volume * 0.264172).toFixed(3);
+        if (resultUKGal) resultUKGal.textContent = (volume * 0.219969).toFixed(3);
+        if (convLabel1) convLabel1.textContent = 'Millilitres';
+        if (convLabel2) convLabel2.textContent = 'US Gallons';
+        if (convLabel3) convLabel3.textContent = 'UK Gallons';
+
         if (rangeResultValue) {
           rangeResultValue.textContent = `${minVol.toFixed(3)} L – ${maxVol.toFixed(3)} L (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
         }
@@ -397,8 +436,18 @@ const categoriesList = [
         const maxMass = mass * maxDensity;
 
         if (resultDisplay) resultDisplay.textContent = massVal.toFixed(3);
+        if (resultValue) resultValue.textContent = massVal.toFixed(3);
         if (resultUnit) resultUnit.textContent = 'Kilograms';
         if (resultLabel) resultLabel.textContent = 'Resulting Mass:';
+
+        // Expanded equivalents (Mass)
+        if (resultML) resultML.textContent = (massVal * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 });
+        if (resultGal) resultGal.textContent = (massVal * 2.20462).toFixed(3);
+        if (resultUKGal) resultUKGal.textContent = (massVal * 35.274).toFixed(2);
+        if (convLabel1) convLabel1.textContent = 'Grams (g)';
+        if (convLabel2) convLabel2.textContent = 'Pounds (lbs)';
+        if (convLabel3) convLabel3.textContent = 'Ounces (oz)';
+
         if (rangeResultValue) {
           rangeResultValue.textContent = `${minMass.toFixed(3)} kg – ${maxMass.toFixed(3)} kg (at ${minDensity.toFixed(3)}–${maxDensity.toFixed(3)} kg/L)`;
         }
