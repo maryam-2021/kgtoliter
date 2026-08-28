@@ -1332,6 +1332,127 @@ html.dark .equivalence-item.no {
   }
 }
 
+/* ========================================================================
+   SUBSTANCE INTRO, NOTE BOX & INTERACTIVE CALCULATOR DEMO
+   ======================================================================== */
+.substance-intro {
+  padding: 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+.substance-intro p {
+  margin: 0 0 0.5rem;
+  color: var(--text-secondary);
+}
+
+.substance-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.note-box {
+  padding: 1rem;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  margin: 1rem 0;
+}
+
+.note-box h4 {
+  margin: 0 0 0.25rem;
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.note-box p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.925rem;
+}
+
+/* Calculator Demo */
+.calculator-section {
+  margin: 1.25rem 0;
+}
+
+.calculator-demo {
+  padding: 1.5rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.calc-row label {
+  min-width: 130px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+}
+
+.calc-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  width: 140px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.calc-input:focus {
+  border-color: var(--accent);
+}
+
+.calc-result {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  margin-top: 1rem;
+}
+
+.calc-result .result-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calc-result .result-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono, monospace);
+}
+
+@media (max-width: 640px) {
+  .calc-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .calc-row label {
+    min-width: auto;
+  }
+  .calc-input {
+    width: 100%;
+  }
+}
+
+
 
 
 

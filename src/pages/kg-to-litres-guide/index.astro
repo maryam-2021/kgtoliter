@@ -12,12 +12,44 @@ const allGuides = await getCollection('guides');
 
 const guideFaqs = [
   {
-    q: 'How much is kg to litres?',
-    a: 'The conversion depends on density. For water: 1 kg = 1 L. For honey: 1 kg = 0.704 L.',
+    q: 'What is the kg to litre formula?',
+    a: 'Volume (L) = Mass (kg) ÷ Density (kg/L). This is the fundamental formula for converting kilograms to litres for any substance.',
   },
   {
-    q: 'How to convert kg to liters?',
-    a: 'Use the formula: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+    q: 'How many litres is 1 kg of oil?',
+    a: '1 kg of olive oil = 1.099 L, 1 kg of canola oil = 1.089 L, 1 kg of coconut oil = 1.082 L, 1 kg of avocado oil = 1.096 L.',
+  },
+  {
+    q: 'What is the kg to litres formula for water?',
+    a: '1 kg of water = 1 litre. The formula is Volume (L) = Mass (kg) ÷ 1.000.',
+  },
+  {
+    q: 'How many litres is 1 kg of diesel?',
+    a: '1 kg of diesel = 1.202 litres. Diesel has a density of approximately 0.832 kg/L.',
+  },
+  {
+    q: 'How many litres is 1 kg of LPG?',
+    a: '1 kg of LPG = 1.96 litres. LPG has a density of approximately 0.510 kg/L.',
+  },
+  {
+    q: 'How many litres is 1 kg of milk?',
+    a: '1 kg of milk = 0.971 litres. Milk has a density of approximately 1.030 kg/L.',
+  },
+  {
+    q: 'How many litres is 1 kg of paint?',
+    a: '1 kg of latex paint = 0.833 L, 1 kg of oil-based paint = 0.769 L, 1 kg of epoxy paint = 0.667 L, 1 kg of primer = 0.833 L.',
+  },
+  {
+    q: 'How many litres is 1 kg of gasoline?',
+    a: '1 kg of gasoline = 1.337 litres. Gasoline has a density of approximately 0.748 kg/L.',
+  },
+  {
+    q: 'How many litres is 1 kg of cat litter?',
+    a: '1 kg of clay litter = 1.25 L, 1 kg of crystal litter = 1.67 L, 1 kg of wood litter = 2.00 L, 1 kg of corn/wheat litter = 2.50 L.',
+  },
+  {
+    q: 'How much is kg to litres?',
+    a: 'The conversion depends on density. For water: 1 kg = 1 L. For honey: 1 kg = 0.704 L.',
   },
   {
     q: 'How to calculate kg to liter?',
@@ -25,35 +57,7 @@ const guideFaqs = [
   },
   {
     q: 'Is 1kg = 1 litre?',
-    a: 'Only for water. 1 kg water = 1 L. For other substances, 1 kg ≠ 1 L.',
-  },
-  {
-    q: 'How much is 1 kg to 1 liter?',
-    a: 'For water: 1 kg = 1 L. For milk: 1 kg = 0.971 L. For honey: 1 kg = 0.704 L.',
-  },
-  {
-    q: 'Are kg and litres the same?',
-    a: 'No. kg measures mass, litres measure volume. They are different physical properties.',
-  },
-  {
-    q: 'Is kg equal to litre?',
-    a: 'No, kg and litre are not equal. Only for water at 20°C do they have the same numerical value.',
-  },
-  {
-    q: 'What is kg to litres?',
-    a: "Kg to litres is the conversion of mass in kilograms to volume in litres using the substance's density.",
-  },
-  {
-    q: 'Can you convert kg to liters?',
-    a: 'Yes, using the formula: Volume (L) = Mass (kg) ÷ Density (kg/L).',
-  },
-  {
-    q: 'Are kg and liters the same?',
-    a: 'No. kg measures mass, liters measure volume. They are different units.',
-  },
-  {
-    q: 'How many kgs is 1 liter?',
-    a: 'For water: 1 L = 1 kg. For honey: 1 L = 1.42 kg. For gasoline: 1 L = 0.748 kg.',
+    a: 'Only for water at 20°C. For other substances, 1 kg ≠ 1 L.',
   },
 ];
 
@@ -61,8 +65,8 @@ const pageSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: 'KG to Litres Guide - Complete Conversion Reference',
-    description: 'Complete guide to converting kg to litres. Includes formulas, examples, and conversion tables for 772 substances.',
+    headline: 'KG to Litres Guide - Complete Conversion Reference & Formula Calculator',
+    description: 'Complete guide to converting kg to litres. Includes formulas, examples, interactive calculator demo, and conversion tables for 772 substances.',
     author: {
       '@type': 'Organization',
       name: 'Kg to Litre Engineering Team',
@@ -113,174 +117,50 @@ const pageSchema = [
         KG to Litres: Complete Conversion Guide
       </h1>
       <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-        Everything you need to know about converting kilograms to litres. This guide covers formulas, examples, and substance-specific conversions.
+        Everything you need to know about converting kilograms to litres. This guide covers formulas, examples, interactive calculators, and substance-specific conversions.
       </p>
 
       <!-- Quick Nav Anchor Pills -->
       <nav aria-label="Guide quick links" class="flex flex-wrap justify-center gap-2 pt-4">
-        <a href="#how-much-is-kg-to-litres" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How Much is kg to L</a>
-        <a href="#how-to-convert-kg-to-liters" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How to Convert</a>
-        <a href="#how-to-calculate-kg-to-liter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How to Calculate</a>
-        <a href="#is-1kg-equal-1-litre" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Is 1kg = 1 Litre?</a>
-        <a href="#how-much-1-kg-to-1-liter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">1 kg to 1 Liter</a>
-        <a href="#are-kg-and-litres-same" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Are kg &amp; L Same?</a>
-        <a href="#what-is-kg-to-litres" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">What is kg to L?</a>
-        <a href="#can-you-convert-kg-to-liters" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Can You Convert?</a>
-        <a href="#are-kg-and-liters-same" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Are kg &amp; Liters Same?</a>
-        <a href="#how-many-kgs-is-1-liter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How Many kgs is 1 L?</a>
+        <a href="#kg-to-litre-formula" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Formula Guide</a>
+        <a href="#kg-to-liters-formula-calculator" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Formula Calculator</a>
+        <a href="#kg-to-liters-for-oil" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Cooking Oils</a>
+        <a href="#kg-to-litre-for-water" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Water</a>
+        <a href="#kg-to-litre-for-diesel" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Diesel</a>
+        <a href="#kg-to-litre-for-lpg" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">LPG Gas</a>
+        <a href="#kg-to-liter-for-milk" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Milk</a>
+        <a href="#kg-to-liters-for-paint" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Paint</a>
+        <a href="#kg-to-liter-for-gas" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Gasoline</a>
+        <a href="#kg-to-liter-for-cat-litter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Cat Litter</a>
         <a href="#faq" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">FAQ</a>
       </nav>
     </header>
 
     <div class="space-y-10">
-      <!-- Keyword 1: How Much is kg to Litres? -->
-      <section class="content-block scroll-mt-24" id="how-much-is-kg-to-litres">
-        <h2 class="text-2xl font-bold text-white">How Much is kg to Litres?</h2>
-        <p class="text-slate-300 mt-2">The conversion from kilograms (kg) to litres (L) depends on the substance's density. The formula is:</p>
-        
-        <div class="formula-box my-4">
-          <strong>Volume (L) = Mass (kg) &divide; Density (kg/L)</strong>
-        </div>
-        
-        <div class="conversion-grid my-4">
-          <div class="conversion-card highlight">
-            <h3 class="font-bold text-white text-base">Water</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.000 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.000 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Milk</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 0.971 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.030 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Olive Oil</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.099 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.910 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Honey</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 0.704 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.420 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Diesel</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.202 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.832 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Gasoline</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.337 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.748 kg/L)</div>
-          </div>
-        </div>
-        
-        <p class="text-slate-300 mt-4"><strong class="text-white">Key Takeaway:</strong> 1 kg equals 1 litre only for water. For all other substances, the conversion varies based on density.</p>
-      </section>
-
-      <!-- Keyword 2: How to Convert kg to Liters -->
-      <section class="content-block scroll-mt-24" id="how-to-convert-kg-to-liters">
-        <h2 class="text-2xl font-bold text-white">How to Convert kg to Liters</h2>
-        
-        <div class="step-by-step">
-          <div class="step">
-            <span class="step-number">1</span>
-            <div class="step-content">
-              <h4>Identify the Substance</h4>
-              <p>Determine what substance you're converting (water, milk, oil, etc.)</p>
-            </div>
-          </div>
-          <div class="step">
-            <span class="step-number">2</span>
-            <div class="step-content">
-              <h4>Find Its Density</h4>
-              <p>Look up the density in kg/L from our <a href="/#density-directory">density directory</a></p>
-            </div>
-          </div>
-          <div class="step">
-            <span class="step-number">3</span>
-            <div class="step-content">
-              <h4>Apply the Formula</h4>
-              <div class="formula-box">
-                Volume (L) = Mass (kg) ÷ Density (kg/L)
-              </div>
-            </div>
-          </div>
-          <div class="step">
-            <span class="step-number">4</span>
-            <div class="step-content">
-              <h4>Get Your Result</h4>
-              <p>The result is the volume in litres</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="example-calculation">
-          <h4>Example: Convert 5 kg of Olive Oil</h4>
-          <ul>
-            <li>Mass = 5 kg</li>
-            <li>Density of olive oil = 0.910 kg/L</li>
-            <li>Volume = 5 ÷ 0.910 = <strong>5.495 L</strong></li>
-          </ul>
-          <p class="mt-2 text-brand-400 font-semibold"><strong>Result:</strong> 5 kg of olive oil = 5.495 litres</p>
-        </div>
-        
-        <div class="example-calculation mt-4">
-          <h4>Example: Convert 10 kg of Honey</h4>
-          <ul>
-            <li>Mass = 10 kg</li>
-            <li>Density of honey = 1.420 kg/L</li>
-            <li>Volume = 10 ÷ 1.420 = <strong>7.042 L</strong></li>
-          </ul>
-          <p class="mt-2 text-brand-400 font-semibold"><strong>Result:</strong> 10 kg of honey = 7.042 litres</p>
-        </div>
-      </section>
-
-      <!-- Keyword 3: How to Calculate kg to Liter -->
-      <section class="content-block scroll-mt-24" id="how-to-calculate-kg-to-liter">
-        <h2 class="text-2xl font-bold text-white">How to Calculate kg to Liter</h2>
+      <!-- Section 1: kg to litre formula -->
+      <section class="content-block scroll-mt-24" id="kg-to-litre-formula">
+        <h2 class="text-2xl font-bold text-white">Kg to Litre Formula: Complete Guide</h2>
         
         <div class="formula-section">
           <h3 class="text-lg font-bold text-white">The Formula</h3>
           <div class="formula-box">
-            <strong>Liters = Kilograms ÷ Density (kg/L)</strong>
+            <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>
           </div>
-          <p class="text-slate-300 text-sm">This is the fundamental formula for converting mass to volume.</p>
+          <p class="text-slate-300 text-sm">This is the fundamental formula for converting kilograms to litres for any substance.</p>
         </div>
         
-        <div class="calculation-examples mt-6 space-y-4">
-          <h3 class="text-lg font-bold text-white">Step-by-Step Calculation</h3>
-          
-          <div class="example-calculation">
-            <h4>Example 1: Water</h4>
-            <ul>
-              <li>Mass: 5 kg</li>
-              <li>Density of water: 1.000 kg/L</li>
-              <li>Calculation: 5 ÷ 1.000 = <strong class="text-brand-400 font-mono">5.000 L</strong></li>
-            </ul>
-          </div>
-          
-          <div class="example-calculation">
-            <h4>Example 2: Diesel</h4>
-            <ul>
-              <li>Mass: 10 kg</li>
-              <li>Density of diesel: 0.832 kg/L</li>
-              <li>Calculation: 10 ÷ 0.832 = <strong class="text-brand-400 font-mono">12.019 L</strong></li>
-            </ul>
-          </div>
-          
-          <div class="example-calculation">
-            <h4>Example 3: Gasoline</h4>
-            <ul>
-              <li>Mass: 15 kg</li>
-              <li>Density of gasoline: 0.748 kg/L</li>
-              <li>Calculation: 15 ÷ 0.748 = <strong class="text-brand-400 font-mono">20.053 L</strong></li>
-            </ul>
-          </div>
+        <div class="example-calculation">
+          <h4>Example Calculation</h4>
+          <p class="text-slate-200"><strong>Convert 5 kg of olive oil to litres</strong></p>
+          <ul class="mt-2 space-y-1">
+            <li>Mass = 5 kg</li>
+            <li>Density of olive oil = 0.910 kg/L</li>
+            <li>Volume = 5 ÷ 0.910 = <strong class="text-brand-400 font-mono">5.495 L</strong></li>
+          </ul>
         </div>
         
         <div class="quick-reference mt-6">
-          <h3 class="text-lg font-bold text-white mb-2">Quick Calculation Table</h3>
+          <h4 class="text-base font-bold text-white mb-2">Quick Reference Table</h4>
           <div class="overflow-x-auto">
             <table>
               <thead>
@@ -288,356 +168,427 @@ const pageSchema = [
                   <th>Substance</th>
                   <th>Density (kg/L)</th>
                   <th>1 kg = ? L</th>
-                  <th>5 kg = ? L</th>
-                  <th>10 kg = ? L</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Water</td><td class="font-mono">1.000</td><td class="font-mono text-brand-400">1.000 L</td><td class="font-mono text-brand-400">5.000 L</td><td class="font-mono text-brand-400">10.000 L</td></tr>
-                <tr><td>Milk</td><td class="font-mono">1.030</td><td class="font-mono text-brand-400">0.971 L</td><td class="font-mono text-brand-400">4.854 L</td><td class="font-mono text-brand-400">9.709 L</td></tr>
-                <tr><td>Olive Oil</td><td class="font-mono">0.910</td><td class="font-mono text-brand-400">1.099 L</td><td class="font-mono text-brand-400">5.495 L</td><td class="font-mono text-brand-400">10.989 L</td></tr>
-                <tr><td>Honey</td><td class="font-mono">1.420</td><td class="font-mono text-brand-400">0.704 L</td><td class="font-mono text-brand-400">3.521 L</td><td class="font-mono text-brand-400">7.042 L</td></tr>
-                <tr><td>Diesel</td><td class="font-mono">0.832</td><td class="font-mono text-brand-400">1.202 L</td><td class="font-mono text-brand-400">6.010 L</td><td class="font-mono text-brand-400">12.019 L</td></tr>
-                <tr><td>Gasoline</td><td class="font-mono">0.748</td><td class="font-mono text-brand-400">1.337 L</td><td class="font-mono text-brand-400">6.684 L</td><td class="font-mono text-brand-400">13.369 L</td></tr>
+                <tr><td>Water</td><td class="font-mono">1.000</td><td class="font-mono text-brand-400 font-semibold">1.000 L</td></tr>
+                <tr><td>Milk</td><td class="font-mono">1.030</td><td class="font-mono text-brand-400 font-semibold">0.971 L</td></tr>
+                <tr><td>Olive Oil</td><td class="font-mono">0.910</td><td class="font-mono text-brand-400 font-semibold">1.099 L</td></tr>
+                <tr><td>Honey</td><td class="font-mono">1.420</td><td class="font-mono text-brand-400 font-semibold">0.704 L</td></tr>
+                <tr><td>Diesel</td><td class="font-mono">0.832</td><td class="font-mono text-brand-400 font-semibold">1.202 L</td></tr>
+                <tr><td>Gasoline</td><td class="font-mono">0.748</td><td class="font-mono text-brand-400 font-semibold">1.337 L</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- Keyword 4: Is 1kg = 1 Litre? -->
-      <section class="content-block scroll-mt-24" id="is-1kg-equal-1-litre">
-        <h2 class="text-2xl font-bold text-white">Is 1kg = 1 Litre?</h2>
+      <!-- Section 2: kg to liters for oil -->
+      <section class="content-block scroll-mt-24" id="kg-to-liters-for-oil">
+        <h2 class="text-2xl font-bold text-white">Kg to Liters for Oil</h2>
         
-        <div class="answer-box">
-          <div class="answer-yes">
-            <h3 class="text-emerald-400 font-bold">✅ Yes, for Water</h3>
-            <p class="text-slate-200"><strong>1 kg of water = 1 litre</strong> at standard room temperature (20°C)</p>
-            <p class="text-xs text-slate-400 mt-1">This is because water has a density of exactly 1.000 kg/L</p>
-          </div>
-          <div class="answer-no">
-            <h3 class="text-rose-400 font-bold">❌ No, for Other Substances</h3>
-            <p class="text-slate-200">For all other substances, 1 kg is <strong>not</strong> equal to 1 litre</p>
-          </div>
+        <div class="substance-intro">
+          <p>Converting kilograms to litres for <strong>cooking oil</strong> depends on the specific type of oil. Most cooking oils have densities between 0.910 and 0.927 kg/L.</p>
         </div>
-        
-        <div class="comparison-grid my-4">
-          <div class="comparison-item">
-            <span class="substance">Water</span>
-            <span class="result text-emerald-400">1 kg = 1.000 L ✅</span>
-          </div>
-          <div class="comparison-item">
-            <span class="substance">Milk</span>
-            <span class="result text-rose-400">1 kg = 0.971 L ❌</span>
-          </div>
-          <div class="comparison-item">
-            <span class="substance">Olive Oil</span>
-            <span class="result text-rose-400">1 kg = 1.099 L ❌</span>
-          </div>
-          <div class="comparison-item">
-            <span class="substance">Honey</span>
-            <span class="result text-rose-400">1 kg = 0.704 L ❌</span>
-          </div>
-          <div class="comparison-item">
-            <span class="substance">Diesel</span>
-            <span class="result text-rose-400">1 kg = 1.202 L ❌</span>
-          </div>
-          <div class="comparison-item">
-            <span class="substance">Gasoline</span>
-            <span class="result text-rose-400">1 kg = 1.337 L ❌</span>
-          </div>
-        </div>
-        
-        <div class="key-takeaway">
-          <h4 class="font-bold text-amber-400 mb-1">Key Takeaway</h4>
-          <p class="text-slate-300 text-sm"><strong>1 kg = 1 litre is only true for pure water at 20°C.</strong> For all other substances, the conversion depends on their density.</p>
-        </div>
-      </section>
-
-      <!-- Keyword 5: How Much is 1 kg to 1 Liter? -->
-      <section class="content-block scroll-mt-24" id="how-much-1-kg-to-1-liter">
-        <h2 class="text-2xl font-bold text-white">How Much is 1 kg to 1 Liter?</h2>
         
         <div class="conversion-grid">
-          <div class="conversion-card highlight">
-            <h3 class="font-bold text-white text-base">Water</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.000 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.000 kg/L)</div>
+          <div class="conversion-card">
+            <h3>Olive Oil</h3>
+            <div class="conversion-value">1 kg = 1.099 L</div>
+            <div class="density font-mono">(0.910 kg/L)</div>
           </div>
           <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Milk</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 0.971 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.030 kg/L)</div>
+            <h3>Canola Oil</h3>
+            <div class="conversion-value">1 kg = 1.089 L</div>
+            <div class="density font-mono">(0.918 kg/L)</div>
           </div>
           <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Olive Oil</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.099 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.910 kg/L)</div>
+            <h3>Vegetable Oil</h3>
+            <div class="conversion-value">1 kg = 1.087 L</div>
+            <div class="density font-mono">(0.920 kg/L)</div>
           </div>
           <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Honey</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 0.704 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.420 kg/L)</div>
+            <h3>Coconut Oil</h3>
+            <div class="conversion-value">1 kg = 1.082 L</div>
+            <div class="density font-mono">(0.924 kg/L)</div>
           </div>
           <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Diesel</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.202 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.832 kg/L)</div>
+            <h3>Avocado Oil</h3>
+            <div class="conversion-value">1 kg = 1.096 L</div>
+            <div class="density font-mono">(0.912 kg/L)</div>
           </div>
           <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Gasoline</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg = 1.337 L</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.748 kg/L)</div>
+            <h3>Peanut Oil</h3>
+            <div class="conversion-value">1 kg = 1.096 L</div>
+            <div class="density font-mono">(0.912 kg/L)</div>
           </div>
         </div>
         
         <div class="formula-section mt-6">
-          <h3 class="text-lg font-bold text-white">Why the Difference?</h3>
-          <p class="text-slate-300 text-sm">The conversion depends on density:</p>
+          <h3 class="text-lg font-bold text-white">Formula for Oil</h3>
           <div class="formula-box my-3">
-            <strong>1 kg = 1 ÷ Density (kg/L) in litres</strong>
+            <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>
           </div>
-          <ul class="list-disc list-inside text-slate-300 text-sm space-y-1">
-            <li>If density &gt; 1.0 kg/L, 1 kg will be &lt; 1 litre (e.g. Honey)</li>
-            <li>If density &lt; 1.0 kg/L, 1 kg will be &gt; 1 litre (e.g. Gasoline, Oils)</li>
-            <li>If density = 1.0 kg/L, 1 kg = 1 litre (Water)</li>
-          </ul>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of olive oil = 5 ÷ 0.910 = <strong class="text-brand-400 font-mono">5.495 L</strong></p>
         </div>
       </section>
 
-      <!-- Keyword 6-7: Are kg and Litres the Same? -->
-      <section class="content-block scroll-mt-24" id="are-kg-and-litres-same">
-        <h2 class="text-2xl font-bold text-white">Are kg and Litres the Same?</h2>
+      <!-- Section 3: kg to liters formula calculator -->
+      <section class="content-block scroll-mt-24" id="kg-to-liters-formula-calculator">
+        <h2 class="text-2xl font-bold text-white">Kg to Liters Formula Calculator</h2>
         
-        <div class="comparison-box">
-          <div class="kg-box">
-            <h3 class="font-bold text-white text-lg mb-2">Kilogram (kg)</h3>
-            <ul class="space-y-1 text-sm text-slate-300">
-              <li>📦 <strong>Measures Mass</strong></li>
-              <li>The amount of matter in an object</li>
-              <li>Base unit in the International System of Units (SI)</li>
-              <li>1 kg = 1,000 grams</li>
-            </ul>
-          </div>
-          <div class="litre-box">
-            <h3 class="font-bold text-white text-lg mb-2">Litre (L)</h3>
-            <ul class="space-y-1 text-sm text-slate-300">
-              <li>🧪 <strong>Measures Volume</strong></li>
-              <li>The amount of space an object occupies</li>
-              <li>1 L = 1,000 millilitres (ml)</li>
-              <li>1 L = 0.001 cubic metres (m³)</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="answer-box">
-          <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] col-span-full">
-            <h4 class="text-base font-bold text-white mb-1">Direct Answer: No, kg and litres are NOT the same.</h4>
-            <p class="text-slate-300 text-sm">They measure different physical properties:</p>
-            <ul class="list-disc list-inside text-slate-300 text-sm my-2 space-y-1">
-              <li><strong>Kilograms</strong> measure mass (how much matter)</li>
-              <li><strong>Litres</strong> measure volume (how much space)</li>
-            </ul>
-            <p class="text-slate-400 text-xs">They can only be converted using <strong>density</strong>: <span class="text-brand-400 font-mono">kg = L × density</span></p>
+        <div class="calculator-section">
+          <h3 class="text-lg font-bold text-white">Use Our Free Calculator</h3>
+          <p class="text-slate-300 text-sm mt-1">Enter the mass and density to get the volume instantly:</p>
+          
+          <div class="calculator-demo">
+            <div class="calc-row">
+              <label for="calcMass">Mass (kg):</label>
+              <input type="number" id="calcMass" value="5" step="0.1" class="calc-input">
+            </div>
+            <div class="calc-row">
+              <label for="calcDensity">Density (kg/L):</label>
+              <input type="number" id="calcDensity" value="0.910" step="0.001" class="calc-input">
+            </div>
+            <div class="calc-result">
+              <span class="result-label">Volume:</span>
+              <span class="result-value" id="calcResult">5.495 L</span>
+            </div>
           </div>
         </div>
         
-        <div class="faq-item mt-4">
-          <h4 class="text-base font-bold text-white">Is kg equal to litre?</h4>
-          <p class="text-slate-300 text-sm"><strong>No.</strong> 1 kg = 1 litre only for water. For other substances, the relationship depends on density.</p>
-        </div>
-      </section>
-
-      <!-- Keyword 8: What is kg to Litres? -->
-      <section class="content-block scroll-mt-24" id="what-is-kg-to-litres">
-        <h2 class="text-2xl font-bold text-white">What is kg to Litres?</h2>
-        
-        <div class="definition-box">
-          <p class="text-slate-200"><strong>Kg to litres</strong> is the conversion of mass (in kilograms) to volume (in litres) using the substance's density.</p>
-        </div>
-        
-        <div class="formula-section my-4">
+        <div class="formula-section">
           <h3 class="text-lg font-bold text-white">The Formula</h3>
           <div class="formula-box">
             <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>
           </div>
         </div>
         
-        <div class="example-grid">
-          <div class="example-item">
-            <span class="substance font-bold text-white block">Water</span>
-            <span class="result font-mono text-brand-400 font-bold block">1 kg = 1.000 L</span>
-          </div>
-          <div class="example-item">
-            <span class="substance font-bold text-white block">Milk</span>
-            <span class="result font-mono text-brand-400 font-bold block">1 kg = 0.971 L</span>
-          </div>
-          <div class="example-item">
-            <span class="substance font-bold text-white block">Olive Oil</span>
-            <span class="result font-mono text-brand-400 font-bold block">1 kg = 1.099 L</span>
-          </div>
-          <div class="example-item">
-            <span class="substance font-bold text-white block">Honey</span>
-            <span class="result font-mono text-brand-400 font-bold block">1 kg = 0.704 L</span>
-          </div>
-        </div>
-        
-        <div class="use-cases mt-6">
-          <h3 class="text-lg font-bold text-white mb-2">When to Use kg to Litres Conversion</h3>
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 text-sm">
-            <li class="p-3 bg-surface-950/60 rounded-lg border border-white/[0.04]">🍳 <strong>Cooking:</strong> Recipes often need volume measurements</li>
-            <li class="p-3 bg-surface-950/60 rounded-lg border border-white/[0.04]">⛽ <strong>Fuel:</strong> Fuel is sold by volume but often weighed</li>
-            <li class="p-3 bg-surface-950/60 rounded-lg border border-white/[0.04]">🏭 <strong>Industry:</strong> Chemical processes require accurate volume dosing</li>
-            <li class="p-3 bg-surface-950/60 rounded-lg border border-white/[0.04]">🔬 <strong>Science:</strong> Lab measurements often need mass-to-volume conversion</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- Keyword 9: Can You Convert kg to Liters? -->
-      <section class="content-block scroll-mt-24" id="can-you-convert-kg-to-liters">
-        <h2 class="text-2xl font-bold text-white">Can You Convert kg to Liters?</h2>
-        
-        <div class="answer-box">
-          <div class="answer-yes col-span-full">
-            <h3 class="text-emerald-400 font-bold">✅ Yes, absolutely!</h3>
-            <p class="text-slate-200">You can convert kilograms to litres for any substance with a known density.</p>
-          </div>
-        </div>
-        
-        <div class="formula-section my-4">
-          <h3 class="text-lg font-bold text-white">How to Convert</h3>
-          <div class="formula-box">
-            <strong>Liters = Kilograms ÷ Density (kg/L)</strong>
-          </div>
-        </div>
-        
-        <div class="example-calculation">
-          <h4>Example: 5 kg of Milk</h4>
-          <ul>
-            <li>Mass = 5 kg</li>
-            <li>Density of milk = 1.030 kg/L</li>
-            <li>Volume = 5 ÷ 1.030 = <strong class="text-brand-400 font-mono">4.854 L</strong></li>
-          </ul>
-        </div>
-        
-        <div class="example-calculation mt-4">
-          <h4>Example: 10 kg of Gasoline</h4>
-          <ul>
-            <li>Mass = 10 kg</li>
-            <li>Density of gasoline = 0.748 kg/L</li>
-            <li>Volume = 10 ÷ 0.748 = <strong class="text-brand-400 font-mono">13.369 L</strong></li>
-          </ul>
-        </div>
-        
-        <div class="cta-box">
-          <p class="text-slate-200 text-sm"><strong>Use our free kg to litres converter</strong> for instant results across 772+ substances.</p>
-          <a href="/" class="cta-button">Convert Now →</a>
-        </div>
-      </section>
-
-      <!-- Keyword 10: Are kg and Liters the Same? -->
-      <section class="content-block scroll-mt-24" id="are-kg-and-liters-same">
-        <h2 class="text-2xl font-bold text-white">Are kg and Liters the Same?</h2>
-        
-        <div class="comparison-box">
-          <div class="kg-box">
-            <h3 class="font-bold text-white text-lg mb-2">Kilogram (kg)</h3>
-            <ul class="space-y-1 text-sm text-slate-300">
-              <li>📦 <strong>Measures Mass</strong></li>
-              <li>How much matter an object contains</li>
-              <li>Independent of shape or size</li>
-              <li>1 kg = 2.205 pounds</li>
-            </ul>
-          </div>
-          <div class="litre-box">
-            <h3 class="font-bold text-white text-lg mb-2">Liter (L)</h3>
-            <ul class="space-y-1 text-sm text-slate-300">
-              <li>🧪 <strong>Measures Volume</strong></li>
-              <li>How much space an object occupies</li>
-              <li>1 L = 1,000 ml</li>
-              <li>1 L = 0.264 US gallons</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="answer-box">
-          <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] col-span-full">
-            <h4 class="text-base font-bold text-white mb-2">Direct Answer: No, they are different units measuring different things.</h4>
-            <ul class="list-disc list-inside text-slate-300 text-sm space-y-1">
-              <li><strong>Mass (kg):</strong> Amount of matter</li>
-              <li><strong>Volume (L):</strong> Amount of space</li>
-              <li><strong>Connection:</strong> Density links them (kg/L)</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="key-takeaway">
-          <h4 class="font-bold text-amber-400 mb-1">Key Takeaway</h4>
-          <p class="text-slate-300 text-sm">1 kg and 1 litre are only equal for water at 20°C. For all other substances, they are different.</p>
-        </div>
-      </section>
-
-      <!-- Keyword 11: How Many kgs is 1 Liter? -->
-      <section class="content-block scroll-mt-24" id="how-many-kgs-is-1-liter">
-        <h2 class="text-2xl font-bold text-white">How Many kgs is 1 Liter?</h2>
-        
-        <div class="formula-box my-4">
-          <strong>Mass (kg) = Volume (L) &times; Density (kg/L)</strong>
-        </div>
-        
-        <div class="conversion-grid">
-          <div class="conversion-card highlight">
-            <h3 class="font-bold text-white text-base">Water</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.000 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.000 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Milk</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.030 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.030 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Olive Oil</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.910 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.910 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Honey</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.420 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(1.420 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Diesel</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.832 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.832 kg/L)</div>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Gasoline</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.748 kg</div>
-            <div class="density text-xs text-slate-500 font-mono">(0.748 kg/L)</div>
-          </div>
-        </div>
-        
         <div class="quick-reference mt-6">
-          <h3 class="text-lg font-bold text-white mb-2">Quick Reference</h3>
+          <h4 class="text-base font-bold text-white mb-2">Common Densities</h4>
           <div class="overflow-x-auto">
             <table>
               <thead>
                 <tr>
                   <th>Substance</th>
-                  <th>1 L = ? kg</th>
+                  <th>Density (kg/L)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Water</td><td class="font-mono text-brand-400 font-semibold">1.000 kg</td></tr>
-                <tr><td>Milk</td><td class="font-mono text-brand-400 font-semibold">1.030 kg</td></tr>
-                <tr><td>Olive Oil</td><td class="font-mono text-brand-400 font-semibold">0.910 kg</td></tr>
-                <tr><td>Honey</td><td class="font-mono text-brand-400 font-semibold">1.420 kg</td></tr>
-                <tr><td>Diesel</td><td class="font-mono text-brand-400 font-semibold">0.832 kg</td></tr>
-                <tr><td>Gasoline</td><td class="font-mono text-brand-400 font-semibold">0.748 kg</td></tr>
+                <tr><td>Water</td><td class="font-mono text-brand-400 font-semibold">1.000</td></tr>
+                <tr><td>Milk</td><td class="font-mono text-brand-400 font-semibold">1.030</td></tr>
+                <tr><td>Olive Oil</td><td class="font-mono text-brand-400 font-semibold">0.910</td></tr>
+                <tr><td>Diesel</td><td class="font-mono text-brand-400 font-semibold">0.832</td></tr>
+                <tr><td>Gasoline</td><td class="font-mono text-brand-400 font-semibold">0.748</td></tr>
+                <tr><td>Honey</td><td class="font-mono text-brand-400 font-semibold">1.420</td></tr>
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- Section 4: kg to litre for water -->
+      <section class="content-block scroll-mt-24" id="kg-to-litre-for-water">
+        <h2 class="text-2xl font-bold text-white">Kg to Litre for Water</h2>
+        
+        <div class="substance-intro">
+          <p><strong class="text-white">1 kg of water = 1 litre</strong> at standard room temperature (20°C).</p>
+          <p>This is because water has a density of exactly <strong>1.000 kg/L</strong>.</p>
+        </div>
+        
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">Water Conversion Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mass (kg)</th>
+                <th>Volume (L)</th>
+                <th>Volume (mL)</th>
+                <th>Volume (US gal)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">0.1 kg</td><td class="font-mono text-brand-400 font-semibold">0.1 L</td><td class="font-mono">100 mL</td><td class="font-mono">0.026 gal</td></tr>
+              <tr><td class="font-mono">0.5 kg</td><td class="font-mono text-brand-400 font-semibold">0.5 L</td><td class="font-mono">500 mL</td><td class="font-mono">0.132 gal</td></tr>
+              <tr><td class="font-mono">1 kg</td><td class="font-mono text-brand-400 font-semibold">1.0 L</td><td class="font-mono">1,000 mL</td><td class="font-mono">0.264 gal</td></tr>
+              <tr><td class="font-mono">2 kg</td><td class="font-mono text-brand-400 font-semibold">2.0 L</td><td class="font-mono">2,000 mL</td><td class="font-mono">0.528 gal</td></tr>
+              <tr><td class="font-mono">5 kg</td><td class="font-mono text-brand-400 font-semibold">5.0 L</td><td class="font-mono">5,000 mL</td><td class="font-mono">1.321 gal</td></tr>
+              <tr><td class="font-mono">10 kg</td><td class="font-mono text-brand-400 font-semibold">10.0 L</td><td class="font-mono">10,000 mL</td><td class="font-mono">2.642 gal</td></tr>
+              <tr><td class="font-mono">20 kg</td><td class="font-mono text-brand-400 font-semibold">20.0 L</td><td class="font-mono">20,000 mL</td><td class="font-mono">5.283 gal</td></tr>
+              <tr><td class="font-mono">50 kg</td><td class="font-mono text-brand-400 font-semibold">50.0 L</td><td class="font-mono">50,000 mL</td><td class="font-mono">13.209 gal</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Formula for Water</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ 1.000</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of water = 5 ÷ 1.000 = <strong class="text-brand-400 font-mono">5.000 L</strong></p>
+        </div>
+      </section>
+
+      <!-- Section 5: kg to litre for diesel -->
+      <section class="content-block scroll-mt-24" id="kg-to-litre-for-diesel">
+        <h2 class="text-2xl font-bold text-white">Kg to Litre for Diesel</h2>
+        
+        <div class="substance-intro">
+          <p><strong class="text-white">1 kg of diesel = 1.202 litres</strong> at standard room temperature (20°C).</p>
+          <p>Diesel has a density of approximately <strong>0.832 kg/L</strong>.</p>
+        </div>
+        
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">Diesel Conversion Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mass (kg)</th>
+                <th>Volume (L)</th>
+                <th>Volume (US gal)</th>
+                <th>Volume (UK gal)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">1 kg</td><td class="font-mono text-brand-400 font-semibold">1.202 L</td><td class="font-mono">0.318 gal</td><td class="font-mono">0.264 gal</td></tr>
+              <tr><td class="font-mono">5 kg</td><td class="font-mono text-brand-400 font-semibold">6.010 L</td><td class="font-mono">1.588 gal</td><td class="font-mono">1.322 gal</td></tr>
+              <tr><td class="font-mono">10 kg</td><td class="font-mono text-brand-400 font-semibold">12.019 L</td><td class="font-mono">3.175 gal</td><td class="font-mono">2.644 gal</td></tr>
+              <tr><td class="font-mono">20 kg</td><td class="font-mono text-brand-400 font-semibold">24.038 L</td><td class="font-mono">6.351 gal</td><td class="font-mono">5.288 gal</td></tr>
+              <tr><td class="font-mono">50 kg</td><td class="font-mono text-brand-400 font-semibold">60.096 L</td><td class="font-mono">15.877 gal</td><td class="font-mono">13.219 gal</td></tr>
+              <tr><td class="font-mono">100 kg</td><td class="font-mono text-brand-400 font-semibold">120.192 L</td><td class="font-mono">31.754 gal</td><td class="font-mono">26.438 gal</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Formula for Diesel</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ 0.832</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 10 kg of diesel = 10 ÷ 0.832 = <strong class="text-brand-400 font-mono">12.019 L</strong></p>
+        </div>
+      </section>
+
+      <!-- Section 6: kg to litre for lpg -->
+      <section class="content-block scroll-mt-24" id="kg-to-litre-for-lpg">
+        <h2 class="text-2xl font-bold text-white">Kg to Litre for LPG</h2>
+        
+        <div class="substance-intro">
+          <p><strong class="text-white">1 kg of LPG = 1.96 litres</strong> at standard room temperature (20°C).</p>
+          <p>LPG has a density of approximately <strong>0.51 kg/L</strong>.</p>
+          <p><small class="text-slate-400"><strong>Note:</strong> LPG density varies by composition (propane/butane ratio).</small></p>
+        </div>
+        
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">LPG Conversion Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mass (kg)</th>
+                <th>Volume (L)</th>
+                <th>Volume (US gal)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">1 kg</td><td class="font-mono text-brand-400 font-semibold">1.961 L</td><td class="font-mono">0.518 gal</td></tr>
+              <tr><td class="font-mono">5 kg</td><td class="font-mono text-brand-400 font-semibold">9.804 L</td><td class="font-mono">2.590 gal</td></tr>
+              <tr><td class="font-mono">10 kg</td><td class="font-mono text-brand-400 font-semibold">19.608 L</td><td class="font-mono">5.180 gal</td></tr>
+              <tr><td class="font-mono">14.2 kg</td><td class="font-mono text-brand-400 font-semibold">27.843 L</td><td class="font-mono">7.356 gal</td></tr>
+              <tr><td class="font-mono">20 kg</td><td class="font-mono text-brand-400 font-semibold">39.216 L</td><td class="font-mono">10.360 gal</td></tr>
+              <tr><td class="font-mono">50 kg</td><td class="font-mono text-brand-400 font-semibold">98.039 L</td><td class="font-mono">25.899 gal</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Formula for LPG</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ 0.510</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of LPG = 5 ÷ 0.510 = <strong class="text-brand-400 font-mono">9.804 L</strong></p>
+        </div>
+        
+        <div class="note-box mt-4">
+          <h4>⚠️ Important Note</h4>
+          <p>LPG density varies with temperature and composition. The values above are approximate for a 60/40 propane/butane mix at 20°C.</p>
+        </div>
+      </section>
+
+      <!-- Section 7: kg to liter for milk -->
+      <section class="content-block scroll-mt-24" id="kg-to-liter-for-milk">
+        <h2 class="text-2xl font-bold text-white">Kg to Liter for Milk</h2>
+        
+        <div class="substance-intro">
+          <p><strong class="text-white">1 kg of milk = 0.971 litres</strong> at standard room temperature (20°C).</p>
+          <p>Milk has a density of approximately <strong>1.030 kg/L</strong>.</p>
+          <p><small class="text-slate-400"><strong>Note:</strong> Milk density varies slightly with fat content and temperature.</small></p>
+        </div>
+        
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">Milk Conversion Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mass (kg)</th>
+                <th>Volume (L)</th>
+                <th>Volume (mL)</th>
+                <th>Volume (US gal)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">0.1 kg</td><td class="font-mono text-brand-400 font-semibold">0.097 L</td><td class="font-mono">97 mL</td><td class="font-mono">0.026 gal</td></tr>
+              <tr><td class="font-mono">0.5 kg</td><td class="font-mono text-brand-400 font-semibold">0.485 L</td><td class="font-mono">485 mL</td><td class="font-mono">0.128 gal</td></tr>
+              <tr><td class="font-mono">1 kg</td><td class="font-mono text-brand-400 font-semibold">0.971 L</td><td class="font-mono">971 mL</td><td class="font-mono">0.257 gal</td></tr>
+              <tr><td class="font-mono">2 kg</td><td class="font-mono text-brand-400 font-semibold">1.942 L</td><td class="font-mono">1,942 mL</td><td class="font-mono">0.513 gal</td></tr>
+              <tr><td class="font-mono">5 kg</td><td class="font-mono text-brand-400 font-semibold">4.854 L</td><td class="font-mono">4,854 mL</td><td class="font-mono">1.282 gal</td></tr>
+              <tr><td class="font-mono">10 kg</td><td class="font-mono text-brand-400 font-semibold">9.709 L</td><td class="font-mono">9,709 mL</td><td class="font-mono">2.565 gal</td></tr>
+              <tr><td class="font-mono">20 kg</td><td class="font-mono text-brand-400 font-semibold">19.417 L</td><td class="font-mono">19,417 mL</td><td class="font-mono">5.130 gal</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Formula for Milk</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ 1.030</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of milk = 5 ÷ 1.030 = <strong class="text-brand-400 font-mono">4.854 L</strong></p>
+        </div>
+      </section>
+
+      <!-- Section 8: kg to liters for paint -->
+      <section class="content-block scroll-mt-24" id="kg-to-liters-for-paint">
+        <h2 class="text-2xl font-bold text-white">Kg to Liters for Paint</h2>
+        
+        <div class="substance-intro">
+          <p>Converting kilograms to litres for <strong>paint</strong> depends on the type of paint. Most paints have densities between 1.15 and 1.50 kg/L.</p>
+        </div>
+        
+        <div class="conversion-grid">
+          <div class="conversion-card">
+            <h3>Latex Paint</h3>
+            <div class="conversion-value">1 kg = 0.833 L</div>
+            <div class="density font-mono">(1.20 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Oil-Based Paint</h3>
+            <div class="conversion-value">1 kg = 0.769 L</div>
+            <div class="density font-mono">(1.30 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Acrylic Paint</h3>
+            <div class="conversion-value">1 kg = 0.870 L</div>
+            <div class="density font-mono">(1.15 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Enamel Paint</h3>
+            <div class="conversion-value">1 kg = 0.714 L</div>
+            <div class="density font-mono">(1.40 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Epoxy Paint</h3>
+            <div class="conversion-value">1 kg = 0.667 L</div>
+            <div class="density font-mono">(1.50 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Primer</h3>
+            <div class="conversion-value">1 kg = 0.833 L</div>
+            <div class="density font-mono">(1.20 kg/L)</div>
+          </div>
+        </div>
+        
+        <div class="formula-section mt-6">
+          <h3 class="text-lg font-bold text-white">Formula for Paint</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of latex paint = 5 ÷ 1.20 = <strong class="text-brand-400 font-mono">4.167 L</strong></p>
+        </div>
+      </section>
+
+      <!-- Section 9: kg to liter for gas -->
+      <section class="content-block scroll-mt-24" id="kg-to-liter-for-gas">
+        <h2 class="text-2xl font-bold text-white">Kg to Liter for Gas (Gasoline)</h2>
+        
+        <div class="substance-intro">
+          <p><strong class="text-white">1 kg of gasoline = 1.337 litres</strong> at standard room temperature (20°C).</p>
+          <p>Gasoline has a density of approximately <strong>0.748 kg/L</strong>.</p>
+          <p><small class="text-slate-400"><strong>Note:</strong> Gasoline density varies with octane rating and temperature.</small></p>
+        </div>
+        
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">Gasoline Conversion Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mass (kg)</th>
+                <th>Volume (L)</th>
+                <th>Volume (US gal)</th>
+                <th>Volume (UK gal)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">1 kg</td><td class="font-mono text-brand-400 font-semibold">1.337 L</td><td class="font-mono">0.353 gal</td><td class="font-mono">0.294 gal</td></tr>
+              <tr><td class="font-mono">5 kg</td><td class="font-mono text-brand-400 font-semibold">6.684 L</td><td class="font-mono">1.766 gal</td><td class="font-mono">1.470 gal</td></tr>
+              <tr><td class="font-mono">10 kg</td><td class="font-mono text-brand-400 font-semibold">13.369 L</td><td class="font-mono">3.532 gal</td><td class="font-mono">2.941 gal</td></tr>
+              <tr><td class="font-mono">20 kg</td><td class="font-mono text-brand-400 font-semibold">26.738 L</td><td class="font-mono">7.063 gal</td><td class="font-mono">5.881 gal</td></tr>
+              <tr><td class="font-mono">50 kg</td><td class="font-mono text-brand-400 font-semibold">66.845 L</td><td class="font-mono">17.658 gal</td><td class="font-mono">14.703 gal</td></tr>
+              <tr><td class="font-mono">100 kg</td><td class="font-mono text-brand-400 font-semibold">133.690 L</td><td class="font-mono">35.316 gal</td><td class="font-mono">29.407 gal</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Formula for Gasoline</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ 0.748</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 10 kg of gasoline = 10 ÷ 0.748 = <strong class="text-brand-400 font-mono">13.369 L</strong></p>
+        </div>
+      </section>
+
+      <!-- Section 10: kg to liter for cat litter -->
+      <section class="content-block scroll-mt-24" id="kg-to-liter-for-cat-litter">
+        <h2 class="text-2xl font-bold text-white">Kg to Liter for Cat Litter</h2>
+        
+        <div class="substance-intro">
+          <p>Converting kilograms to litres for <strong>cat litter</strong> depends on the type of litter. Most cat litters have densities between 0.40 and 0.80 kg/L.</p>
+        </div>
+        
+        <div class="conversion-grid">
+          <div class="conversion-card">
+            <h3>Clay Litter</h3>
+            <div class="conversion-value">1 kg = 1.25 L</div>
+            <div class="density font-mono">(0.80 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Crystal/Silica Litter</h3>
+            <div class="conversion-value">1 kg = 1.67 L</div>
+            <div class="density font-mono">(0.60 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Wood/Pine Litter</h3>
+            <div class="conversion-value">1 kg = 2.00 L</div>
+            <div class="density font-mono">(0.50 kg/L)</div>
+          </div>
+          <div class="conversion-card">
+            <h3>Corn/Wheat Litter</h3>
+            <div class="conversion-value">1 kg = 2.50 L</div>
+            <div class="density font-mono">(0.40 kg/L)</div>
+          </div>
+        </div>
+        
+        <div class="formula-section mt-6">
+          <h3 class="text-lg font-bold text-white">Formula for Cat Litter</h3>
+          <div class="formula-box my-3">
+            <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>
+          </div>
+          <p class="text-slate-300 text-sm"><strong>Example:</strong> 5 kg of clay litter = 5 ÷ 0.80 = <strong class="text-brand-400 font-mono">6.25 L</strong></p>
+        </div>
+        
+        <div class="note-box mt-4">
+          <h4>⚠️ Important Note</h4>
+          <p>Cat litter density varies significantly by brand and type. Always check the product specifications for the most accurate conversion.</p>
         </div>
       </section>
 
@@ -667,132 +618,6 @@ const pageSchema = [
             <li><strong>1 gallon</strong> (US) = 3.785 L</li>
             <li><strong>1 gallon</strong> (UK) = 4.546 L</li>
           </ul>
-        </div>
-      </section>
-
-      <!-- Petrol and Diesel Conversions -->
-      <section class="content-block scroll-mt-24" id="litre-of-petrol-diesel">
-        <h2 class="text-2xl font-bold text-white">How Much Litre of Petrol and Diesel?</h2>
-        
-        <div class="conversion-grid">
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Petrol (Gasoline)</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg petrol = 1.337 L</div>
-            <div class="conversion-value text-slate-300 font-mono text-xs">1 L petrol = 0.748 kg</div>
-            <div class="conversion-value text-slate-400 font-mono text-xs">1 gallon petrol = 3.785 L</div>
-            <p class="text-slate-500 text-xs mt-1"><small>Density: 0.748 kg/L</small></p>
-          </div>
-          <div class="conversion-card">
-            <h3 class="font-bold text-white text-base">Diesel</h3>
-            <div class="conversion-value text-brand-400 font-mono font-bold">1 kg diesel = 1.202 L</div>
-            <div class="conversion-value text-slate-300 font-mono text-xs">1 L diesel = 0.832 kg</div>
-            <div class="conversion-value text-slate-400 font-mono text-xs">1 gallon diesel = 3.785 L</div>
-            <p class="text-slate-500 text-xs mt-1"><small>Density: 0.832 kg/L</small></p>
-          </div>
-        </div>
-        
-        <div class="example-calculation">
-          <h4 class="text-base font-bold text-white mb-2">Example: 10 kg of Petrol</h4>
-          <p class="text-slate-300">10 kg ÷ 0.748 kg/L = <strong class="text-white font-mono">13.37 L</strong></p>
-          <p class="text-slate-300 mt-1">13.37 L × 0.26417 = <strong class="text-white font-mono">3.53 US gallons</strong></p>
-        </div>
-      </section>
-
-      <!-- Water Specific -->
-      <section class="content-block scroll-mt-24" id="kg-litre-water">
-        <h2 class="text-2xl font-bold text-white">How Many kg is 1 Litre of Water?</h2>
-        <p class="text-slate-300"><strong class="text-white">1 litre of water weighs exactly 1 kg at standard room temperature (20°C).</strong></p>
-        
-        <div class="conversion-table my-4 overflow-x-auto">
-          <table>
-            <thead>
-              <tr>
-                <th>Volume (L)</th>
-                <th>Mass (kg)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="font-mono">0.1 L</td><td class="font-mono text-brand-400 font-semibold">0.1 kg</td></tr>
-              <tr><td class="font-mono">0.5 L</td><td class="font-mono text-brand-400 font-semibold">0.5 kg</td></tr>
-              <tr><td class="font-mono">1 L</td><td class="font-mono text-brand-400 font-semibold">1.0 kg</td></tr>
-              <tr><td class="font-mono">2 L</td><td class="font-mono text-brand-400 font-semibold">2.0 kg</td></tr>
-              <tr><td class="font-mono">5 L</td><td class="font-mono text-brand-400 font-semibold">5.0 kg</td></tr>
-              <tr><td class="font-mono">10 L</td><td class="font-mono text-brand-400 font-semibold">10.0 kg</td></tr>
-              <tr><td class="font-mono">20 L</td><td class="font-mono text-brand-400 font-semibold">20.0 kg</td></tr>
-              <tr><td class="font-mono">50 L</td><td class="font-mono text-brand-400 font-semibold">50.0 kg</td></tr>
-              <tr><td class="font-mono">100 L</td><td class="font-mono text-brand-400 font-semibold">100.0 kg</td></tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div class="faq-item mt-4">
-          <h4 class="text-base font-bold text-white mb-2">How much kg is 20 litres?</h4>
-          <p class="text-slate-300 text-sm">20 litres of water = 20 kg. For other substances, multiply 20 by density:</p>
-          <ul class="list-disc list-inside text-slate-300 text-sm mt-2 space-y-1">
-            <li>20 L milk = 20 × 1.030 = <strong class="text-white font-mono">20.6 kg</strong></li>
-            <li>20 L honey = 20 × 1.420 = <strong class="text-white font-mono">28.4 kg</strong></li>
-            <li>20 L gasoline = 20 × 0.748 = <strong class="text-white font-mono">14.96 kg</strong></li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- General kg to L Queries & Quick Reference Table -->
-      <section class="content-block scroll-mt-24" id="general-kg-to-l">
-        <h2 class="text-2xl font-bold text-white">General KG to Litre Conversion Guide</h2>
-        
-        <div class="faq-list">
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kg to liter?</h4>
-            <p class="text-slate-300 text-sm">To find kg in a litre, multiply volume by density: kg = L × kg/L</p>
-          </div>
-          
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kgs to a litre?</h4>
-            <p class="text-slate-300 text-sm">For water: 1 L = 1 kg. For other substances, use the formula above.</p>
-          </div>
-          
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kilos to a litre?</h4>
-            <p class="text-slate-300 text-sm">Same as kgs to a litre. The number varies by substance density.</p>
-          </div>
-          
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kg in litre of water?</h4>
-            <p class="text-slate-300 text-sm"><strong class="text-white">Exactly 1 kg</strong> (at 20°C).</p>
-          </div>
-          
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kg one litre?</h4>
-            <p class="text-slate-300 text-sm">For water: 1 L = 1 kg. For other substances, it depends on density.</p>
-          </div>
-          
-          <div class="faq-item">
-            <h4 class="text-base font-bold text-white">How many kg makes litre?</h4>
-            <p class="text-slate-300 text-sm">1 kg of water = 1 litre. For other substances, use: kg = L × density</p>
-          </div>
-        </div>
-        
-        <div class="quick-reference">
-          <h3 class="text-lg font-bold text-white">Quick Reference Table</h3>
-          <div class="overflow-x-auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Substance</th>
-                  <th>1 kg = ? L</th>
-                  <th>1 L = ? kg</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Water</td><td class="font-mono text-brand-400 font-semibold">1.000 L</td><td class="font-mono text-brand-400 font-semibold">1.000 kg</td></tr>
-                <tr><td>Milk</td><td class="font-mono text-brand-400 font-semibold">0.971 L</td><td class="font-mono text-brand-400 font-semibold">1.030 kg</td></tr>
-                <tr><td>Olive Oil</td><td class="font-mono text-brand-400 font-semibold">1.099 L</td><td class="font-mono text-brand-400 font-semibold">0.910 kg</td></tr>
-                <tr><td>Honey</td><td class="font-mono text-brand-400 font-semibold">0.704 L</td><td class="font-mono text-brand-400 font-semibold">1.420 kg</td></tr>
-                <tr><td>Diesel</td><td class="font-mono text-brand-400 font-semibold">1.202 L</td><td class="font-mono text-brand-400 font-semibold">0.832 kg</td></tr>
-                <tr><td>Gasoline</td><td class="font-mono text-brand-400 font-semibold">1.337 L</td><td class="font-mono text-brand-400 font-semibold">0.748 kg</td></tr>
-              </tbody>
-            </table>
-          </div>
         </div>
       </section>
 
@@ -856,4 +681,26 @@ const pageSchema = [
       </section>
     </div>
   </main>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      const massInput = document.getElementById('calcMass');
+      const densityInput = document.getElementById('calcDensity');
+      const resultDisplay = document.getElementById('calcResult');
+      
+      function updateCalculator() {
+        if (!massInput || !densityInput || !resultDisplay) return;
+        const mass = parseFloat(massInput.value) || 0;
+        const density = parseFloat(densityInput.value) || 1;
+        const volume = density > 0 ? (mass / density) : 0;
+        resultDisplay.textContent = volume.toFixed(3) + ' L';
+      }
+      
+      if (massInput && densityInput) {
+        massInput.addEventListener('input', updateCalculator);
+        densityInput.addEventListener('input', updateCalculator);
+        updateCalculator();
+      }
+    });
+  </script>
 </BaseLayout>
