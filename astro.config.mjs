@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import { featuredSubstances } from './src/data/substances.js';
 
 export default defineConfig({
   site: 'https://kgtoliter.com',
@@ -12,6 +13,7 @@ export default defineConfig({
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
+      customPages: featuredSubstances.map((s) => `https://kgtoliter.com/substances/${s.id}/`),
     }),
     mdx(),
   ],
