@@ -1,0 +1,47 @@
+---
+export interface Props {
+  initialVolume?: number;
+  initialMass?: number;
+  mode?: 'kg-to-l' | 'l-to-kg';
+}
+
+const { initialVolume = 1.0, initialMass = 1.0, mode = 'kg-to-l' } = Astro.props;
+
+const ml = mode === 'kg-to-l'
+  ? (initialVolume * 1000).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+  : (initialMass * 1000).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+const usGal = mode === 'kg-to-l'
+  ? (initialVolume / 3.78541).toFixed(3)
+  : (initialMass / 0.45359237).toFixed(3);
+
+const ukGal = mode === 'kg-to-l'
+  ? (initialVolume / 4.54609).toFixed(3)
+  : (initialMass / 0.028349523).toFixed(2);
+
+const flOz = (initialVolume * 33.814).toFixed(1);
+---
+
+<div class="converter-result-expanded space-y-3">
+  <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+    <span>Alternative Units &amp; Equivalents:</span>
+  </div>
+  <div class="result-conversions">
+    <div class="conversion-item">
+      <span class="conversion-label" id="conv-label-1">Millilitres</span>
+      <span class="conversion-value" id="resultML">{ml}</span>
+    </div>
+    <div class="conversion-item">
+      <span class="conversion-label" id="conv-label-2">US Gallons</span>
+      <span class="conversion-value" id="resultGal">{usGal}</span>
+    </div>
+    <div class="conversion-item">
+      <span class="conversion-label" id="conv-label-3">UK Gallons</span>
+      <span class="conversion-value" id="resultUKGal">{ukGal}</span>
+    </div>
+    <div class="conversion-item">
+      <span class="conversion-label" id="conv-label-4">Fluid Ounces</span>
+      <span class="conversion-value text-amber-400" id="resultFlOz">{flOz}</span>
+    </div>
+  </div>
+</div>

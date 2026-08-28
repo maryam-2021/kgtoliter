@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CalculatorWidget from '../components/CalculatorWidget.astro';
+import SubstanceCard from '../components/SubstanceCard.astro';
 import HeroDensityVisualizer from '../components/interactive/HeroDensityVisualizer.astro';
 import FormulaPlayground from '../components/interactive/FormulaPlayground.astro';
 import VolumeComparisonSlider from '../components/interactive/VolumeComparisonSlider.astro';
@@ -12,6 +13,7 @@ import TemperatureDensitySlider from '../components/interactive/TemperatureDensi
 import InteractiveConversionTable from '../components/interactive/InteractiveConversionTable.astro';
 import FAQAccordion from '../components/interactive/FAQAccordion.astro';
 import { catalogItems } from '../data/catalog.ts';
+import { featuredSubstances } from '../data/substances';
 import { getToolPath, toolsData } from '../data/toolsData.ts';
 import { getCollection } from 'astro:content';
 
@@ -164,54 +166,16 @@ const featureLinks = [
         </p>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <a
-          href="/substances/water/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">💧</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Water</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">1.000 kg/L</span>
-        </a>
-        <a
-          href="/substances/milk/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🥛</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Milk</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">1.030 kg/L</span>
-        </a>
-        <a
-          href="/substances/olive-oil/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🫒</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Olive Oil</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">0.910 kg/L</span>
-        </a>
-        <a
-          href="/substances/honey/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">🍯</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Honey</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">1.420 kg/L</span>
-        </a>
-        <a
-          href="/substances/diesel/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">⛽</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Diesel</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">0.832 kg/L</span>
-        </a>
-        <a
-          href="/substances/petrol/"
-          class="glass-card glass-card-hover flex flex-col items-center p-4 rounded-xl text-center group"
-        >
-          <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">⛽</span>
-          <span class="font-bold text-white group-hover:text-brand-400 transition-colors">Gasoline</span>
-          <span class="text-xs font-mono text-slate-400 mt-1">0.748 kg/L</span>
-        </a>
+        {
+          featuredSubstances.map((substance) => (
+            <SubstanceCard
+              id={substance.id === 'gasoline' ? 'petrol' : substance.id}
+              name={substance.name}
+              density={substance.density}
+              icon={substance.icon}
+            />
+          ))
+        }
       </div>
     </section>
 

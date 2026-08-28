@@ -1,0 +1,57 @@
+---
+export interface Props {
+  initialDensity?: number;
+  initialUnit?: 'kg/L' | 'g/mL' | 'lb/ft3' | 'kg/m3';
+}
+
+const { initialDensity = 1.0, initialUnit = 'kg/L' } = Astro.props;
+---
+
+<div class="custom-density-section">
+  <div class="flex items-center gap-2.5 cursor-pointer select-none">
+    <input
+      type="checkbox"
+      id="customDensityToggle"
+      class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-slate-700 focus:ring-brand-500 focus:ring-2 cursor-pointer accent-sky-400"
+    />
+    <label for="customDensityToggle" class="text-xs font-semibold text-slate-300 font-mono cursor-pointer">
+      Enter custom density
+    </label>
+  </div>
+
+  <div id="customDensityInput" class="hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div>
+        <label for="customDensityValue" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono mb-1">
+          Density Value
+        </label>
+        <input
+          type="number"
+          id="customDensityValue"
+          value={initialDensity}
+          step="any"
+          min="0.0001"
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+        />
+      </div>
+      <div>
+        <label for="customDensityUnit" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono mb-1">
+          Density Unit
+        </label>
+        <select
+          id="customDensityUnit"
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:ring-2 focus:ring-brand-500 outline-none cursor-pointer"
+        >
+          <option value="kg/L" selected={initialUnit === 'kg/L'}>kg/L (kg per litre)</option>
+          <option value="g/mL" selected={initialUnit === 'g/mL'}>g/mL (g per millilitre)</option>
+          <option value="lb/ft3" selected={initialUnit === 'lb/ft3'}>lb/ft³ (pounds per cu ft)</option>
+          <option value="kg/m3" selected={initialUnit === 'kg/m3'}>kg/m³ (kg per cu meter)</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-2 text-xs font-mono text-slate-400 flex items-center gap-1.5">
+      <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+      <span id="customDensityNote">Enter density in kg/L (water = 1.000 kg/L)</span>
+    </div>
+  </div>
+</div>

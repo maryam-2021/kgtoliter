@@ -1,0 +1,41 @@
+---
+export interface Props {
+  id: string;
+  name: string;
+  density: number;
+  icon?: string;
+  category?: string;
+  href?: string;
+}
+
+const {
+  id,
+  name,
+  density,
+  icon = '⚗️',
+  category,
+  href = `/substances/${id}/`,
+} = Astro.props;
+---
+
+<a
+  href={href}
+  class="glass-card glass-card-hover flex flex-col items-center p-4 sm:p-5 rounded-xl text-center group transition-all"
+>
+  <span class="text-3xl sm:text-4xl mb-2.5 group-hover:scale-110 transition-transform">
+    {icon}
+  </span>
+  <span class="font-bold text-sm sm:text-base text-white group-hover:text-brand-400 transition-colors truncate w-full">
+    {name}
+  </span>
+  <span class="text-xs font-mono text-slate-400 mt-1">
+    {density.toFixed(3)} kg/L
+  </span>
+  {
+    category && (
+      <span class="text-[10px] uppercase font-mono text-brand-400/80 mt-1 tracking-wider">
+        {category}
+      </span>
+    )
+  }
+</a>

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Converter from '../../components/Converter.astro';
+import SubstanceCard from '../../components/SubstanceCard.astro';
 import FormulaGuide from '../../components/FormulaGuide.astro';
 import FAQAccordion from '../../components/FAQAccordion.astro';
 import { substances } from '../../data/substances';
@@ -303,19 +304,13 @@ const lastUpdated = 'August 2026';
             </h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {relatedSubstances.map((related) => (
-                <a
-                  href={`/substances/${related.id}/`}
-                  class="glass-card glass-card-hover p-4 rounded-xl border border-slate-800 block group"
-                >
-                  <div class="text-xl mb-1">{related.id === 'water' ? '💧' : related.id === 'milk' ? '🥛' : related.id === 'olive-oil' ? '🫒' : related.id === 'honey' ? '🍯' : related.id === 'diesel' ? '⛽' : '⚗️'}</div>
-                  <div class="font-bold text-sm text-white group-hover:text-brand-400 transition-colors truncate">
-                    {related.name}
-                  </div>
-                  <div class="text-xs font-mono text-slate-400 mt-1">{related.density_kg_per_l.toFixed(3)} kg/L</div>
-                  <div class="text-[11px] font-mono text-emerald-400 mt-0.5">
-                    {(1 / related.density_kg_per_l).toFixed(3)} L/kg
-                  </div>
-                </a>
+                <SubstanceCard
+                  id={related.id}
+                  name={related.name}
+                  density={related.density_kg_per_l}
+                  icon={related.id === 'water' ? '💧' : related.id === 'milk' ? '🥛' : related.id === 'olive-oil' ? '🫒' : related.id === 'honey' ? '🍯' : related.id === 'diesel' ? '⛽' : '⚗️'}
+                  category={related.category}
+                />
               ))}
             </div>
           </div>
