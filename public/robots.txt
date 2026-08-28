@@ -9,8 +9,10 @@ Allow: /substances/olive-oil
 Allow: /substances/honey
 Allow: /substances/diesel
 Allow: /substances/gasoline
-# Allow quick reference pages
+# Allow quick reference & educational pages
 Allow: /kg-to-l/
+Allow: /kg-to-litres/
+Allow: /kg-to-litres-guide/
 
 Sitemap: https://kgtoliter.com/sitemap-index.xml
 

@@ -21,6 +21,12 @@ const staticPages = [
   { key: 'sitemap', path: 'sitemap' },
 ];
 
+const educationalPages = [
+  { name: 'Kg to Litres Conversion Overview', path: 'kg-to-litres' },
+  { name: 'Kg to L Quick Reference', path: 'kg-to-l' },
+  { name: 'Kg to Litres Guide & Technical Hub', path: 'kg-to-litres-guide' },
+];
+
 const toolPages = [
   { name: 'All Specialized Tools', path: 'tools' },
   { name: 'Batch Mass Converter', path: 'batch-converter' },
@@ -63,6 +69,29 @@ const blogPaginationPages = Array.from({ length: totalBlogPages }, (_, i) => i +
               >
                 <span class="text-xs text-slate-500">→</span>
                 {t(`nav.${page.key}`) !== `nav.${page.key}` ? t(`nav.${page.key}`) : page.key}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- Educational & Quick Reference Pages -->
+    <section class="mb-10 bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        Educational &amp; Quick Reference Guides
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {
+          educationalPages.map((page) => (
+            <li>
+              <a
+                href={useI18n(locale).getLocalizedPath(page.path)}
+                class="text-sm text-slate-300 hover:text-brand-400 transition-colors flex items-center gap-2"
+              >
+                <span class="text-xs text-slate-500">→</span>
+                {page.name}
               </a>
             </li>
           ))

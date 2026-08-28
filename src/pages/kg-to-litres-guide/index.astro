@@ -1,0 +1,87 @@
+---
+// src/pages/kg-to-litres-guide/index.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allGuides = await getCollection('guides');
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Kg to Litres Complete Guide & Engineering Hub',
+  description: 'Complete guide and reference collection for converting kilograms to litres across chemical, culinary, and automotive substances.',
+  url: 'https://kgtoliter.com/kg-to-litres-guide/',
+};
+---
+
+<BaseLayout 
+  title="Kg to Litres Complete Guide & Engineering Hub"
+  description="Complete guide and reference collection for converting kilograms to litres across chemical, culinary, and automotive substances."
+  canonicalUrl="https://kgtoliter.com/kg-to-litres-guide/"
+  schema={pageSchema}
+>
+  <div class="container mx-auto px-4 py-12 max-w-5xl">
+    <div class="mb-10 text-center">
+      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider mb-4 inline-block">
+        Technical Knowledge Hub
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 section-title">
+        Kg to Litres Conversion Guide
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+        Everything you need to know about mass-to-volume math, temperature variations, and industry density values.
+      </p>
+    </div>
+
+    <!-- Guides Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      {
+        allGuides.map((guide) => (
+          <a
+            href={`/guides/${guide.id}/`}
+            class="group glass-card glass-card-hover rounded-2xl p-6 border border-slate-800 block transition-all"
+          >
+            <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20 capitalize font-sans">
+                {guide.data.category}
+              </span>
+              <span>•</span>
+              <span>
+                {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
+            <h2 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors mb-2">
+              {guide.data.title}
+            </h2>
+            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              {guide.data.description}
+            </p>
+            <div class="mt-4">
+              <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform">
+                Read Guide &rarr;
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- CTA -->
+    <div class="p-8 rounded-2xl bg-surface-900/60 border border-white/[0.08] text-center space-y-4">
+      <h2 class="text-2xl font-bold text-white">Need Real-Time Conversion?</h2>
+      <p class="text-slate-400 text-sm max-w-lg mx-auto">
+        Calculate mass and volume across 772+ substances with automatic temperature corrections and bulk CSV processing.
+      </p>
+      <div class="pt-2">
+        <a href="/" class="btn-primary inline-flex items-center gap-2">
+          <span>Explore Calculator</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

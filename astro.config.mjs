@@ -13,7 +13,12 @@ export default defineConfig({
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
-      customPages: featuredSubstances.map((s) => `https://kgtoliter.com/substances/${s.id}/`),
+      customPages: [
+        ...featuredSubstances.map((s) => `https://kgtoliter.com/substances/${s.id}/`),
+        'https://kgtoliter.com/kg-to-l/',
+        'https://kgtoliter.com/kg-to-litres/',
+        'https://kgtoliter.com/kg-to-litres-guide/',
+      ],
     }),
     mdx(),
   ],
