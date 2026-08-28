@@ -48,26 +48,58 @@ const homepageSchema = [
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'How do you convert litres to kilograms?',
+        name: 'What is kg to litres?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: "To convert litres to kilograms, multiply the volume by the substance's density. Formula: Mass (kg) = Volume (L) × Density (kg/L).",
+          text: 'Kg to litres is a conversion that transforms mass (in kilograms) into volume (in litres). Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). Since different substances have different densities, 1 kg of water equals 1 litre, while 1 kg of honey equals 0.704 litres.',
         },
       },
       {
         '@type': 'Question',
-        name: 'How do you convert kg to litres?',
+        name: 'What is 1 kg to litres?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: "To convert kilograms to litres, divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
+          text: "1 kg to litres varies depending on the substance's density. For water at 20°C, 1 kg = 1.000 L (density 1.000 kg/L). For milk, 1 kg = 0.971 L. For olive oil, 1 kg = 1.099 L. For honey, 1 kg = 0.704 L. For diesel, 1 kg = 1.202 L. For gasoline, 1 kg = 1.337 L.",
         },
       },
       {
         '@type': 'Question',
-        name: 'Is 1 kg always equal to 1 litre?',
+        name: 'What is kg to l?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'No. Kilograms measure mass, while litres measure volume. They are only equal for substances with a density of exactly 1 kg/L, like pure water at 4°C.',
+          text: 'Kg to l is the shorthand for converting kilograms (kg) to litres (L) based on density: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How much is 1 kg to 1 litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '1 kg equals 1 litre only for pure water at standard temperature (20°C) where density is 1.000 kg/L. For other substances, 1 kg = 1 ÷ Density (kg/L) in litres.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How many kg to a litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The number of kilograms in a litre depends on density: Mass (kg) = Volume (L) × Density (kg/L). For water, 1 L = 1.000 kg; milk = 1.030 kg; olive oil = 0.910 kg; honey = 1.420 kg; diesel = 0.832 kg; gasoline = 0.748 kg.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How to calculate kg to litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'To calculate kg to litres: 1. Identify substance. 2. Find its density in kg/L. 3. Apply formula Volume (L) = Mass (kg) ÷ Density (kg/L). Example: 5 kg of olive oil (0.910 kg/L) = 5 ÷ 0.910 = 5.495 litres.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is 1kg equivalent to 1 litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '1kg is equivalent to 1 litre only for water at 20°C (density 1.0 kg/L). For other liquids like milk (0.971 L/kg) or olive oil (1.099 L/kg), 1kg is not equivalent to 1 litre.',
         },
       },
     ],

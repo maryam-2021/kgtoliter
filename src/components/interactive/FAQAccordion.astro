@@ -5,16 +5,160 @@ export interface Props {
 
 const defaultFaqs = [
   {
-    q: 'How do you convert kilograms to litres?',
-    a: "To convert kilograms (kg) to litres (L), divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
+    q: 'What is kg to litres?',
+    a: `<p>Kg to litres is a conversion that transforms mass (in kilograms) into volume (in litres). The conversion uses the formula: <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>. Since different substances have different densities, 1 kg of water equals 1 litre, while 1 kg of honey equals only 0.704 litres. This conversion is essential for cooking, fuel calculations, industrial processes, and scientific measurements.</p>
+<div class="conversion-example">
+    <strong>Quick Examples:</strong>
+    <ul>
+        <li>1 kg water = 1.000 L</li>
+        <li>1 kg milk = 0.971 L</li>
+        <li>1 kg olive oil = 1.099 L</li>
+        <li>1 kg honey = 0.704 L</li>
+        <li>1 kg diesel = 1.202 L</li>
+        <li>1 kg gasoline = 1.337 L</li>
+    </ul>
+</div>`,
   },
   {
-    q: 'Is 1 kg always equal to 1 litre?',
-    a: 'No. Kilograms measure mass, whereas litres measure spatial volume. They are only equal for substances with a density of exactly 1.00 kg/L, like pure water at 4°C.',
+    q: 'What is 1 kg to litres?',
+    a: `<p>1 kg to litres varies depending on the substance's density. For water at room temperature (20°C), <strong>1 kg = 1 litre</strong> because water density is 1.0 kg/L. For other substances:</p>
+<div class="conversion-grid">
+    <div class="conversion-card">
+        <span class="substance">Water</span>
+        <span class="result">1 kg = 1.000 L</span>
+        <span class="density">(1.000 kg/L)</span>
+    </div>
+    <div class="conversion-card">
+        <span class="substance">Milk</span>
+        <span class="result">1 kg = 0.971 L</span>
+        <span class="density">(1.030 kg/L)</span>
+    </div>
+    <div class="conversion-card">
+        <span class="substance">Olive Oil</span>
+        <span class="result">1 kg = 1.099 L</span>
+        <span class="density">(0.910 kg/L)</span>
+    </div>
+    <div class="conversion-card">
+        <span class="substance">Honey</span>
+        <span class="result">1 kg = 0.704 L</span>
+        <span class="density">(1.420 kg/L)</span>
+    </div>
+    <div class="conversion-card">
+        <span class="substance">Diesel</span>
+        <span class="result">1 kg = 1.202 L</span>
+        <span class="density">(0.832 kg/L)</span>
+    </div>
+    <div class="conversion-card">
+        <span class="substance">Gasoline</span>
+        <span class="result">1 kg = 1.337 L</span>
+        <span class="density">(0.748 kg/L)</span>
+    </div>
+</div>`,
+  },
+  {
+    q: 'What is kg to l?',
+    a: `<p><strong>Kg to l</strong> is the shorthand for converting kilograms (kg) to litres (L). This conversion is based on the substance's density: <strong>Volume (L) = Mass (kg) ÷ Density (kg/L)</strong>. The "kg to l" conversion is commonly used in cooking, automotive fuel calculations, and industrial processes where mass is measured but volume is needed.</p>
+<p class="mt-2">Our <a href="/">kg to l calculator</a> handles this conversion automatically for 772 substances, saving you time and ensuring accuracy.</p>`,
+  },
+  {
+    q: 'How much is 1 kg to 1 litre?',
+    a: `<p><strong>1 kg equals 1 litre only for water at standard room temperature (20°C).</strong> For other substances, 1 kg can be more or less than 1 litre:</p>
+<table class="conversion-table">
+    <thead>
+        <tr>
+            <th>Substance</th>
+            <th>1 kg in Litres</th>
+            <th>Density (kg/L)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Water</td><td>1.000 L</td><td>1.000</td></tr>
+        <tr><td>Milk</td><td>0.971 L</td><td>1.030</td></tr>
+        <tr><td>Olive Oil</td><td>1.099 L</td><td>0.910</td></tr>
+        <tr><td>Honey</td><td>0.704 L</td><td>1.420</td></tr>
+        <tr><td>Diesel</td><td>1.202 L</td><td>0.832</td></tr>
+        <tr><td>Gasoline</td><td>1.337 L</td><td>0.748</td></tr>
+    </tbody>
+</table>
+<p>The relationship is: <strong>1 kg = 1 ÷ Density (kg/L) in litres</strong>.</p>`,
+  },
+  {
+    q: 'How many kg to a litre?',
+    a: `<p>The number of kilograms in a litre depends entirely on the substance's density. The formula is: <strong>Mass (kg) = Volume (L) × Density (kg/L)</strong>.</p>
+<div class="example-grid">
+    <div class="example-item">
+        <strong>Water</strong> 1 L = 1.000 kg
+    </div>
+    <div class="example-item">
+        <strong>Milk</strong> 1 L = 1.030 kg
+    </div>
+    <div class="example-item">
+        <strong>Olive Oil</strong> 1 L = 0.910 kg
+    </div>
+    <div class="example-item">
+        <strong>Honey</strong> 1 L = 1.420 kg
+    </div>
+    <div class="example-item">
+        <strong>Diesel</strong> 1 L = 0.832 kg
+    </div>
+    <div class="example-item">
+        <strong>Gasoline</strong> 1 L = 0.748 kg
+    </div>
+</div>
+<p class="mt-2">Use our <a href="/">kg to litres converter</a> to find the exact value for any substance.</p>`,
+  },
+  {
+    q: 'How to calculate kg to litre?',
+    a: `<p>To calculate kg to litres, follow these steps:</p>
+<ol class="calculation-steps">
+    <li><strong>Identify the substance</strong> (water, milk, oil, etc.)</li>
+    <li><strong>Find its density</strong> in kg/L (use our <a href="/">density directory</a>)</li>
+    <li><strong>Apply the formula:</strong> Volume (L) = Mass (kg) ÷ Density (kg/L)</li>
+</ol>
+<div class="example-calculation">
+    <strong>Example: 5 kg of olive oil</strong>
+    <ul>
+        <li>Mass = 5 kg</li>
+        <li>Density of olive oil = 0.910 kg/L</li>
+        <li>Volume = 5 ÷ 0.910 = 5.495 L</li>
+    </ul>
+    <p class="mt-2"><strong>Result:</strong> 5 kg of olive oil = 5.495 litres</p>
+</div>
+<p class="mt-2">Our <a href="/">interactive converter</a> does this calculation automatically.</p>`,
+  },
+  {
+    q: 'Is 1kg equivalent to 1 litre?',
+    a: `<p><strong>1kg is equivalent to 1 litre only for water at standard temperature (20°C).</strong> This is because water has a density of exactly 1.0 kg/L. For all other substances, 1kg is not equivalent to 1 litre:</p>
+<div class="equivalence-grid">
+    <div class="equivalence-item yes">
+        <span class="icon">✅</span>
+        <span class="label">Water:</span>
+        <span class="value">1 kg = 1.000 L</span>
+    </div>
+    <div class="equivalence-item no">
+        <span class="icon">❌</span>
+        <span class="label">Milk:</span>
+        <span class="value">1 kg = 0.971 L</span>
+    </div>
+    <div class="equivalence-item no">
+        <span class="icon">❌</span>
+        <span class="label">Olive Oil:</span>
+        <span class="value">1 kg = 1.099 L</span>
+    </div>
+    <div class="equivalence-item no">
+        <span class="icon">❌</span>
+        <span class="label">Honey:</span>
+        <span class="value">1 kg = 0.704 L</span>
+    </div>
+</div>
+<p class="mt-2">The conversion between kg and litres requires the density of the substance. Use our <a href="/">converter</a> to get accurate results for any substance.</p>`,
   },
 ];
 
 const { faqs = defaultFaqs } = Astro.props;
+
+// Strip HTML for schema generation
+const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
 
 // Generate Schema in Frontmatter (Safe from UI leaks)
 const faqSchema = {
@@ -25,7 +169,7 @@ const faqSchema = {
     name: faq.q,
     acceptedAnswer: {
       '@type': 'Answer',
-      text: faq.a,
+      text: stripHtml(faq.a),
     },
   })),
 };
@@ -38,12 +182,12 @@ const faqSchema = {
 <div class="space-y-4 max-w-4xl mx-auto my-8 font-sans">
   {
     faqs.map((faq) => (
-      <details class="group bg-gray-800/50 border border-gray-700 rounded-lg open:bg-gray-800 transition-all">
-        <summary class="flex justify-between items-center p-4 cursor-pointer list-none text-white font-medium">
-          {faq.q}
-          <span class="transition-transform group-open:rotate-45 text-brand-400 text-xl">+</span>
+      <details class="faq-item group open:bg-surface-900/90 transition-all">
+        <summary class="faq-question">
+          <span>{faq.q}</span>
+          <span class="transition-transform duration-300 group-open:rotate-45 text-brand-400 text-xl font-mono leading-none ml-3 shrink-0">+</span>
         </summary>
-        <div class="px-4 pb-4 text-gray-400 text-sm leading-relaxed">{faq.a}</div>
+        <div class="faq-answer" set:html={faq.a} />
       </details>
     ))
   }
