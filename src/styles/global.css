@@ -899,5 +899,58 @@ html.dark .equivalence-item.no {
   transform: translateY(-1px);
 }
 
+/* ========================================================================
+   CONTENT BLOCK & FORMULA BOX
+   ======================================================================== */
+.content-block {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.content-block h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.content-block p {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.formula-box {
+  margin: 1.25rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.125rem;
+  color: var(--accent);
+}
+
+.content-block .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.content-block .read-more:hover {
+  opacity: 0.85;
+  transform: translateX(3px);
+}
+
+
 
 
