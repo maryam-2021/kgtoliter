@@ -56,6 +56,18 @@ const guideFaqs = [
     a: '1 kg/L equals 1,000,000 g/m³ (10⁶ g/m³), or 1,000 kg/m³. Since 1 m³ = 1,000 L, 1 kg/L × 1,000 = 1,000 kg/m³ = 1,000,000 g/m³.',
   },
   {
+    q: 'What is the difference between kg and liter (kg or liter difference)?',
+    a: 'Kilograms (kg) measure mass (how much matter an object contains), while liters (L / ltr) measure volume (how much 3D space an object occupies). They are connected through density: Mass (kg) = Volume (L) × Density (kg/L).',
+  },
+  {
+    q: 'What is kg versus litre (kg vs ltr)?',
+    a: 'In kg versus litre, 1 kg equals 1 L only for pure water at 20°C. For substances with densities lower than 1.0 kg/L (like gasoline or oils), 1 kg is greater than 1 L. For substances denser than 1.0 kg/L (like honey or milk), 1 kg is less than 1 L.',
+  },
+  {
+    q: 'What is the kg vs liter conversion formula?',
+    a: 'To convert kg to liter: Volume (L) = Mass (kg) ÷ Density (kg/L). To convert liter to kg: Mass (kg) = Volume (L) × Density (kg/L).',
+  },
+  {
     q: 'How many litres is 1 kg of cat litter?',
     a: '1 kg of clay litter = 1.25 L, 1 kg of crystal litter = 1.67 L, 1 kg of wood litter = 2.00 L, 1 kg of corn/wheat litter = 2.50 L.',
   },
@@ -145,6 +157,7 @@ const pageSchema = [
         <a href="#kg-to-liter-for-gas" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Gasoline</a>
         <a href="#kg-to-liter-for-cat-litter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Cat Litter</a>
         <a href="#kg-l-density-units" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Density Units (g/cm³, g/mL, g/m³)</a>
+        <a href="#kg-vs-liter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Kg vs Liter (Differences)</a>
         <a href="#faq" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">FAQ</a>
       </nav>
     </header>
@@ -663,6 +676,76 @@ const pageSchema = [
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- Section: Kg vs Liter / Kg Versus Litre / Kg vs Ltr Difference -->
+      <section class="content-block scroll-mt-24" id="kg-vs-liter">
+        <div id="kg-versus-litre"></div>
+        <div id="kg-vs-ltr"></div>
+        <div id="kg-or-liter-difference"></div>
+        <h2 class="text-2xl font-bold text-white">Kg vs Liter (Kg Versus Litre): Key Differences Explained</h2>
+        <p class="text-slate-300 mt-2">
+          When analyzing <strong>kg vs liter</strong> (kilograms versus litres / kg vs ltr), the essential distinction is that <strong>kilograms measure mass</strong> (quantity of matter) while <strong>litres measure volume</strong> (spatial capacity).
+        </p>
+
+        <div class="conversion-table my-4 overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-2">Kg vs Liter Comparison Matrix</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Kilogram (kg)</th>
+                <th>Litre (L / ltr)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Physical Quantity</strong></td>
+                <td class="font-semibold text-white">Mass (Gravitational weight)</td>
+                <td class="font-semibold text-white">Volume (Spatial capacity)</td>
+              </tr>
+              <tr>
+                <td><strong>SI System Role</strong></td>
+                <td>Base SI Unit of Mass</td>
+                <td>Metric unit accepted for volume (1 dm³)</td>
+              </tr>
+              <tr>
+                <td><strong>Equivalencies</strong></td>
+                <td class="font-mono">1 kg = 1,000 g = 2.205 lbs</td>
+                <td class="font-mono">1 L = 1,000 mL = 0.264 US gal</td>
+              </tr>
+              <tr>
+                <td><strong>Temperature Effect</strong></td>
+                <td>Constant regardless of temperature</td>
+                <td>Expands/contracts with temperature changes</td>
+              </tr>
+              <tr>
+                <td><strong>Conversion Link</strong></td>
+                <td colspan="2" class="text-center font-mono text-brand-400 font-bold">Density (&rho; in kg/L): Mass (kg) = Volume (L) &times; Density</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="answer-box">
+          <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] col-span-full">
+            <h4 class="text-base font-bold text-white mb-1">When is 1 kg equal to 1 liter?</h4>
+            <p class="text-slate-300 text-sm">
+              <strong class="text-white">1 kg equals 1 liter only for pure water at 20°C</strong> because water has a density of exactly 1.000 kg/L. For other substances:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 text-sm my-2 space-y-1">
+              <li><strong>Lighter liquids (Density &lt; 1.0 kg/L):</strong> 1 kg yields <em>more</em> than 1 L (e.g. Gasoline: 1 kg = 1.337 L).</li>
+              <li><strong>Heavier liquids (Density &gt; 1.0 kg/L):</strong> 1 kg yields <em>less</em> than 1 L (e.g. Honey: 1 kg = 0.704 L).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="key-takeaway">
+          <h4 class="font-bold text-amber-400 mb-1">Key Takeaway</h4>
+          <p class="text-slate-300 text-sm">
+            Do not assume 1 kg = 1 L for cooking oils, milk, fuels, or chemicals. Always apply the substance density formula: <code>Volume = Mass ÷ Density</code>.
+          </p>
         </div>
       </section>
 
