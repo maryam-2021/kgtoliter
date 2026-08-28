@@ -20,22 +20,46 @@ const {
 
 <a
   href={href}
-  class="glass-card glass-card-hover flex flex-col items-center p-4 sm:p-5 rounded-xl text-center group transition-all"
+  class="substance-card group transition-all duration-300"
 >
-  <span class="text-3xl sm:text-4xl mb-2.5 group-hover:scale-110 transition-transform">
-    {icon}
-  </span>
-  <span class="font-bold text-sm sm:text-base text-white group-hover:text-brand-400 transition-colors truncate w-full">
-    {name}
-  </span>
-  <span class="text-xs font-mono text-slate-400 mt-1">
-    {density.toFixed(3)} kg/L
-  </span>
-  {
-    category && (
-      <span class="text-[10px] uppercase font-mono text-brand-400/80 mt-1 tracking-wider">
-        {category}
-      </span>
-    )
-  }
+  <div class="substance-card-inner glass-card flex flex-col items-center p-5 sm:p-6 rounded-xl text-center">
+    <span class="text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
+      {icon}
+    </span>
+    <span class="font-bold text-sm sm:text-base text-white group-hover:text-brand-400 transition-colors truncate w-full">
+      {name}
+    </span>
+    <span class="text-xs font-mono text-slate-500 mt-1.5">
+      {density.toFixed(3)} kg/L
+    </span>
+    {
+      category && (
+        <span class="text-[10px] uppercase font-mono text-brand-400/70 mt-1.5 tracking-wider">
+          {category}
+        </span>
+      )
+    }
+  </div>
 </a>
+
+<style>
+  .substance-card {
+    position: relative;
+    border-radius: 0.85rem;
+    padding: 1px;
+    background: transparent;
+  }
+
+  .substance-card:hover {
+    background: linear-gradient(135deg, rgba(41, 165, 255, 0.4), rgba(89, 218, 255, 0.2), rgba(41, 165, 255, 0.1));
+    transform: translateY(-3px);
+  }
+
+  .substance-card-inner {
+    border-radius: calc(0.85rem - 1px);
+  }
+
+  .substance-card:hover .substance-card-inner {
+    border-color: transparent;
+  }
+</style>

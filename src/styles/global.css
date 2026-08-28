@@ -95,11 +95,11 @@ html:not(.dark) {
   );
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-card-hover {
@@ -112,6 +112,82 @@ html:not(.dark) {
     0 0 0 1px rgba(41, 165, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transform: translateY(-3px);
+}
+
+/* ========================================================================
+   HERO AMBIENT GLOW
+   ======================================================================== */
+.hero-glow {
+  position: relative;
+}
+.hero-glow::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 40%,
+    rgba(41, 165, 255, 0.12) 0%,
+    rgba(41, 165, 255, 0.04) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ========================================================================
+   TRUST BAR — Social Proof Strip
+   ======================================================================== */
+.trust-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+  letter-spacing: 0.01em;
+}
+
+.trust-bar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.trust-bar-item .trust-icon {
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.7;
+}
+
+.trust-bar-divider {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #334155;
+}
+
+/* ========================================================================
+   SECTION TITLE — Standardised gradient heading
+   ======================================================================== */
+.section-title {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+  letter-spacing: -0.01em;
+}
+
+.section-title-accent {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(135deg, #51c3ff 0%, #29a5ff 40%, #89daff 100%);
+  letter-spacing: -0.01em;
 }
 
 /* ========================================================================
