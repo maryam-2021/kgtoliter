@@ -11,13 +11,45 @@ const quickConversions = [
   { name: 'Gasoline', result: '1 kg = 1.337 L', density: '0.748 kg/L', icon: '🚗' },
 ];
 
-const pageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Kg to Litres - Mass to Volume Conversion Reference',
-  description: 'Learn how to convert kg to litres. Formulas, density factors, and quick conversion tables for liquids and bulk materials.',
-  url: 'https://kgtoliter.com/kg-to-litres/',
-};
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Kg to Litres - Mass to Volume Conversion Reference',
+    description: 'Learn how to convert kg to litres. Formulas, density factors, and quick conversion tables for liquids and bulk materials.',
+    url: 'https://kgtoliter.com/kg-to-litres/',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do you convert kg to litres?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: "Divide the mass in kilograms by the substance's density in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is 1 kg always equal to 1 litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No, 1 kg equals 1 litre only for water at 20°C (density 1.000 kg/L). Lighter substances yield more than 1 litre per kg, while heavier substances yield less.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How many litres is 1 kg of olive oil?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '1 kg of olive oil equals 1.099 litres because olive oil has a density of 0.910 kg/L (1 ÷ 0.910 = 1.099 L).',
+        },
+      },
+    ],
+  },
+];
 ---
 
 <BaseLayout 

@@ -13,13 +13,45 @@ const quickConversions = [
   { name: 'Gasoline', result: '1 kg = 1.337 L', density: '0.748 kg/L', icon: '🚗' },
 ];
 
-const pageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Kg to L - Kilograms to Liters Quick Reference',
-  description: 'Quick reference for kg to L conversion. 1 kg water = 1 L. Use our converter for 772 substances.',
-  url: 'https://kgtoliter.com/kg-to-l/',
-};
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Kg to L - Kilograms to Liters Quick Reference',
+    description: 'Quick reference for kg to L conversion. 1 kg water = 1 L. Use our converter for 772 substances.',
+    url: 'https://kgtoliter.com/kg-to-l/',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What does kg to L mean?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Kg to L is shorthand for converting mass in kilograms (kg) to volume in litres (L). Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How many kg to a litre?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: "The number of kilograms in a litre depends on the substance's density. For water: 1 L = 1 kg. For honey: 1 L = 1.42 kg. For milk: 1 L = 1.03 kg.",
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How much is 1 kg of water in litres?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: '1 kg of water equals exactly 1.000 litre (density 1.000 kg/L).',
+        },
+      },
+    ],
+  },
+];
 ---
 
 <BaseLayout 
