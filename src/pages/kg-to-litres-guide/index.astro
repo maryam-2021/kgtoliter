@@ -16,32 +16,44 @@ const guideFaqs = [
     a: 'Volume (L) = Mass (kg) ÷ Density (kg/L). This is the fundamental formula for converting kilograms to litres for any substance.',
   },
   {
-    q: 'How many litres is 1 kg of oil?',
-    a: '1 kg of olive oil = 1.099 L, 1 kg of canola oil = 1.089 L, 1 kg of coconut oil = 1.082 L, 1 kg of avocado oil = 1.096 L.',
+    q: 'How many litres is 1 kg to litre in oil?',
+    a: 'For olive oil (0.910 kg/L), 1 kg = 1.099 L. For canola oil (0.918 kg/L), 1 kg = 1.089 L. For vegetable oil (0.920 kg/L), 1 kg = 1.087 L.',
   },
   {
-    q: 'What is the kg to litres formula for water?',
-    a: '1 kg of water = 1 litre. The formula is Volume (L) = Mass (kg) ÷ 1.000.',
+    q: 'What is kg to l in water?',
+    a: '1 kg of water equals exactly 1.000 litre (L) at standard room temperature (20°C) with density 1.000 kg/L.',
   },
   {
-    q: 'How many litres is 1 kg of diesel?',
-    a: '1 kg of diesel = 1.202 litres. Diesel has a density of approximately 0.832 kg/L.',
+    q: 'What is kg to liter in diesel?',
+    a: '1 kg of diesel equals 1.202 litres (L) based on a standard diesel density of 0.832 kg/L.',
   },
   {
-    q: 'How many litres is 1 kg of LPG?',
-    a: '1 kg of LPG = 1.96 litres. LPG has a density of approximately 0.510 kg/L.',
+    q: 'What is kg to liters in milk?',
+    a: '1 kg of milk equals 0.971 litres (L) based on an average whole milk density of 1.030 kg/L.',
   },
   {
-    q: 'How many litres is 1 kg of milk?',
-    a: '1 kg of milk = 0.971 litres. Milk has a density of approximately 1.030 kg/L.',
+    q: 'What is kg to liters in gas (gasoline)?',
+    a: '1 kg of gasoline equals 1.337 litres (L) based on a reference density of 0.748 kg/L.',
   },
   {
-    q: 'How many litres is 1 kg of paint?',
-    a: '1 kg of latex paint = 0.833 L, 1 kg of oil-based paint = 0.769 L, 1 kg of epoxy paint = 0.667 L, 1 kg of primer = 0.833 L.',
+    q: 'What is kg to liters in paint?',
+    a: 'For latex paint (1.20 kg/L), 1 kg = 0.833 L. For oil-based paint (1.30 kg/L), 1 kg = 0.769 L. For epoxy paint (1.50 kg/L), 1 kg = 0.667 L.',
   },
   {
-    q: 'How many litres is 1 kg of gasoline?',
-    a: '1 kg of gasoline = 1.337 litres. Gasoline has a density of approximately 0.748 kg/L.',
+    q: 'What is kg to liters in lpg?',
+    a: '1 kg of liquid LPG equals approximately 1.961 litres (L) based on a commercial propane/butane density of 0.510 kg/L at 20°C.',
+  },
+  {
+    q: 'What is 1 kg/L in g/cm³ (kg l in g cm3)?',
+    a: '1 kg/L equals exactly 1 g/cm³. Because 1 kg = 1,000 g and 1 L = 1,000 cm³, the 1,000 factor cancels out: 1 kg/L = 1 g/cm³.',
+  },
+  {
+    q: 'What is 1 kg/L in g/mL (kg l in g ml)?',
+    a: '1 kg/L equals exactly 1 g/mL. Since 1 mL = 1 cm³ = 0.001 L, 1 kg/L = 1 g/mL.',
+  },
+  {
+    q: 'What is 1 kg/L in g/m³ (kg l in g m3)?',
+    a: '1 kg/L equals 1,000,000 g/m³ (10⁶ g/m³), or 1,000 kg/m³. Since 1 m³ = 1,000 L, 1 kg/L × 1,000 = 1,000 kg/m³ = 1,000,000 g/m³.',
   },
   {
     q: 'How many litres is 1 kg of cat litter?',
@@ -132,6 +144,7 @@ const pageSchema = [
         <a href="#kg-to-liters-for-paint" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Paint</a>
         <a href="#kg-to-liter-for-gas" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Gasoline</a>
         <a href="#kg-to-liter-for-cat-litter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Cat Litter</a>
+        <a href="#kg-l-density-units" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Density Units (g/cm³, g/mL, g/m³)</a>
         <a href="#faq" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">FAQ</a>
       </nav>
     </header>
@@ -589,6 +602,67 @@ const pageSchema = [
         <div class="note-box mt-4">
           <h4>⚠️ Important Note</h4>
           <p>Cat litter density varies significantly by brand and type. Always check the product specifications for the most accurate conversion.</p>
+        </div>
+      </section>
+
+      <!-- Density Unit Conversions: kg/L in g/cm3, g/ml, g/m3 -->
+      <section class="content-block scroll-mt-24" id="kg-l-density-units">
+        <h2 class="text-2xl font-bold text-white">Kg/L Density Equivalencies: g/cm³, g/mL &amp; g/m³</h2>
+        <p class="text-slate-300">Understanding how <strong>kg/L</strong> converts to scientific metric units is essential when referencing material data sheets:</p>
+        
+        <div class="conversion-grid my-4">
+          <div class="conversion-card highlight" id="kg-l-in-g-cm3">
+            <h3>kg/L in g/cm³</h3>
+            <div class="conversion-value">1 kg/L = 1 g/cm³</div>
+            <p class="text-xs text-slate-400 mt-1">Exact 1:1 Equivalency</p>
+          </div>
+          <div class="conversion-card highlight" id="kg-l-in-g-ml">
+            <h3>kg/L in g/mL</h3>
+            <div class="conversion-value">1 kg/L = 1 g/mL</div>
+            <p class="text-xs text-slate-400 mt-1">Exact 1:1 Equivalency</p>
+          </div>
+          <div class="conversion-card" id="kg-l-in-g-m3">
+            <h3>kg/L in g/m³</h3>
+            <div class="conversion-value">1 kg/L = 10⁶ g/m³</div>
+            <p class="text-xs text-slate-400 mt-1">1,000,000 g/m³ (1,000 kg/m³)</p>
+          </div>
+        </div>
+
+        <div class="formula-section">
+          <h3 class="text-lg font-bold text-white">Mathematical Proof &amp; Conversion Rules</h3>
+          <div class="overflow-x-auto my-3">
+            <table>
+              <thead>
+                <tr>
+                  <th>Unit Conversion</th>
+                  <th>Formula / Derivation</th>
+                  <th>Example (Water: 1.000 kg/L)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>kg/L &rarr; g/cm³</strong></td>
+                  <td class="font-mono text-sm">(1,000 g) ÷ (1,000 cm³) = 1 g/cm³</td>
+                  <td class="font-mono text-brand-400 font-semibold">1.000 g/cm³</td>
+                </tr>
+                <tr>
+                  <td><strong>kg/L &rarr; g/mL</strong></td>
+                  <td class="font-mono text-sm">1 cm³ = 1 mL &rArr; 1 kg/L = 1 g/mL</td>
+                  <td class="font-mono text-brand-400 font-semibold">1.000 g/mL</td>
+                </tr>
+                <tr>
+                  <td><strong>kg/L &rarr; kg/m³</strong></td>
+                  <td class="font-mono text-sm">1 m³ = 1,000 L &rArr; kg/L &times; 1,000</td>
+                  <td class="font-mono text-brand-400 font-semibold">1,000 kg/m³</td>
+                </tr>
+                <tr>
+                  <td><strong>kg/L &rarr; g/m³</strong></td>
+                  <td class="font-mono text-sm">1 m³ = 1,000 L &rArr; kg/L &times; 1,000,000</td>
+                  <td class="font-mono text-brand-400 font-semibold">1,000,000 g/m³</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
