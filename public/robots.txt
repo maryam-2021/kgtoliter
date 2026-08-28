@@ -1,7 +1,10 @@
 User-agent: *
 Allow: /
 
-# Allow substance pages
+# Allow educational pages
+Allow: /kg-to-litres/
+Allow: /kg-to-l/
+Allow: /kg-to-litres-guide/
 Allow: /substances/
 Allow: /substances/water
 Allow: /substances/milk
@@ -9,10 +12,6 @@ Allow: /substances/olive-oil
 Allow: /substances/honey
 Allow: /substances/diesel
 Allow: /substances/gasoline
-# Allow quick reference & educational pages
-Allow: /kg-to-l/
-Allow: /kg-to-litres/
-Allow: /kg-to-litres-guide/
 
+# Sitemap location
 Sitemap: https://kgtoliter.com/sitemap-index.xml
-
