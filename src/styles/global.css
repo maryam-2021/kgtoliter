@@ -900,132 +900,125 @@ html.dark .equivalence-item.no {
 }
 
 /* ========================================================================
-   CONTENT BLOCK & FORMULA BOX
+   CONTENT BLOCK, FORMULA BOX & KEYWORD SECTIONS
    ======================================================================== */
 .content-block {
-  padding: 2rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
   background: var(--bg-card);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .content-block h2 {
   font-size: 1.5rem;
-  font-weight: 700;
+  margin-bottom: 1rem;
   color: var(--text-primary);
-  margin-bottom: 0.75rem;
+  font-weight: 700;
 }
 
-.content-block p {
-  color: var(--text-secondary);
-  font-size: 0.9375rem;
-  line-height: 1.7;
+.content-block h3 {
+  font-size: 1.25rem;
+  margin: 1rem 0 0.5rem;
+  color: var(--text-primary);
+  font-weight: 700;
 }
 
 .formula-box {
-  margin: 1.25rem 0;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   background: var(--bg-hover);
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   text-align: center;
-  font-family: var(--font-mono, monospace);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  font-family: monospace;
+  margin: 0.75rem 0;
+  border: 1px solid var(--border);
   color: var(--accent);
 }
 
-.content-block .read-more {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.content-block .read-more:hover {
-  opacity: 0.85;
-  transform: translateX(3px);
-}
-
-.conversion-cards {
+.example-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin: 1.25rem 0;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
 }
 
-.conversion-cards .conversion-card {
-  padding: 1.25rem;
-  text-align: left;
-  border-radius: var(--radius-sm);
+.example-item {
+  padding: 0.75rem;
   background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  text-align: center;
   border: 1px solid var(--border);
 }
 
-.conversion-cards .conversion-card h3 {
-  font-size: 1.0625rem;
-  font-weight: 700;
+.example-item .substance {
+  display: block;
+  font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 0.75rem;
 }
 
-.conversion-cards .conversion-value {
-  font-size: 0.9375rem;
-  font-family: var(--font-mono, monospace);
+.example-item .result {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.example-item .density {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.conversion-card {
+  padding: 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.conversion-card.highlight {
+  border-color: var(--accent);
+  background: rgba(41, 165, 255, 0.08);
+}
+
+.conversion-value {
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--accent);
-  margin-bottom: 0.375rem;
 }
 
-.example-calculation h4 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-/* ========================================================================
-   STEP-BY-STEP CONVERSION FLOW
-   ======================================================================== */
 .step-by-step {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin: 1.5rem 0;
+  gap: 0.75rem;
+  margin: 1rem 0;
 }
 
 .step {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  padding: 1.25rem;
+  padding: 1rem;
   background: var(--bg-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  transition: border-color 0.2s ease;
-}
-
-.step:hover {
-  border-color: rgba(41, 165, 255, 0.3);
 }
 
 .step-number {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
+  min-width: 2rem;
   height: 2rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #29a5ff, #0084e6);
+  background: var(--accent);
   color: white;
+  border-radius: 50%;
   font-weight: 700;
-  font-size: 0.875rem;
   flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(41, 165, 255, 0.4);
+  box-shadow: 0 0 10px rgba(41, 165, 255, 0.3);
 }
 
 .step-content {
@@ -1033,17 +1026,15 @@ html.dark .equivalence-item.no {
 }
 
 .step-content h4 {
-  font-size: 1.0625rem;
+  margin: 0 0 0.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.25rem;
 }
 
 .step-content p {
+  margin: 0;
   color: var(--text-secondary);
   font-size: 0.875rem;
-  line-height: 1.6;
-  margin: 0;
 }
 
 .step-content a {
@@ -1052,86 +1043,116 @@ html.dark .equivalence-item.no {
   text-underline-offset: 3px;
 }
 
-/* ========================================================================
-   KEYWORD CONTENT BLOCKS & TABLES
-   ======================================================================== */
+.example-calculation {
+  padding: 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  margin: 0.75rem 0;
+  border: 1px solid var(--border);
+}
+
 .conversion-section {
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
+}
+
+.conversion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
-  margin: 1.25rem 0;
-}
-
-.conversion-section h3 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-
-.conversion-card.highlight {
-  border-color: rgba(41, 165, 255, 0.4);
-  background: rgba(41, 165, 255, 0.06);
-}
-
-.conversion-card .density {
-  font-size: 0.75rem;
-  font-family: var(--font-mono, monospace);
-  color: var(--text-muted);
-  margin-top: 0.25rem;
+  margin: 1rem 0;
 }
 
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin: 1.25rem 0;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.faq-item {
+  padding: 0.75rem 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.faq-item h4,
+.faq-item h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 
 .quick-reference {
-  margin-top: 2rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
 }
 
-.quick-reference h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.quick-reference table,
-.conversion-table table {
+.quick-reference table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  margin: 0.75rem 0;
 }
 
 .quick-reference th,
-.quick-reference td,
-.conversion-table th,
-.conversion-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
+.quick-reference td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
   text-align: left;
 }
 
-.quick-reference th,
-.conversion-table th {
+.quick-reference thead {
   background: var(--bg-hover);
+}
+
+.quick-reference th {
   color: var(--text-primary);
   font-weight: 600;
 }
 
-.quick-reference td,
-.conversion-table td {
+.quick-reference td {
   color: var(--text-secondary);
 }
 
-.quick-reference tr:hover td,
-.conversion-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+.read-more {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
 }
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .example-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .conversion-grid {
+    grid-template-columns: 1fr;
+  }
+  .step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
 
 
 
