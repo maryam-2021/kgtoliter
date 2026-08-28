@@ -8,52 +8,48 @@ const allGuides = await getCollection('guides');
 
 const guideFaqs = [
   {
-    q: 'How do you convert kilograms to litres?',
-    a: "To convert kilograms (kg) to litres (L), divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For water (density 1.0 kg/L), 1 kg = 1 L.",
+    q: 'How much is kg to litres?',
+    a: 'The conversion depends on density. For water: 1 kg = 1 L. For honey: 1 kg = 0.704 L.',
+  },
+  {
+    q: 'How to convert kg to liters?',
+    a: 'Use the formula: Volume (L) = Mass (kg) ÷ Density (kg/L).',
   },
   {
     q: 'How to calculate kg to liter?',
-    a: 'Use the formula Liters = Kilograms ÷ Density (kg/L). Example: 10 kg of diesel (0.832 kg/L) = 10 ÷ 0.832 = 12.019 L.',
+    a: 'Divide the mass in kg by the density in kg/L. Example: 5 kg ÷ 0.910 kg/L = 5.495 L.',
   },
   {
-    q: 'Is 1kg equal to 1 litre?',
-    a: '1 kg equals 1 litre only for pure water at standard room temperature (20°C). For all other substances, it varies based on density.',
+    q: 'Is 1kg = 1 litre?',
+    a: 'Only for water. 1 kg water = 1 L. For other substances, 1 kg ≠ 1 L.',
   },
   {
     q: 'How much is 1 kg to 1 liter?',
-    a: '1 kg of water = 1.000 L; 1 kg of milk = 0.971 L; 1 kg of olive oil = 1.099 L; 1 kg of honey = 0.704 L; 1 kg of diesel = 1.202 L; 1 kg of gasoline = 1.337 L.',
+    a: 'For water: 1 kg = 1 L. For milk: 1 kg = 0.971 L. For honey: 1 kg = 0.704 L.',
   },
   {
     q: 'Are kg and litres the same?',
-    a: 'No. Kilograms measure mass (the quantity of matter), while litres measure volume (the physical space occupied). They relate through density: Mass = Volume × Density.',
+    a: 'No. kg measures mass, litres measure volume. They are different physical properties.',
+  },
+  {
+    q: 'Is kg equal to litre?',
+    a: 'No, kg and litre are not equal. Only for water at 20°C do they have the same numerical value.',
   },
   {
     q: 'What is kg to litres?',
-    a: 'Kg to litres is the mathematical transformation of gravitational weight into liquid capacity using density as the conversion factor.',
+    a: "Kg to litres is the conversion of mass in kilograms to volume in litres using the substance's density.",
   },
   {
     q: 'Can you convert kg to liters?',
-    a: 'Yes, absolutely. Any material with a known density can be converted using Volume (L) = Mass (kg) ÷ Density (kg/L).',
+    a: 'Yes, using the formula: Volume (L) = Mass (kg) ÷ Density (kg/L).',
   },
   {
-    q: 'How much litre in one barrel?',
-    a: '1 standard US oil barrel equals 42 US gallons or 158.987 litres. 1 UK barrel equals 163.659 litres.',
+    q: 'Are kg and liters the same?',
+    a: 'No. kg measures mass, liters measure volume. They are different units.',
   },
   {
-    q: 'How much litre in 1 gallon?',
-    a: '1 US liquid gallon equals 3.78541 litres. 1 UK (Imperial) gallon equals 4.54609 litres.',
-  },
-  {
-    q: 'How many kg is 1 litre of water?',
-    a: '1 litre of water weighs exactly 1 kilogram at 20°C (density 1.000 kg/L).',
-  },
-  {
-    q: 'How much is 1 kilolitre (kL)?',
-    a: '1 kilolitre (kL) equals 1,000 litres, 264.17 US gallons, 219.97 UK gallons, or 6.29 US barrels.',
-  },
-  {
-    q: 'How many millilitres (ml) are in a litre?',
-    a: 'There are exactly 1,000 millilitres (ml) in 1 litre (L). To convert litres to ml, multiply by 1,000.',
+    q: 'How many kgs is 1 liter?',
+    a: 'For water: 1 L = 1 kg. For honey: 1 L = 1.42 kg. For gasoline: 1 L = 0.748 kg.',
   },
 ];
 
@@ -125,6 +121,8 @@ const pageSchema = [
         <a href="#are-kg-and-litres-same" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Are kg &amp; L Same?</a>
         <a href="#what-is-kg-to-litres" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">What is kg to L?</a>
         <a href="#can-you-convert-kg-to-liters" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Can You Convert?</a>
+        <a href="#are-kg-and-liters-same" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Are kg &amp; Liters Same?</a>
+        <a href="#how-many-kgs-is-1-liter" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">How Many kgs is 1 L?</a>
         <a href="#litre-to-barrel-gallon" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Barrels &amp; Gallons</a>
         <a href="#litre-of-petrol-diesel" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Petrol &amp; Diesel</a>
         <a href="#kg-litre-water" class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all">Water Guide</a>
@@ -386,7 +384,7 @@ const pageSchema = [
       </div>
       
       <div class="answer-box">
-        <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] w-full">
+        <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] col-span-full">
           <h4 class="text-base font-bold text-white mb-1">Direct Answer: No, kg and litres are NOT the same.</h4>
           <p class="text-slate-300 text-sm">They measure different physical properties:</p>
           <ul class="list-disc list-inside text-slate-300 text-sm my-2 space-y-1">
@@ -453,7 +451,7 @@ const pageSchema = [
       <h2 class="text-2xl font-bold text-white">Can You Convert kg to Liters?</h2>
       
       <div class="answer-box">
-        <div class="answer-yes w-full">
+        <div class="answer-yes col-span-full">
           <h3 class="text-emerald-400 font-bold">✅ Yes, absolutely!</h3>
           <p class="text-slate-200">You can convert kilograms to litres for any substance with a known density.</p>
         </div>
@@ -490,7 +488,113 @@ const pageSchema = [
       </div>
     </section>
 
-    <!-- Keyword 6-8: Barrel and Gallon Conversions -->
+    <!-- Keyword 10: Are kg and Liters the Same? -->
+    <section class="content-block scroll-mt-24" id="are-kg-and-liters-same">
+      <h2 class="text-2xl font-bold text-white">Are kg and Liters the Same?</h2>
+      
+      <div class="comparison-box">
+        <div class="kg-box">
+          <h3 class="font-bold text-white text-lg mb-2">Kilogram (kg)</h3>
+          <ul class="space-y-1 text-sm text-slate-300">
+            <li>📦 <strong>Measures Mass</strong></li>
+            <li>How much matter an object contains</li>
+            <li>Independent of shape or size</li>
+            <li>1 kg = 2.205 pounds</li>
+          </ul>
+        </div>
+        <div class="litre-box">
+          <h3 class="font-bold text-white text-lg mb-2">Liter (L)</h3>
+          <ul class="space-y-1 text-sm text-slate-300">
+            <li>🧪 <strong>Measures Volume</strong></li>
+            <li>How much space an object occupies</li>
+            <li>1 L = 1,000 ml</li>
+            <li>1 L = 0.264 US gallons</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="answer-box">
+        <div class="p-4 bg-surface-950/80 rounded-xl border border-white/[0.08] col-span-full">
+          <h4 class="text-base font-bold text-white mb-2">Direct Answer: No, they are different units measuring different things.</h4>
+          <ul class="list-disc list-inside text-slate-300 text-sm space-y-1">
+            <li><strong>Mass (kg):</strong> Amount of matter</li>
+            <li><strong>Volume (L):</strong> Amount of space</li>
+            <li><strong>Connection:</strong> Density links them (kg/L)</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="key-takeaway">
+        <h4 class="font-bold text-amber-400 mb-1">Key Takeaway</h4>
+        <p class="text-slate-300 text-sm">1 kg and 1 litre are only equal for water at 20°C. For all other substances, they are different.</p>
+      </div>
+    </section>
+
+    <!-- Keyword 11: How Many kgs is 1 Liter? -->
+    <section class="content-block scroll-mt-24" id="how-many-kgs-is-1-liter">
+      <h2 class="text-2xl font-bold text-white">How Many kgs is 1 Liter?</h2>
+      
+      <div class="formula-box my-4">
+        <strong>Mass (kg) = Volume (L) &times; Density (kg/L)</strong>
+      </div>
+      
+      <div class="conversion-grid">
+        <div class="conversion-card highlight">
+          <h3 class="font-bold text-white text-base">Water</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.000 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(1.000 kg/L)</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="font-bold text-white text-base">Milk</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.030 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(1.030 kg/L)</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="font-bold text-white text-base">Olive Oil</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.910 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(0.910 kg/L)</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="font-bold text-white text-base">Honey</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 1.420 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(1.420 kg/L)</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="font-bold text-white text-base">Diesel</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.832 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(0.832 kg/L)</div>
+        </div>
+        <div class="conversion-card">
+          <h3 class="font-bold text-white text-base">Gasoline</h3>
+          <div class="conversion-value text-brand-400 font-mono font-bold">1 L = 0.748 kg</div>
+          <div class="density text-xs text-slate-500 font-mono">(0.748 kg/L)</div>
+        </div>
+      </div>
+      
+      <div class="quick-reference mt-6">
+        <h3 class="text-lg font-bold text-white mb-2">Quick Reference</h3>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Substance</th>
+                <th>1 L = ? kg</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Water</td><td class="font-mono text-brand-400 font-semibold">1.000 kg</td></tr>
+              <tr><td>Milk</td><td class="font-mono text-brand-400 font-semibold">1.030 kg</td></tr>
+              <tr><td>Olive Oil</td><td class="font-mono text-brand-400 font-semibold">0.910 kg</td></tr>
+              <tr><td>Honey</td><td class="font-mono text-brand-400 font-semibold">1.420 kg</td></tr>
+              <tr><td>Diesel</td><td class="font-mono text-brand-400 font-semibold">0.832 kg</td></tr>
+              <tr><td>Gasoline</td><td class="font-mono text-brand-400 font-semibold">0.748 kg</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barrel and Gallon Conversions -->
     <section class="content-block scroll-mt-24" id="litre-to-barrel-gallon">
       <h2 class="text-2xl font-bold text-white">Litre to Barrel &amp; Gallon Conversions</h2>
       
@@ -519,7 +623,7 @@ const pageSchema = [
       </div>
     </section>
 
-    <!-- Keyword 9-10: Petrol and Diesel Conversions -->
+    <!-- Petrol and Diesel Conversions -->
     <section class="content-block scroll-mt-24" id="litre-of-petrol-diesel">
       <h2 class="text-2xl font-bold text-white">How Much Litre of Petrol and Diesel?</h2>
       
@@ -547,7 +651,7 @@ const pageSchema = [
       </div>
     </section>
 
-    <!-- Keyword 19-20: Water Specific -->
+    <!-- Water Specific -->
     <section class="content-block scroll-mt-24" id="kg-litre-water">
       <h2 class="text-2xl font-bold text-white">How Many kg is 1 Litre of Water?</h2>
       <p class="text-slate-300"><strong class="text-white">1 litre of water weighs exactly 1 kg at standard room temperature (20°C).</strong></p>
@@ -585,7 +689,7 @@ const pageSchema = [
       </div>
     </section>
 
-    <!-- Keyword 21-25: General kg to L Queries & Quick Reference Table -->
+    <!-- General kg to L Queries & Quick Reference Table -->
     <section class="content-block scroll-mt-24" id="general-kg-to-l">
       <h2 class="text-2xl font-bold text-white">General KG to Litre Conversion Guide</h2>
       
