@@ -1,44 +1,130 @@
 ---
-import { languages, defaultLang } from '../i18n/utils';
+// src/components/LanguageSwitcher.astro
+import { supportedLocales, defaultLocale, getLocaleDisplayName } from '@i18n/config';
+import { useI18n } from '@utils/i18n';
 
 export interface Props {
-  currentLang?: string;
+  currentLocale?: string;
 }
 
-const { currentLang = defaultLang } = Astro.props;
+const { currentLocale = defaultLocale } = Astro.props;
+const otherLocales = supportedLocales.filter((l) => l !== currentLocale);
+const pathname = Astro.url.pathname;
+const cleanPath = pathname.replace(/^\/[a-zA-Z]{2}(\/|$)/, '');
 ---
 
-<div class="relative inline-block text-left" id="lang-switcher">
-  <select
-    id="lang-select"
-    aria-label="Select Language"
-    class="px-2.5 py-1.5 rounded-lg bg-surface-900 border border-white/[0.08] text-xs font-mono text-slate-300 hover:text-white hover:border-brand-500/30 transition-all cursor-pointer outline-none"
+<div class="language-switcher relative" x-data="{ open: false }" id="lang-switcher-container">
+  <button
+    type="button"
+    id="lang-switcher-button"
+    @click="open = !open"
+    class="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm bg-surface-800/80 hover:bg-surface-700/80 border border-white/10 text-slate-200 hover:text-white rounded-lg transition-colors cursor-pointer"
+    aria-expanded="false"
+    aria-haspopup="true"
+  >
+    <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+      ></path>
+    </svg>
+    <span id="current-locale-display">{getLocaleDisplayName(currentLocale)}</span>
+    <svg
+      id="lang-chevron"
+      class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200"
+      :class="{ 'rotate-180': open }"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <div
+    id="lang-switcher-menu"
+    x-show="open"
+    @click.away="open = false"
+    class="hidden absolute right-0 mt-2 w-48 bg-surface-900 border border-white/15 rounded-lg shadow-xl py-1 z-50 max-h-60 overflow-y-auto backdrop-blur-md"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 translate-y-1"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    role="menu"
   >
     {
-      Object.entries(languages).map(([code, name]) => (
-        <option value={code} selected={code === currentLang}>
-          {name} ({code.toUpperCase()})
-        </option>
-      ))
+      otherLocales.map((locale) => {
+        const localizedPath = useI18n(locale).getLocalizedPath(cleanPath);
+        return (
+          <a
+            href={`?lang=${locale}`}
+            data-localized-path={localizedPath}
+            data-locale={locale}
+            class="lang-item block px-4 py-2 text-xs sm:text-sm text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
+            role="menuitem"
+          >
+            {getLocaleDisplayName(locale)}
+          </a>
+        );
+      })
     }
-  </select>
+  </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const sel = document.getElementById('lang-select') as HTMLSelectElement;
-    if (!sel) return;
+  function setupLanguageSwitcher() {
+    const container = document.getElementById('lang-switcher-container');
+    const button = document.getElementById('lang-switcher-button');
+    const menu = document.getElementById('lang-switcher-menu');
+    const chevron = document.getElementById('lang-chevron');
 
-    // Load saved lang preference from localStorage if available
-    const saved = localStorage.getItem('user_lang');
-    if (saved && sel.value !== saved && sel.querySelector(`option[value="${saved}"]`)) {
-      sel.value = saved;
+    if (!container || !button || !menu) return;
+
+    let isOpen = false;
+
+    function toggleMenu(open?: boolean) {
+      isOpen = typeof open === 'boolean' ? open : !isOpen;
+      if (isOpen) {
+        menu?.classList.remove('hidden');
+        chevron?.classList.add('rotate-180');
+        button?.setAttribute('aria-expanded', 'true');
+      } else {
+        menu?.classList.add('hidden');
+        chevron?.classList.remove('rotate-180');
+        button?.setAttribute('aria-expanded', 'false');
+      }
     }
 
-    sel.addEventListener('change', () => {
-      const code = sel.value;
-      localStorage.setItem('user_lang', code);
-      window.dispatchEvent(new CustomEvent('language-change', { detail: { lang: code } }));
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
     });
-  });
+
+    document.querySelectorAll('.lang-item').forEach((item) => {
+      item.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const locale = target.getAttribute('data-locale');
+        if (locale) {
+          localStorage.setItem('user_lang', locale);
+          window.dispatchEvent(new CustomEvent('language-change', { detail: { lang: locale } }));
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (isOpen && !container.contains(e.target as Node)) {
+        toggleMenu(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        toggleMenu(false);
+      }
+    });
+  }
+
+  setupLanguageSwitcher();
+  document.addEventListener('astro:page-load', setupLanguageSwitcher);
 </script>

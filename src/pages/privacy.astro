@@ -1,0 +1,36 @@
+---
+// src/pages/privacy.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { useI18n } from '@utils/i18n';
+
+const locale = 'en';
+const { t } = useI18n(locale);
+---
+
+<BaseLayout
+  title={`${t('privacy.title')} | ${t('site.title')}`}
+  description={t('privacy.description')}
+  locale={locale}
+>
+  <main class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-2">{t('privacy.title')}</h1>
+    <p class="text-xs font-mono text-slate-400 mb-8">{t('privacy.last_updated')}</p>
+
+    <div class="prose prose-invert max-w-none bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+      <h2 class="text-xl font-semibold text-white">1. Information Collection</h2>
+      <p class="text-slate-300">
+        Kg to Litre prioritizes user privacy. All interactive calculations run directly in your browser client-side. We do not store or sell individual calculation entries.
+      </p>
+
+      <h2 class="text-xl font-semibold text-white">2. Local Storage</h2>
+      <p class="text-slate-300">
+        We may store user preferences such as selected language or theme mode locally in your browser's localStorage.
+      </p>
+
+      <h2 class="text-xl font-semibold text-white">3. Third-Party Analytics</h2>
+      <p class="text-slate-300">
+        Standard anonymous web traffic analytics may be collected to improve site reliability and usability.
+      </p>
+    </div>
+  </main>
+</BaseLayout>

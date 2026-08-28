@@ -1,0 +1,116 @@
+---
+// src/components/Footer.astro
+import { useI18n } from '@utils/i18n';
+
+export interface Props {
+  locale?: string;
+  socialLinks?: string[];
+  navItems?: { key: string; path: string }[];
+  t?: (key: string) => string;
+  isRTL?: boolean;
+  currentYear?: number;
+}
+
+const {
+  locale = 'en',
+  socialLinks: _socialLinks = [],
+  navItems: _navItems,
+  t: propT,
+  isRTL = false,
+  currentYear = new Date().getFullYear(),
+} = Astro.props;
+
+const { t: fallbackT } = useI18n(locale);
+const t = propT || fallbackT;
+---
+
+<footer class="relative mt-20 border-t border-white/[0.04]" dir={isRTL ? 'rtl' : 'ltr'}>
+  <div class="absolute inset-0 bg-surface-950/90 backdrop-blur-xl"></div>
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 space-y-10">
+    <!-- Footer Top -->
+    <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+      <!-- Brand -->
+      <div class="space-y-3">
+        <a href="/" class="flex items-center gap-2.5 group">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-md"
+          >
+            <span class="text-white font-bold text-xs font-mono">KL</span>
+          </div>
+          <span
+            class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors"
+          >
+            {t('site.title') || 'Kg to Litre'}
+          </span>
+        </a>
+        <p class="text-xs text-slate-500 max-w-xs leading-relaxed">
+          {t('footer.description') || 'Mass-to-volume estimates based on compiled reference density values for 772 substances.'}
+        </p>
+      </div>
+
+      <!-- Links Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-xs">
+        <div class="space-y-3">
+          <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+            Calculators
+          </h4>
+          <nav class="flex flex-col gap-2">
+            <a href="/tools/" class="text-slate-500 hover:text-brand-400 transition-colors">All Tools</a>
+            <a href="/batch-converter/" class="text-slate-500 hover:text-brand-400 transition-colors">Batch &amp; CSV</a>
+            <a href="/container-calculator/" class="text-slate-500 hover:text-brand-400 transition-colors">Tank Solver</a>
+            <a href="/custom-density-calculator/" class="text-slate-500 hover:text-brand-400 transition-colors">Density Solver</a>
+          </nav>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+            Categories
+          </h4>
+          <nav class="flex flex-col gap-2">
+            <a href="/basic/" class="text-slate-500 hover:text-brand-400 transition-colors">Basic Liquids</a>
+            <a href="/cooking/" class="text-slate-500 hover:text-brand-400 transition-colors">Cooking</a>
+            <a href="/fuels/" class="text-slate-500 hover:text-brand-400 transition-colors">Fuels &amp; Energy</a>
+            <a href="/automotive/" class="text-slate-500 hover:text-brand-400 transition-colors">Automotive</a>
+            <a href="/industrial/" class="text-slate-500 hover:text-brand-400 transition-colors">Industrial</a>
+          </nav>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+            Resources
+          </h4>
+          <nav class="flex flex-col gap-2">
+            <a href="/guides/" class="text-slate-500 hover:text-brand-400 transition-colors">Guides</a>
+            <a href="/blog/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.blog') || 'Blog'}</a>
+            <a href="/api-docs/" class="text-slate-500 hover:text-brand-400 transition-colors">REST API</a>
+            <a href="/sitemap/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.sitemap') || 'Sitemap'}</a>
+          </nav>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+            Company &amp; Legal
+          </h4>
+          <nav class="flex flex-col gap-2">
+            <a href="/about/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.about') || 'About'}</a>
+            <a href="/contact/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.contact') || 'Contact'}</a>
+            <a href="/terms/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.terms') || 'Terms'}</a>
+            <a href="/privacy/" class="text-slate-500 hover:text-brand-400 transition-colors">{t('nav.privacy') || 'Privacy'}</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <p>{t('footer.copyright') || `© ${currentYear} Kg to Litre. All rights reserved.`}</p>
+      <div class="flex items-center gap-4">
+        <a href="/privacy/" class="hover:text-slate-400 transition-colors">{t('nav.privacy') || 'Privacy'}</a>
+        <span>•</span>
+        <a href="/terms/" class="hover:text-slate-400 transition-colors">{t('nav.terms') || 'Terms'}</a>
+        <span>•</span>
+        <a href="/sitemap/" class="hover:text-slate-400 transition-colors">{t('nav.sitemap') || 'Sitemap'}</a>
+      </div>
+    </div>
+  </div>
+</footer>

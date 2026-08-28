@@ -1,0 +1,70 @@
+---
+// src/components/Pagination.astro
+import { useI18n } from '@utils/i18n';
+
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  locale?: string;
+}
+
+const { currentPage, totalPages, baseUrl, locale = 'en' } = Astro.props;
+const { t } = useI18n(locale);
+
+if (totalPages <= 1) {
+  return;
+}
+
+function getPageUrl(page: number) {
+  if (page === 1) {
+    return baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  }
+  const cleanBase = baseUrl.replace(/\/+$/, '');
+  return `${cleanBase}/${page}/`;
+}
+
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+---
+
+<nav aria-label="Pagination Navigation" class="flex items-center justify-center gap-2 mt-12">
+  {currentPage > 1 && (
+    <a
+      href={getPageUrl(currentPage - 1)}
+      class="px-3 py-2 text-sm rounded-lg bg-surface-900 border border-white/[0.08] text-slate-300 hover:text-white hover:border-brand-500/40 transition-colors"
+      rel="prev"
+    >
+      ← {t('common.back') || 'Previous'}
+    </a>
+  )}
+
+  <div class="flex items-center gap-1">
+    {pages.map((p) => {
+      const isCurrent = p === currentPage;
+      return (
+        <a
+          href={getPageUrl(p)}
+          class:list={[
+            'w-9 h-9 flex items-center justify-center text-sm font-mono rounded-lg transition-colors',
+            isCurrent
+              ? 'bg-brand-500 text-white font-bold'
+              : 'bg-surface-900 border border-white/[0.08] text-slate-300 hover:text-white hover:border-brand-500/40',
+          ]}
+          aria-current={isCurrent ? 'page' : undefined}
+        >
+          {p}
+        </a>
+      );
+    })}
+  </div>
+
+  {currentPage < totalPages && (
+    <a
+      href={getPageUrl(currentPage + 1)}
+      class="px-3 py-2 text-sm rounded-lg bg-surface-900 border border-white/[0.08] text-slate-300 hover:text-white hover:border-brand-500/40 transition-colors"
+      rel="next"
+    >
+      {t('common.read_more') || 'Next'} →
+    </a>
+  )}
+</nav>

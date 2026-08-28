@@ -2,7 +2,22 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const guidesCollection = defineCollection({
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    image: z.string().optional(),
+    date: z.coerce.date(),
+    author: z.string(),
+    category: z.string(),
+    draft: z.boolean().default(false),
+    tags: z.array(z.string()).optional(),
+    readingTime: z.number().optional(),
+  }),
+});
+
+const guides = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/guides' }),
   schema: z.object({
     title: z.string(),
@@ -13,6 +28,4 @@ const guidesCollection = defineCollection({
   }),
 });
 
-export const collections = {
-  guides: guidesCollection,
-};
+export const collections = { blog, guides };

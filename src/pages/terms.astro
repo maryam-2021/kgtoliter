@@ -1,0 +1,36 @@
+---
+// src/pages/terms.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { useI18n } from '@utils/i18n';
+
+const locale = 'en';
+const { t } = useI18n(locale);
+---
+
+<BaseLayout
+  title={`${t('terms.title')} | ${t('site.title')}`}
+  description={t('terms.description')}
+  locale={locale}
+>
+  <main class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-2">{t('terms.title')}</h1>
+    <p class="text-xs font-mono text-slate-400 mb-8">{t('terms.last_updated')}</p>
+
+    <div class="prose prose-invert max-w-none bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+      <h2 class="text-xl font-semibold text-white">1. Acceptance of Terms</h2>
+      <p class="text-slate-300">
+        By accessing and using Kg to Litre (kgtoliter.com), you agree to comply with and be bound by these Terms of Service.
+      </p>
+
+      <h2 class="text-xl font-semibold text-white">2. Reference Calculations Disclaimer</h2>
+      <p class="text-slate-300">
+        Conversion factors and density values are compiled from standard reference materials. Exact material density varies with temperature, altitude, chemical formulation, and moisture. Always perform verification for commercial or critical engineering use.
+      </p>
+
+      <h2 class="text-xl font-semibold text-white">3. Intellectual Property</h2>
+      <p class="text-slate-300">
+        All calculators, user interfaces, scripts, and content are protected by copyright and intellectual property laws.
+      </p>
+    </div>
+  </main>
+</BaseLayout>

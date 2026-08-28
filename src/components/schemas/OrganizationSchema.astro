@@ -1,0 +1,40 @@
+---
+// src/components/schemas/OrganizationSchema.astro
+export interface SiteConfig {
+  name: string;
+  url: string;
+  legalName?: string;
+  description: string;
+  socialLinks?: string[];
+}
+
+export interface Props {
+  site?: Partial<SiteConfig>;
+}
+
+const defaultSite = {
+  name: 'Kg to Litre',
+  url: 'https://kgtoliter.com',
+  legalName: 'Kg to Litre',
+  description: 'Convert mass to volume instantly for 772 substances. Free, accurate density reference tool.',
+  socialLinks: [],
+};
+
+const site = { ...defaultSite, ...Astro.props.site };
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: site.url,
+  legalName: site.legalName || site.name,
+  description: site.description,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${site.url}/favicon.ico`,
+  },
+  sameAs: site.socialLinks || [],
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(organization)} />

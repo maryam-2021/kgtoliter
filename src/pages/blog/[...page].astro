@@ -1,0 +1,71 @@
+---
+// src/pages/blog/[...page].astro
+import type { GetStaticPaths, Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogCard from '@components/BlogCard.astro';
+import Pagination from '@components/Pagination.astro';
+import { useI18n } from '@utils/i18n';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const sortedPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  return paginate(sortedPosts, { pageSize: 12 });
+};
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+const { page } = Astro.props;
+const locale = 'en';
+const { t } = useI18n(locale);
+const posts = page.data;
+---
+
+<BaseLayout
+  title={`${t('site.title')} | ${t('nav.blog')}`}
+  description={t('site.description')}
+  locale={locale}
+>
+  <main class="container mx-auto px-4 py-12 max-w-6xl">
+    <div class="mb-10 text-center max-w-2xl mx-auto">
+      <span
+        class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider mb-4 inline-block"
+      >
+        {t('nav.blog')}
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">{t('nav.blog')}</h1>
+      <p class="text-slate-400 text-sm sm:text-base">
+        {
+          t('blog.description') !== 'blog.description'
+            ? t('blog.description')
+            : 'Articles, guides, and engineering insights on density and conversions.'
+        }
+      </p>
+    </div>
+
+    {
+      posts.length === 0 ? (
+        <p class="text-slate-400 text-center py-16">{t('common.no_results')}</p>
+      ) : (
+        <>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post) => (
+              <BlogCard post={post} locale={locale} />
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={page.currentPage}
+            totalPages={page.lastPage}
+            baseUrl={useI18n(locale).getLocalizedPath('blog')}
+            locale={locale}
+          />
+        </>
+      )
+    }
+  </main>
+</BaseLayout>

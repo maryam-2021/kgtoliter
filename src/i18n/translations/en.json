@@ -1,0 +1,106 @@
+{
+  "site": {
+    "title": "Kg to Litre",
+    "description": "Convert mass to volume instantly for 772 substances. Free, accurate density reference tool.",
+    "keywords": "kg to litre, density converter, mass to volume, substance density"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "sitemap": "Sitemap",
+    "terms": "Terms",
+    "privacy": "Privacy"
+  },
+  "footer": {
+    "description": "Your trusted source for accurate mass-to-volume conversions across 772 substances.",
+    "copyright": "Kg to Litre. All rights reserved."
+  },
+  "home": {
+    "title": "Kg to Litre | Free Mass to Volume Calculator",
+    "description": "Instantly convert mass to volume for water, milk, oil, diesel, and more.",
+    "h1": "Kg to Litre",
+    "subtitle": "Free Mass to Volume Calculator",
+    "intro": "Instantly convert mass to volume for water, milk, oil, diesel, and more. Select a substance below to apply its reference density value.",
+    "how_it_works": "How It Works",
+    "how_it_works_desc": "The formula is simple: divide mass by density. Drag the sliders below to see how changing either value affects the resulting volume.",
+    "converter_label": "Convert Mass to Volume",
+    "mass_label": "Mass (kg)",
+    "substance_label": "Substance",
+    "result_label": "Result",
+    "density_label": "Density",
+    "temperature_label": "Reference Temperature",
+    "formula_label": "Formula",
+    "volume_label": "Litres"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "question": "How do you convert kilograms to litres?",
+        "answer": "To convert kilograms (kg) to litres (L), divide the mass by the substance's density. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L)."
+      },
+      {
+        "question": "Is 1 kg always equal to 1 litre?",
+        "answer": "No. Kilograms measure mass, whereas litres measure spatial volume. They are only equal for substances with a density of exactly 1.00 kg/L, like pure water at 4°C."
+      }
+    ]
+  },
+  "about": {
+    "title": "About Kg to Litre",
+    "description": "Learn about our mission to provide accurate density conversions.",
+    "hero_title": "About Kg to Litre",
+    "hero_subtitle": "Your trusted density reference tool",
+    "content": "Kg to Litre is a free, accurate reference tool designed to help professionals, students, and enthusiasts convert mass to volume for a wide range of substances."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "Have questions or suggestions? We'd love to hear from you.",
+    "form_name": "Name",
+    "form_email": "Email",
+    "form_message": "Message",
+    "form_submit": "Send Message",
+    "form_sending": "Sending...",
+    "form_success": "Thank you for your message. We'll respond within 24 hours.",
+    "form_error": "Something went wrong. Please try again.",
+    "form_network_error": "Network error. Please check your connection.",
+    "email_fallback": "Or email us directly:"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "description": "Read our terms and conditions.",
+    "last_updated": "Last Updated: August 2024"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "Learn how we protect your data.",
+    "last_updated": "Last Updated: August 2024"
+  },
+  "sitemap": {
+    "title": "Sitemap",
+    "description": "Complete navigation guide for Kg to Litre.",
+    "pages": "Pages",
+    "blog": "Blog Posts",
+    "locale": "Language"
+  },
+  "common": {
+    "loading": "Loading...",
+    "no_results": "No results found",
+    "search": "Search substances...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "back": "Back",
+    "read_more": "Read More",
+    "view_category": "View Category",
+    "convert": "Convert",
+    "copy": "Copy",
+    "share": "Share",
+    "export": "Export",
+    "batch": "Batch Conversion",
+    "temperature": "Temperature",
+    "density": "Density",
+    "volume": "Volume"
+  }
+}

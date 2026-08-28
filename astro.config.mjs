@@ -1,24 +1,47 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import mdx from '@astrojs/mdx';
 
-// https://astro.build/config
 export default defineConfig({
   site: 'https://kgtoliter.com',
+  trailingSlash: 'always',
   integrations: [
-    mdx(),
     sitemap({
-      filter: (page) => {
-        const pathname = new URL(page).pathname;
-        return !pathname.startsWith('/substances/') && !/^\/kg-to-litres-/.test(pathname);
-      },
+      filter: (page) => !page.includes('/admin'),
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date(),
     }),
+    mdx(),
   ],
   vite: {
     plugins: [tailwindcss()],
   },
-  // Accept extensionless checklist URLs in local/preview environments. Cloudflare's
-  // redirect rules below still consolidate them onto the canonical trailing-slash URLs.
-  trailingSlash: 'ignore',
+  i18n: {
+    defaultLocale: 'en',
+    locales: [
+      'en',
+      'hi',
+      'es',
+      'ru',
+      'fr',
+      'de',
+      'it',
+      'pt',
+      'bn',
+      'ja',
+      'ko',
+      'ms',
+      'pl',
+      'id',
+      'ar',
+      'bg',
+      'tr',
+      'sv',
+    ],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
 });

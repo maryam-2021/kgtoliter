@@ -1,0 +1,169 @@
+---
+// src/pages/sitemap/index.astro
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { useI18n } from '@utils/i18n';
+import { supportedLocales } from '@i18n/config';
+
+const locale = 'en';
+const { t } = useI18n(locale);
+
+// Get all blog posts
+const blogPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Define static pages
+const staticPages = [
+  { key: 'home', path: '' },
+  { key: 'about', path: 'about' },
+  { key: 'contact', path: 'contact' },
+  { key: 'terms', path: 'terms' },
+  { key: 'privacy', path: 'privacy' },
+  { key: 'sitemap', path: 'sitemap' },
+];
+
+const toolPages = [
+  { name: 'All Specialized Tools', path: 'tools' },
+  { name: 'Batch Mass Converter', path: 'batch-converter' },
+  { name: 'Container Volume Calculator', path: 'container-calculator' },
+  { name: 'Custom Density Solver', path: 'custom-density-calculator' },
+  { name: 'Density Physics & Methodology', path: 'density-methodology' },
+  { name: 'REST API Documentation', path: 'api-docs' },
+  { name: 'Conversion Guides', path: 'guides' },
+];
+
+// Blog pagination pages (estimate based on 12 per page)
+const totalBlogPages = Math.ceil(blogPosts.length / 12);
+const blogPaginationPages = Array.from({ length: totalBlogPages }, (_, i) => i + 1);
+---
+
+<BaseLayout
+  title={`${t('sitemap.title')} | ${t('site.title')}`}
+  description={t('sitemap.description')}
+  locale={locale}
+>
+  <main class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="mb-10 text-center">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">{t('sitemap.title')}</h1>
+      <p class="text-slate-400 text-base">{t('sitemap.description')}</p>
+    </div>
+
+    <!-- Static Pages -->
+    <section class="mb-10 bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        {t('sitemap.pages')}
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {
+          staticPages.map((page) => (
+            <li>
+              <a
+                href={useI18n(locale).getLocalizedPath(page.path)}
+                class="text-sm text-slate-300 hover:text-brand-400 transition-colors flex items-center gap-2"
+              >
+                <span class="text-xs text-slate-500">→</span>
+                {t(`nav.${page.key}`) !== `nav.${page.key}` ? t(`nav.${page.key}`) : page.key}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- Interactive Tools & Calculators -->
+    <section class="mb-10 bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        Calculators & Engineering Tools
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {
+          toolPages.map((tool) => (
+            <li>
+              <a
+                href={useI18n(locale).getLocalizedPath(tool.path)}
+                class="text-sm text-slate-300 hover:text-brand-400 transition-colors flex items-center gap-2"
+              >
+                <span class="text-xs text-slate-500">→</span>
+                {tool.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="mb-10 bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        {t('sitemap.blog')}
+      </h2>
+      {
+        blogPosts.length === 0 ? (
+          <p class="text-sm text-slate-400">{t('common.no_results')}</p>
+        ) : (
+          <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {blogPosts.map((post) => (
+              <li>
+                <a
+                  href={useI18n(locale).getLocalizedPath(`blog/${post.id}`)}
+                  class="text-sm text-slate-300 hover:text-brand-400 transition-colors flex items-center gap-2"
+                >
+                  <span class="text-xs text-slate-500">→</span>
+                  {post.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- Blog Pagination -->
+    {
+      blogPaginationPages.length > 1 && (
+        <section class="mb-10 bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+          <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+            {t('sitemap.blog')} Pagination
+          </h2>
+          <ul class="flex flex-wrap gap-2">
+            {blogPaginationPages.map((page) => (
+              <li>
+                <a
+                  href={useI18n(locale).getLocalizedPath(page === 1 ? 'blog' : `blog/${page}`)}
+                  class="px-3 py-1 text-xs rounded-md bg-surface-950 border border-white/[0.08] text-slate-300 hover:text-white hover:border-brand-500/40 transition-colors"
+                >
+                  Page {page}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <!-- Supported Languages -->
+    <section class="bg-surface-900/60 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        {t('sitemap.locale')}
+      </h2>
+      <ul class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {
+          supportedLocales.map((loc) => (
+            <li>
+              <a
+                href={`?lang=${loc}`}
+                class="block p-2 text-center text-xs font-mono rounded-lg bg-surface-950 border border-white/[0.06] text-slate-300 hover:text-white hover:border-brand-500/40 transition-colors"
+              >
+                {loc.toUpperCase()}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</BaseLayout>
