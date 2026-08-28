@@ -4,8 +4,31 @@
 @plugin "@tailwindcss/typography";
 
 /* ========================================================================
-   DESIGN SYSTEM — PREMIUM DARK THEME WITH ANIMATIONS
+   DESIGN SYSTEM — THEME VARIABLES & ACCENTS
    ======================================================================== */
+:root {
+  --bg-card: rgba(11, 17, 32, 0.85);
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --radius: 1rem;
+  --radius-sm: 0.5rem;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --accent: #38bdf8;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-light: #64748b;
+}
+
+html:not(.dark) {
+  --bg-card: #ffffff;
+  --bg-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --accent: #0284c7;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-light: #94a3b8;
+}
 
 @layer base {
   html {
@@ -217,86 +240,76 @@
 }
 
 /* ========================================================================
-   BUTTON SYSTEM
+   PULSE & GLOW ACCENTS
+   ======================================================================== */
+@keyframes subtle-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 4s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* ========================================================================
+   BUTTON PRESETS
    ======================================================================== */
 .btn-primary {
-  @apply relative overflow-hidden px-6 py-3 rounded-xl font-bold text-sm
-         bg-gradient-to-r from-brand-500 to-brand-600
-         text-white shadow-lg transition-all duration-300;
-}
-.btn-primary:hover {
-  @apply shadow-brand-500/25 shadow-xl;
-  transform: translateY(-1px);
-}
-.btn-primary:active {
-  transform: translateY(0) scale(0.98);
+  @apply px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300
+         bg-gradient-to-r from-brand-500 via-brand-600 to-brand-700
+         text-white shadow-lg shadow-brand-500/25
+         hover:shadow-brand-500/40 hover:brightness-110 active:scale-[0.98]
+         focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none;
 }
 
-/* Shimmer hover effect */
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transition: left 0.5s ease;
+.btn-secondary {
+  @apply px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300
+         bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white
+         border border-white/[0.08] hover:border-white/[0.15]
+         active:scale-[0.98]
+         focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none;
 }
-.btn-primary:hover::before {
-  left: 100%;
+
+.btn-ghost {
+  @apply px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200
+         text-slate-400 hover:text-white hover:bg-white/[0.04]
+         focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:outline-none;
 }
 
 /* ========================================================================
-   INPUT SYSTEM
+   FORM INPUTS
    ======================================================================== */
-.input-pro {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  background-color: #0b1120;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.125rem;
-  transition: all 0.3s ease;
-  outline: none;
-}
-.input-pro:focus {
-  @apply border-brand-500/50 ring-2 ring-brand-500/20;
-  box-shadow: 0 0 20px -5px rgba(41, 165, 255, 0.15);
-}
-
-.select-pro {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  background-color: #0b1120;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  font-size: 0.875rem;
-  font-family: 'JetBrains Mono', monospace;
-  transition: all 0.3s ease;
-  outline: none;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2351c3ff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-.select-pro:focus {
-  @apply border-brand-500/50 ring-2 ring-brand-500/20;
+.input-primary {
+  @apply w-full px-4 py-3 rounded-xl bg-surface-900/80 border border-white/[0.08]
+         text-white placeholder-slate-500 text-sm font-mono
+         transition-all duration-200
+         focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none;
 }
 
 /* ========================================================================
-   TABLE SYSTEM
+   TABLE STYLING
    ======================================================================== */
-.table-pro {
-  @apply w-full text-left text-sm;
-}
-
 .overflow-x-auto,
 .overflow-auto {
   max-width: 100%;
@@ -370,15 +383,14 @@ input[type='range'] {
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  /* Increased from 24px to 32px for better mobile touch target */
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #0ea5e9; /* brand-500 */
+  background: #0ea5e9;
   cursor: pointer;
   border: 3px solid white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  margin-top: -10px; /* Centers thumb on track */
+  margin-top: -10px;
 }
 
 /* ========================================================================
@@ -454,4 +466,63 @@ input[type='range']::-webkit-slider-thumb {
     grid-row: 2;
     min-width: 0;
   }
+}
+
+/* ========================================================================
+   EXPANDED CONVERTER RESULT STYLING
+   ======================================================================== */
+.converter-result-expanded {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.result-main {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.result-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.result-unit {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.result-conversions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.conversion-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+}
+
+.conversion-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+.conversion-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
 }

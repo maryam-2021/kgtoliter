@@ -202,9 +202,9 @@ const categoriesList = [
 
     <!-- Conversion Result Card -->
     <div
-      class="p-5 rounded-2xl bg-gradient-to-br from-slate-900/95 via-surface-900/90 to-slate-900/95 border border-brand-500/30 flex flex-col gap-4 shadow-lg shadow-brand-500/5"
+      class="converter-result-expanded p-5 sm:p-6 rounded-2xl border border-brand-500/30 flex flex-col gap-4 shadow-lg shadow-brand-500/5"
     >
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="result-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
         <div class="space-y-1">
           <p
             id="result-label"
@@ -212,10 +212,10 @@ const categoriesList = [
           >
             Resulting Volume:
           </p>
-          <p class="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight flex items-baseline gap-2">
-            <span id="result">{initialVolume.toFixed(3)}</span>
+          <p class="flex items-baseline gap-2.5">
+            <span id="result" class="result-value text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono tracking-tight">{initialVolume.toFixed(3)}</span>
             <span id="resultValue" class="hidden">{initialVolume.toFixed(3)}</span>
-            <span id="result-unit" class="text-base font-bold text-slate-300 font-mono">Litres</span>
+            <span id="result-unit" class="result-unit text-base sm:text-lg font-bold text-slate-300 font-mono">Litres</span>
           </p>
           <p id="density-note" class="text-xs text-slate-400">
             Based on {defaultSubstance.name} density {defaultSubstance.density} kg/L ({
@@ -225,7 +225,7 @@ const categoriesList = [
         </div>
 
         <!-- Action Buttons: Copy & Share -->
-        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0">
           <!-- Copy Button -->
           <button
             type="button"
@@ -270,23 +270,23 @@ const categoriesList = [
         </span>
       </div>
 
-      <!-- Expanded Conversions Box -->
-      <div class="converter-result-expanded p-3.5 rounded-xl bg-slate-950/80 border border-brand-500/20 space-y-2">
+      <!-- Expanded Conversions Section -->
+      <div class="space-y-2 pt-1">
         <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 uppercase tracking-wider">
           <span>Alternative Units &amp; Equivalents:</span>
         </div>
-        <div class="result-conversions grid grid-cols-3 gap-2 sm:gap-3 text-center font-mono">
-          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
-            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-1">Millilitres</span>
-            <span class="conversion-value text-sm sm:text-base font-bold text-sky-400" id="resultML">{(initialVolume * 1000).toLocaleString('en-US', { maximumFractionDigits: 1 })}</span>
+        <div class="result-conversions">
+          <div class="conversion-item">
+            <span class="conversion-label" id="conv-label-1">Millilitres</span>
+            <span class="conversion-value" id="resultML">{(initialVolume * 1000).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
           </div>
-          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
-            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-2">US Gallons</span>
-            <span class="conversion-value text-sm sm:text-base font-bold text-indigo-400" id="resultGal">{(initialVolume * 0.264172).toFixed(3)}</span>
+          <div class="conversion-item">
+            <span class="conversion-label" id="conv-label-2">US Gallons</span>
+            <span class="conversion-value" id="resultGal">{(initialVolume / 3.78541).toFixed(3)}</span>
           </div>
-          <div class="conversion-item p-2.5 rounded-lg bg-surface-900/90 border border-white/[0.04]">
-            <span class="conversion-label block text-[10px] text-slate-400 uppercase tracking-wider mb-1" id="conv-label-3">UK Gallons</span>
-            <span class="conversion-value text-sm sm:text-base font-bold text-purple-400" id="resultUKGal">{(initialVolume * 0.219969).toFixed(3)}</span>
+          <div class="conversion-item">
+            <span class="conversion-label" id="conv-label-3">UK Gallons</span>
+            <span class="conversion-value" id="resultUKGal">{(initialVolume / 4.54609).toFixed(3)}</span>
           </div>
         </div>
       </div>
