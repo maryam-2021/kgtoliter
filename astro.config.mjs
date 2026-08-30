@@ -17,6 +17,8 @@ export default defineConfig({
         ...featuredSubstances.map((s) => `https://kgtoliter.com/substances/${s.id}/`),
         'https://kgtoliter.com/kg-to-l/',
         'https://kgtoliter.com/kg-to-litres/',
+        'https://kgtoliter.com/kg-to-liters-converter/',
+        'https://kgtoliter.com/kg-to-litres-converter/',
         'https://kgtoliter.com/kg-to-litres-guide/',
         'https://kgtoliter.com/what-is-density/',
         'https://kgtoliter.com/density-reference/',
