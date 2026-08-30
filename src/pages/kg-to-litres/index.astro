@@ -1,6 +1,9 @@
 ---
 // src/pages/kg-to-litres/index.astro
 import BaseLayout from '@layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
 
 const quickConversions = [
   { name: 'Water', result: '1 kg = 1.000 L', density: '1.000 kg/L', icon: '💧' },
@@ -11,69 +14,77 @@ const quickConversions = [
   { name: 'Gasoline', result: '1 kg = 1.337 L', density: '0.748 kg/L', icon: '🚗' },
 ];
 
+const faqs = [
+  {
+    q: 'How do you convert kg to litres?',
+    a: "Divide the mass in kilograms by the substance's density in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L)."
+  },
+  {
+    q: 'Is 1 kg always equal to 1 litre?',
+    a: 'No, 1 kg equals 1 litre only for water at 20°C (density 1.000 kg/L). Lighter substances yield more than 1 litre per kg, while heavier substances yield less.'
+  },
+  {
+    q: 'How many litres is 1 kg of olive oil?',
+    a: '1 kg of olive oil equals 1.099 litres because olive oil has a density of 0.910 kg/L (1 ÷ 0.910 = 1.099 L).'
+  }
+];
+
 const pageSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Kg to Litres - Mass to Volume Conversion Reference',
-    description: 'Learn how to convert kg to litres. Formulas, density factors, and quick conversion tables for liquids and bulk materials.',
+    name: 'Kg to Litres Converter - Mass to Volume Reference',
+    description: 'Free online kg to litres converter. Convert kilograms (kg) to litres (L) with formulas, density factors, and quick conversion tables.',
     url: 'https://kgtoliter.com/kg-to-litres/',
   },
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'How do you convert kg to litres?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: "Divide the mass in kilograms by the substance's density in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L).",
-        },
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
       },
-      {
-        '@type': 'Question',
-        name: 'Is 1 kg always equal to 1 litre?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'No, 1 kg equals 1 litre only for water at 20°C (density 1.000 kg/L). Lighter substances yield more than 1 litre per kg, while heavier substances yield less.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'How many litres is 1 kg of olive oil?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '1 kg of olive oil equals 1.099 litres because olive oil has a density of 0.910 kg/L (1 ÷ 0.910 = 1.099 L).',
-        },
-      },
-    ],
+    })),
   },
 ];
 ---
 
 <BaseLayout 
-  title="Kg to Litres - Mass to Volume Conversion Reference"
-  description="Learn how to convert kg to litres. Formulas, density factors, and quick conversion tables for liquids and bulk materials."
+  title="Kg to Litres Converter | Mass to Volume Calculator"
+  description="Free online kg to litres converter. Convert kilograms (kg) to litres (L) with formulas, density factors, and quick conversion tables for 772+ substances."
   canonicalUrl="https://kgtoliter.com/kg-to-litres/"
   schema={pageSchema}
 >
-  <div class="container mx-auto px-4 py-12 max-w-4xl">
-    <div class="mb-10 text-center">
-      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider mb-4 inline-block">
-        Educational Reference
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-10">
+    <BreadcrumbNav
+      categoryName="Universal Hubs"
+      categorySlug="convert"
+      substanceName="Kg to Litres Converter"
+    />
+
+    <div class="mb-6 text-center space-y-3">
+      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider inline-block">
+        Conversion Reference
       </span>
-      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 section-title">
-        Kg to Litres Conversion
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white section-title">
+        Kg to Litres Converter
       </h1>
       <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-        Understand the physical relationship between mass and spatial volume using material density factors.
+        Use our <strong class="text-white">kg to litres converter</strong> to calculate the exact physical relationship between mass in kilograms (<strong class="text-white">kg</strong>) and spatial volume in litres (<strong class="text-white">L</strong>) using verified material density values.
       </p>
     </div>
 
+    <!-- Live Calculator -->
+    <div class="space-y-4">
+      <CalculatorWidget defaultMass={1} defaultSubstanceId="water" />
+    </div>
+
     <!-- Quick Reference Card -->
-    <div class="glass-card p-6 sm:p-8 rounded-2xl mb-10 border border-white/[0.08] shadow-xl">
-      <h2 class="text-xl font-bold text-white mb-4">Standard 1 Kg Conversions</h2>
+    <div class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] shadow-xl space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">Standard 1 Kg to Litres Conversions</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         {
           quickConversions.map((item) => (
@@ -91,24 +102,31 @@ const pageSchema = [
     <!-- Details -->
     <div class="space-y-8 text-slate-300">
       <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
-        <h2 class="text-xl sm:text-2xl font-bold text-white">How Kg Converts to Litres</h2>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">How the Kg to Litres Converter Works</h2>
         <p class="leading-relaxed">
-          Converting kilograms (kg) to litres (L) requires knowing the substance's density ($\rho$). Because kilograms measure the amount of matter (mass) while litres measure three-dimensional volume, the conversion depends on how tightly packed the molecules are.
+          Converting kilograms (kg) to litres (L) requires knowing the substance's density (&rho;). Because kilograms measure the amount of matter (mass) while litres measure three-dimensional volume, the conversion depends on how tightly packed the molecules are.
         </p>
         <div class="p-5 rounded-xl bg-surface-950/90 border border-brand-500/20 text-center font-mono text-lg sm:text-xl font-bold text-brand-400">
           Volume (L) = Mass (kg) ÷ Density (kg/L)
         </div>
       </section>
 
+      <!-- FAQs -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl font-extrabold text-white">Frequently Asked Questions</h2>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
       <div class="pt-4 text-center flex flex-wrap justify-center gap-3">
-        <a href="/" class="btn-primary inline-flex items-center gap-2">
-          <span>Open Main Converter</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        <a href="/kg-to-litres-guide/" class="btn-primary inline-flex items-center gap-2">
+          <span>Complete Conversion Guide &rarr;</span>
         </a>
-        <a href="/kg-to-litres-guide/" class="btn-secondary inline-flex items-center gap-2">
-          <span>Full Conversion Guide &rarr;</span>
+        <a href="/density-reference/" class="btn-secondary inline-flex items-center gap-2">
+          <span>772+ Density Reference &rarr;</span>
         </a>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
