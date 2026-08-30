@@ -1,0 +1,144 @@
+---
+// src/pages/construction/kg-to-litres-paints.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+
+const paintData = [
+  { name: 'Water-Based Acrylic Emulsion (Latex Wall Paint)', density: 1.250, massPer5L: '6.25 kg', volPer10Kg: '8.00 L', coverage: '10–12 m²/L', solids: '45–55% wt' },
+  { name: 'Oil-Based Gloss Enamel (Alkyd Paint)', density: 1.150, massPer5L: '5.75 kg', volPer10Kg: '8.70 L', coverage: '12–14 m²/L', solids: '55–65% wt' },
+  { name: 'Epoxy Floor Coating (2-Part 100% Solids)', density: 1.450, massPer5L: '7.25 kg', volPer10Kg: '6.90 L', coverage: '5–8 m²/L', solids: '100% wt' },
+  { name: 'Polyurethane Topcoat (Clear / Satin)', density: 1.050, massPer5L: '5.25 kg', volPer10Kg: '9.52 L', coverage: '14–16 m²/L', solids: '40–50% wt' },
+  { name: 'Zinc-Rich Anti-Corrosion Primer', density: 2.300, massPer5L: '11.50 kg', volPer10Kg: '4.35 L', coverage: '6–8 m²/L', solids: '80–85% wt (Zinc metal)' },
+  { name: 'Masonry Exterior Textured Paint', density: 1.380, massPer5L: '6.90 kg', volPer10Kg: '7.25 L', coverage: '6–8 m²/L', solids: '60–70% wt' },
+  { name: 'Liquid Bitumen / Asphalt Waterproofing', density: 1.050, massPer5L: '5.25 kg', volPer10Kg: '9.52 L', coverage: '1.5–2 m²/L', solids: '60% wt' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 10 kg of water-based emulsion paint?',
+    a: '10 kg ÷ 1.250 kg/L = 8.000 Litres. In reverse, a standard 5-litre tin of emulsion paint weighs 6.250 kg (net paint weight).'
+  },
+  {
+    q: 'Why is zinc primer over twice as heavy as standard wall paint?',
+    a: 'Zinc-rich primers contain high concentrations of heavy metallic zinc dust (density 7.14 kg/L) suspended in resin to provide cathodic protection for steel, resulting in an extreme paint density of 2.300 kg/L.'
+  },
+  {
+    q: 'How does paint density correlate to m²/litre surface coverage?',
+    a: 'Paint density is heavily influenced by pigment volume concentration (PVC). Higher density paints (like heavy primers or textured masonry) contain more heavy mineral extenders and solids, depositing a thicker dry film with lower area coverage per litre.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Kg to Litres: Paints, Coatings & Sealants Guide',
+    description: 'Practical guide for converting kg to litres for paints, primers, epoxy resins, and polyurethane coatings. Density tables and surface coverage calculations.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Architectural Coatings Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/construction/kg-to-litres-paints/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Paints, Coatings & Sealants Guide"
+  description="Convert kg to litres for architectural paints & coatings: Emulsion (1.25 kg/L), Oil-based (1.15 kg/L), 2-Part Epoxy (1.45 kg/L), Zinc Primer (2.30 kg/L). Coverage formulas."
+  canonicalUrl="https://kgtoliter.com/construction/kg-to-litres-paints/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-10 max-w-5xl space-y-10">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Construction Materials"
+      categorySlug="construction"
+      substanceName="Paints, Coatings & Sealants"
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+        <span>🏗️ Domain F: Architectural Coatings QDP</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400">Paints, Coatings &amp; Sealants</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Commercial painting estimation, surface coverage calculations (m²/litre), and bulk drum mass-to-volume conversions.
+      </p>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Master Comparative Table -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">Paints &amp; Coatings Density &amp; Coverage Reference Table</h2>
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3.5 px-4">Coating Type</th>
+              <th class="py-3.5 px-4 text-right font-mono">Density @ 20°C</th>
+              <th class="py-3.5 px-4 text-right font-mono">5 Litre Can Mass</th>
+              <th class="py-3.5 px-4 text-right font-mono">10 kg Volume</th>
+              <th class="py-3.5 px-4 text-center">Avg Coverage</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {paintData.map((item) => (
+              <tr class="hover:bg-white/[0.02]">
+                <td class="py-3.5 px-4 font-semibold text-white font-sans">{item.name}</td>
+                <td class="py-3.5 px-4 text-right text-brand-400 font-bold">{item.density.toFixed(3)} kg/L</td>
+                <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{item.massPer5L}</td>
+                <td class="py-3.5 px-4 text-right text-purple-400 font-bold">{item.volPer10Kg}</td>
+                <td class="py-3.5 px-4 text-center text-slate-400 font-sans text-xs">{item.coverage}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Paint density and volume estimation FAQs.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

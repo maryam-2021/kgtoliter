@@ -1,0 +1,232 @@
+---
+// src/pages/industry/kg-to-litres-cooking.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const culinaryIngredients = [
+  { name: 'All-Purpose Plain Flour (Sifted)', density: 0.530, massPer1L: '0.530 kg', volPer1Kg: '1.887 L', errorRisk: 'High (Packs up to 0.65 kg/L when scooped)' },
+  { name: 'All-Purpose Plain Flour (Packed / Scooped)', density: 0.650, massPer1L: '0.650 kg', volPer1Kg: '1.538 L', errorRisk: '+22% weight error vs sifted' },
+  { name: 'Granulated White Sugar', density: 0.850, massPer1L: '0.850 kg', volPer1Kg: '1.176 L', errorRisk: 'Medium (Crystalline void packing)' },
+  { name: 'Brown Sugar (Packed)', density: 0.930, massPer1L: '0.930 kg', volPer1Kg: '1.075 L', errorRisk: 'High (Moisture content shifts volume)' },
+  { name: 'Pure Water', density: 1.000, massPer1L: '1.000 kg', volPer1Kg: '1.000 L', errorRisk: 'Zero (Standard metric baseline)' },
+  { name: 'Whole Milk (3.5% fat)', density: 1.030, massPer1L: '1.030 kg', volPer1Kg: '0.971 L', errorRisk: 'Low (+3% heavier than water)' },
+  { name: 'Extra Virgin Olive Oil', density: 0.910, massPer1L: '0.910 kg', volPer1Kg: '1.099 L', errorRisk: 'High if assumed 1:1 with water (-9% lighter)' },
+  { name: 'Unsalted Butter (Melted @ 35°C)', density: 0.911, massPer1L: '0.911 kg', volPer1Kg: '1.098 L', errorRisk: 'High (Solid block is 0.96 kg/L)' },
+  { name: 'Pure Clover Honey', density: 1.420, massPer1L: '1.420 kg', volPer1Kg: '0.704 L', errorRisk: 'Extreme (+42% heavier than water)' },
+  { name: 'Pure Maple Syrup', density: 1.325, massPer1L: '1.325 kg', volPer1Kg: '0.755 L', errorRisk: 'Extreme (+32.5% heavier than water)' },
+];
+
+const faqs = [
+  {
+    q: 'Why should professional bakeries weigh ingredients in kg instead of measuring litres or cups?',
+    a: 'Volumetric measurement of dry ingredients (flour, cocoa, sugar) is notoriously inaccurate. Depending on humidity, aeration, and whether flour is sifted or scooped directly with a cup, 1 litre of flour can weigh anywhere from 530 grams to 680 grams (a ±28% error). Weighing in kilograms guarantees 100% batch consistency.'
+  },
+  {
+    q: 'How many litres is 1 kg of plain all-purpose flour?',
+    a: '1 kg of sifted all-purpose flour equals approximately 1.887 litres (about 8 US cups). For densely settled or packed flour, 1 kg occupies 1.538 litres.'
+  },
+  {
+    q: 'Why does 1 litre of olive oil weigh less than 1 kg?',
+    a: 'All culinary vegetable oils (olive, canola, sunflower, corn) have densities around 0.910 to 0.920 kg/L. Therefore, 1 litre of olive oil weighs only 0.910 kg (910 grams).'
+  },
+  {
+    q: 'How do commercial recipe formulation software convert units?',
+    a: 'Professional culinary ERP software (like Nutritics, ESHA Genesis, Apicbase) maintains a specific gravity database for every raw ingredient SKU. When a chef enters volume (litres), the software applies: Mass (kg) = Volume (L) × Ingredient Density (kg/L) to calculate exact food cost and nutritional facts.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Kg to Litres: Cooking, Baking & Chef\'s Formulation Guide',
+    description: 'Master culinary mass to volume conversions for chefs, bakeries, and food plants. Ingredient densities for flour, sugar, dairy, oils, and syrups.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Culinary Science Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/industry/kg-to-litres-cooking/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Convert Cooking Recipe Volumes to Weighed Masses',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Lookup Ingredient Density',
+        text: 'Find the standard density of the culinary ingredient (e.g. Olive Oil = 0.910 kg/L, Flour = 0.530 kg/L).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Calculate Exact Weight',
+        text: 'Multiply recipe volume in litres by the ingredient density: Mass (kg) = Volume (L) × Density (kg/L).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Dose by Digital Scale',
+        text: 'Zero the commercial digital scale and weigh out the ingredient in grams or kilograms for 100% batch consistency.',
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Cooking & Baking Guide for Chefs & Food Production"
+  description="Master mass to volume conversions in the kitchen. Density tables for flour (0.53 kg/L), sugar (0.85 kg/L), olive oil (0.91 kg/L), honey (1.42 kg/L), and baker's scaling."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/industry/kg-to-litres-cooking/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="B2B Industry Guides"
+      categorySlug="industry"
+      substanceName="Cooking & Baking Mass-to-Volume Guide"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wider">
+        <span>👨‍🍳 Culinary Science &amp; Food Production Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-brand-400">Cooking &amp; Baking Guide</span> (Chef's Reference)
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Why do commercial bakeries and Michelin-starred kitchens weigh every liquid and dry ingredient on digital scales in kilograms (<strong class="text-white">kg</strong>) instead of using measuring jugs in litres (<strong class="text-white">L</strong>)?
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/cooking/kg-to-litres-baking-ingredients/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          Baking Ingredients Hub &rarr;
+        </a>
+        <a
+          href="/cooking-oils/kg-to-litres-comparison/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          Cooking Oils Density Comparison &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Main Content -->
+    <article class="space-y-12">
+      
+      <!-- The Inaccuracy of Kitchen Jugs -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Why Kitchen Measuring Jugs Fail: Meniscus &amp; Aeration Errors
+        </h2>
+        <p class="text-slate-300 leading-relaxed">
+          Measuring liquids in jugs introduces optical meniscus parallax error (&plusmn;5%), while measuring powders in cups produces massive volume fluctuations (&plusmn;25%) caused by air settling:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-rose-500/20 space-y-2">
+            <h3 class="text-base font-bold text-rose-300">The Flour Trap: 0.53 kg/L vs. 0.65 kg/L</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              1 litre of gently sifted flour weighs <strong>0.530 kg (530g)</strong>. However, scooping that same flour directly from a sack compresses the powder, packing <strong>0.650 kg (650g)</strong> into 1 litre—introducing a <strong>+22.6% excess of dry starch</strong> that ruins cake moisture and gluten development.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+            <h3 class="text-base font-bold text-amber-300">The Heavy Sugar &amp; Honey Trap</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Assuming liquids weigh 1 kg per litre causes major errors with viscous syrups. 1 litre of clover honey weighs <strong>1.420 kg</strong> (42% heavier than water), while 1 litre of whole milk weighs <strong>1.030 kg</strong>. Explore <a href="/substances/milk/" class="text-amber-300 underline">milk density and mass conversions</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Culinary Density Table -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Master Culinary Ingredients Density &amp; Yield Matrix
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Physical bulk densities measured at standard kitchen room ambient temperature (20°C / 68°F).
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Culinary Ingredient</th>
+                <th class="py-3.5 px-4 text-center font-mono">Density @ 20°C</th>
+                <th class="py-3.5 px-4 text-right font-mono">1 Litre Mass</th>
+                <th class="py-3.5 px-4 text-right font-mono">1 kg Volume</th>
+                <th class="py-3.5 px-4">Volumetric Error Risk</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 text-xs sm:text-sm">
+              {culinaryIngredients.map((ci) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">{ci.name}</td>
+                  <td class="py-3.5 px-4 text-center text-purple-400 font-bold font-mono">{ci.density.toFixed(3)} kg/L</td>
+                  <td class="py-3.5 px-4 text-right text-emerald-400 font-bold font-mono">{ci.massPer1L}</td>
+                  <td class="py-3.5 px-4 text-right text-brand-400 font-bold font-mono">{ci.volPer1Kg}</td>
+                  <td class="py-3.5 px-4 text-slate-400 font-sans text-xs">{ci.errorRisk}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- FAQs -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Professional kitchen and bakery formulation FAQs.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

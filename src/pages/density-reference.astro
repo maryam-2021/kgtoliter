@@ -1,0 +1,344 @@
+---
+// src/pages/density-reference.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import FAQAccordion from '@components/interactive/FAQAccordion.astro';
+import { SUBSTANCE_DATABASE } from '../data/substances';
+import { useI18n } from '../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+// Group categories for quick filtering
+const categories = [
+  { id: 'all', label: 'All Substances', count: SUBSTANCE_DATABASE.length },
+  { id: 'basic', label: '💧 Basic Liquids', count: SUBSTANCE_DATABASE.filter(s => s.category === 'basic').length },
+  { id: 'cooking', label: '🍳 Cooking & Food', count: SUBSTANCE_DATABASE.filter(s => s.category === 'cooking').length },
+  { id: 'fuels', label: '⛽ Fuels & Energy', count: SUBSTANCE_DATABASE.filter(s => s.category === 'fuels').length },
+  { id: 'automotive', label: '🚗 Automotive Fluids', count: SUBSTANCE_DATABASE.filter(s => s.category === 'automotive').length },
+  { id: 'industrial', label: '🧪 Industrial & Solvents', count: SUBSTANCE_DATABASE.filter(s => s.category === 'industrial').length },
+  { id: 'construction', label: '🏗️ Construction Materials', count: SUBSTANCE_DATABASE.filter(s => s.category === 'construction').length },
+  { id: 'agriculture', label: '🌱 Agriculture & Fertiliser', count: SUBSTANCE_DATABASE.filter(s => s.category === 'agriculture').length },
+];
+
+// Reference FAQs
+const faqs = [
+  {
+    q: 'How accurate is the density data in this master reference?',
+    a: 'All densities in this master database are referenced to internationally recognized chemical and physical authorities, including the CRC Handbook of Chemistry and Physics, ASTM standards (e.g. ASTM D1298 for petroleum, ASTM C138 for concrete), IUPAC tables, and European Standards (EN 590 for diesel). Reference temperatures are standard 20°C (or 15°C for fuels) unless noted.'
+  },
+  {
+    q: 'Why do some substances have a density range instead of a single number?',
+    a: 'Natural and compounded substances (such as crude oils, honey, concrete mixes, engine oils, and biological fluids) vary in composition, moisture content, grade, and particulate packing. For example, crude oil ranges from 0.79 to 0.97 kg/L depending on its API gravity rating.'
+  },
+  {
+    q: 'How do I convert density in kg/L to other density units?',
+    a: '1 kg/L is mathematically identical to 1 g/cm³ and 1 g/mL. To convert kg/L to kg/m³, multiply by 1,000 (e.g. water = 1.000 kg/L = 1,000 kg/m³). To convert kg/L to lb/US gal, multiply by 8.3454.'
+  },
+  {
+    q: 'What is the standard reference temperature for liquid density?',
+    a: 'The international standard laboratory reference temperature is 20°C (68°F). In the global petroleum and bunkering trade, 15°C (59°F) or 60°F is standard per API MPMS Chapter 11.1 / ASTM D1250.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Master Substance Density Reference Database',
+    description: `Comprehensive reference database containing densities, temperature baselines, and ASTM/IUPAC/CRC citations for ${SUBSTANCE_DATABASE.length} chemical, industrial, food, fuel, and construction substances.`,
+    url: 'https://kgtoliter.com/density-reference/',
+    creator: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/'
+    },
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    variableMeasured: 'Density (kg/L), Specific Gravity, Reference Temperature (°C)'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a
+      }
+    }))
+  }
+];
+---
+
+<BaseLayout
+  title="Density Reference: Master Substance Database (772+ Substances)"
+  description="Search the master substance density database. Verified kg/L values, ASTM/CRC sources, temperature coefficients, and direct conversion calculators."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/density-reference/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-6xl space-y-10">
+    
+    <!-- Hero Header -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+        <span>📖 Master Reference Database Pillar</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Master Density Reference: <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400">{SUBSTANCE_DATABASE.length}+ Substances</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Explore verified scientific densities, temperature baselines, ASTM/CRC citations, and conversion ratios. Instant search and domain filtering for accurate mass-to-volume calculations.
+      </p>
+    </header>
+
+    <!-- Quick Stat Cards -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] p-4 rounded-xl text-center">
+        <span class="text-xs font-mono text-slate-400 block">Total Substances</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-brand-400 font-mono">{SUBSTANCE_DATABASE.length}</span>
+      </div>
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] p-4 rounded-xl text-center">
+        <span class="text-xs font-mono text-slate-400 block">Domain Categories</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">8</span>
+      </div>
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] p-4 rounded-xl text-center">
+        <span class="text-xs font-mono text-slate-400 block">Standard Ref Temp</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-purple-400 font-mono">20°C / 15°C</span>
+      </div>
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] p-4 rounded-xl text-center">
+        <span class="text-xs font-mono text-slate-400 block">Standard Unit</span>
+        <span class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">kg/L (g/cm³)</span>
+      </div>
+    </section>
+
+    <!-- Interactive Database Explorer -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-5 sm:p-8 shadow-2xl space-y-6">
+      
+      <!-- Controls Toolbar -->
+      <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-b border-white/[0.06] pb-6">
+        <!-- Search Input -->
+        <div class="relative flex-1">
+          <input
+            type="text"
+            id="substance-search"
+            placeholder="Search by substance name, formula, or use (e.g. diesel, acetone, olive oil)..."
+            class="w-full bg-surface-900 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm font-sans"
+            autocomplete="off"
+          />
+          <svg class="w-5 h-5 text-slate-500 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Result Counter -->
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400 whitespace-nowrap self-end md:self-center">
+          <span>Showing:</span>
+          <span id="match-count" class="font-bold text-brand-400 text-sm">{SUBSTANCE_DATABASE.length}</span>
+          <span>of {SUBSTANCE_DATABASE.length}</span>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap gap-2" id="category-filters">
+        {categories.map((cat, idx) => (
+          <button
+            type="button"
+            data-category={cat.id}
+            class={`category-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              idx === 0
+                ? 'bg-brand-500 text-slate-950 font-bold shadow-sm'
+                : 'bg-surface-900 text-slate-400 hover:text-white hover:bg-surface-800 border border-white/5'
+            }`}
+          >
+            {cat.label} <span class="opacity-60 ml-1 text-[11px]">({cat.count})</span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Live Search Table -->
+      <div class="overflow-x-auto rounded-xl border border-white/[0.06] bg-surface-900/40">
+        <table class="w-full text-left text-sm border-collapse" id="substance-table">
+          <thead>
+            <tr class="border-b border-white/10 bg-surface-900/80 text-xs font-mono uppercase text-slate-400 tracking-wider">
+              <th class="py-3.5 px-4">Substance Name</th>
+              <th class="py-3.5 px-4">Category</th>
+              <th class="py-3.5 px-4 text-right">Density (&rho;)</th>
+              <th class="py-3.5 px-4 text-right">1 kg = (Litres)</th>
+              <th class="py-3.5 px-4 text-center">Ref Temp</th>
+              <th class="py-3.5 px-4">Standard Citation</th>
+              <th class="py-3.5 px-4 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-sans" id="table-body">
+            {SUBSTANCE_DATABASE.map((item) => {
+              const litresPerKg = (1 / item.density).toFixed(3);
+              return (
+                <tr 
+                  class="substance-row hover:bg-white/[0.02] transition-colors"
+                  data-id={item.id}
+                  data-name={item.name.toLowerCase()}
+                  data-category={item.category}
+                  data-notes={(item.notes || '').toLowerCase()}
+                >
+                  <td class="py-3.5 px-4 font-semibold text-white">
+                    <div class="flex flex-col">
+                      <span>{item.name}</span>
+                      {item.notes && <span class="text-xs text-slate-500 font-normal mt-0.5 line-clamp-1">{item.notes}</span>}
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-mono capitalize bg-surface-800 text-slate-400 border border-white/5">
+                      {item.category}
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right font-mono font-bold text-brand-400">
+                    {item.density.toFixed(3)} <span class="text-[11px] text-slate-500 font-normal">kg/L</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right font-mono font-bold text-emerald-400">
+                    {litresPerKg} <span class="text-[11px] text-slate-500 font-normal">L</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-mono text-xs text-slate-400">
+                    {item.temperature || 20}&deg;C
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-slate-400 font-mono">
+                    {item.source || 'Standard Reference'}
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    <a
+                      href={`/substances/${item.id}/`}
+                      class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-slate-950 border border-brand-500/20 transition-all"
+                    >
+                      Convert &rarr;
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Results State -->
+      <div id="no-results" class="hidden text-center py-12 space-y-3">
+        <p class="text-slate-400 text-base">No substances matched your search query.</p>
+        <button
+          type="button"
+          id="reset-search-btn"
+          class="px-4 py-2 rounded-xl bg-surface-800 text-brand-400 hover:bg-surface-700 text-xs font-semibold"
+        >
+          Reset Filters
+        </button>
+      </div>
+    </section>
+
+    <!-- Silo Linking Hub -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">Related Architectural Pillars & Guides</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Connect to core conversion theory, physics principles, and domain guides.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a href="/kg-to-litres-guide/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-brand-500/30 transition-all">
+          <span class="text-xs font-mono text-brand-400 block mb-1">Pillar P1</span>
+          <span class="text-sm font-bold text-white block">Complete kg to Litres Guide &rarr;</span>
+          <span class="text-xs text-slate-400 mt-1 block">Formulas, mathematical proofs, and step-by-step conversions.</span>
+        </a>
+        <a href="/what-is-density/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-emerald-500/30 transition-all">
+          <span class="text-xs font-mono text-emerald-400 block mb-1">Pillar P2</span>
+          <span class="text-sm font-bold text-white block">What Is Density? The Physics &rarr;</span>
+          <span class="text-xs text-slate-400 mt-1 block">In-depth exploration of specific gravity, units, and expansion.</span>
+        </a>
+        <a href="/custom-density-calculator/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-purple-500/30 transition-all">
+          <span class="text-xs font-mono text-purple-400 block mb-1">Tool</span>
+          <span class="text-sm font-bold text-white block">Custom Density Solver &rarr;</span>
+          <span class="text-xs text-slate-400 mt-1 block">Calculate custom density mixtures and temperature corrections.</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Database & Methodology FAQs</h2>
+        <p class="text-slate-400 text-sm">Standards, sourcing, and calculation accuracy.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>
+
+<script>
+  function setupDatabaseExplorer() {
+    const searchInput = document.getElementById('substance-search') as HTMLInputElement | null;
+    const matchCountEl = document.getElementById('match-count');
+    const tableBody = document.getElementById('table-body');
+    const noResultsEl = document.getElementById('no-results');
+    const filterButtons = document.querySelectorAll('.category-filter-btn');
+    const resetBtn = document.getElementById('reset-search-btn');
+
+    if (!tableBody || !searchInput || !matchCountEl) return;
+
+    const rows = Array.from(tableBody.querySelectorAll('.substance-row')) as HTMLElement[];
+    let currentCategory = 'all';
+    let currentQuery = '';
+
+    function filterTable() {
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const name = row.getAttribute('data-name') || '';
+        const cat = row.getAttribute('data-category') || '';
+        const notes = row.getAttribute('data-notes') || '';
+
+        const matchesCat = (currentCategory === 'all' || cat === currentCategory);
+        const matchesQuery = !currentQuery || name.includes(currentQuery) || notes.includes(currentQuery) || cat.includes(currentQuery);
+
+        if (matchesCat && matchesQuery) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      matchCountEl.textContent = visibleCount.toString();
+      if (noResultsEl) {
+        noResultsEl.classList.toggle('hidden', visibleCount > 0);
+      }
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      currentQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      filterTable();
+    });
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => {
+          b.classList.remove('bg-brand-500', 'text-slate-950', 'font-bold');
+          b.classList.add('bg-surface-900', 'text-slate-400');
+        });
+        btn.classList.remove('bg-surface-900', 'text-slate-400');
+        btn.classList.add('bg-brand-500', 'text-slate-950', 'font-bold');
+
+        currentCategory = btn.getAttribute('data-category') || 'all';
+        filterTable();
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentQuery = '';
+        const allBtn = document.querySelector('[data-category="all"]') as HTMLElement | null;
+        if (allBtn) allBtn.click();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', setupDatabaseExplorer);
+  document.addEventListener('astro:page-load', setupDatabaseExplorer);
+</script>

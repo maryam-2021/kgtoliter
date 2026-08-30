@@ -1,0 +1,375 @@
+---
+// src/pages/convert/[query].astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { SUBSTANCE_DATABASE } from '../../data/substances';
+
+export async function getStaticPaths() {
+  const quantities = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50, 100, 200, 500, 1000];
+  const topSubstances = [
+    { id: 'water', name: 'Pure Water', density: 1.000, category: 'basic' },
+    { id: 'milk', name: 'Whole Milk', density: 1.030, category: 'basic' },
+    { id: 'diesel', name: 'Diesel Fuel', density: 0.832, category: 'fuels' },
+    { id: 'petrol', name: 'Gasoline / Petrol', density: 0.748, category: 'fuels' },
+    { id: 'olive-oil', name: 'Olive Oil', density: 0.910, category: 'cooking' },
+    { id: 'honey', name: 'Pure Honey', density: 1.420, category: 'cooking' },
+  ];
+
+  const paths: any[] = [];
+
+  // 1. Universal Kg to Litres quantities
+  quantities.forEach((qty) => {
+    paths.push({
+      params: { query: `${qty}-kg-to-litres` },
+      props: {
+        amount: qty,
+        fromUnit: 'kg',
+        toUnit: 'litres',
+        isReverse: false,
+        specificSubstance: null,
+      },
+    });
+  });
+
+  // 2. Universal Litres to Kg quantities
+  quantities.forEach((qty) => {
+    const slugUnit = qty === 1 ? '1-litre-to-kg' : `${qty}-litres-to-kg`;
+    paths.push({
+      params: { query: slugUnit },
+      props: {
+        amount: qty,
+        fromUnit: qty === 1 ? 'litre' : 'litres',
+        toUnit: 'kg',
+        isReverse: true,
+        specificSubstance: null,
+      },
+    });
+  });
+
+  // 3. Substance-Specific QDP Quantities (e.g. 5-kg-water-to-litres)
+  topSubstances.forEach((sub) => {
+    [1, 2, 5, 10, 20, 25, 50, 100, 1000].forEach((qty) => {
+      // Forward: [qty]-kg-[sub]-to-litres
+      paths.push({
+        params: { query: `${qty}-kg-${sub.id}-to-litres` },
+        props: {
+          amount: qty,
+          fromUnit: 'kg',
+          toUnit: 'litres',
+          isReverse: false,
+          specificSubstance: sub,
+        },
+      });
+
+      // Reverse: [qty]-litres-[sub]-to-kg
+      const reverseSlug = qty === 1 ? `1-litre-${sub.id}-to-kg` : `${qty}-litres-${sub.id}-to-kg`;
+      paths.push({
+        params: { query: reverseSlug },
+        props: {
+          amount: qty,
+          fromUnit: qty === 1 ? 'litre' : 'litres',
+          toUnit: 'kg',
+          isReverse: true,
+          specificSubstance: sub,
+        },
+      });
+    });
+  });
+
+  return paths;
+}
+
+interface Props {
+  amount: number;
+  fromUnit: string;
+  toUnit: string;
+  isReverse: boolean;
+  specificSubstance?: { id: string; name: string; density: number; category: string } | null;
+}
+
+const { amount, fromUnit, toUnit, isReverse, specificSubstance } = Astro.props;
+
+// Primary reference substances
+const keySubstances = [
+  { id: 'water', name: 'Pure Water', density: 1.000, category: 'basic' },
+  { id: 'milk', name: 'Whole Milk', density: 1.030, category: 'basic' },
+  { id: 'olive-oil', name: 'Olive Oil', density: 0.910, category: 'cooking' },
+  { id: 'sunflower-oil', name: 'Sunflower Oil', density: 0.920, category: 'cooking' },
+  { id: 'honey', name: 'Pure Honey', density: 1.420, category: 'cooking' },
+  { id: 'diesel', name: 'Diesel Fuel', density: 0.832, category: 'fuels' },
+  { id: 'petrol', name: 'Gasoline / Petrol', density: 0.748, category: 'fuels' },
+  { id: 'kerosene', name: 'Kerosene / Jet Fuel', density: 0.810, category: 'fuels' },
+  { id: 'engine-oil', name: 'Motor Oil (SAE 5W-30)', density: 0.855, category: 'automotive' },
+  { id: 'coolant', name: 'Antifreeze / Coolant (50/50)', density: 1.065, category: 'automotive' },
+  { id: 'paint', name: 'Latex Paint', density: 1.200, category: 'construction' },
+  { id: 'concrete', name: 'Wet Concrete', density: 2.400, category: 'construction' },
+  { id: 'acetone', name: 'Acetone', density: 0.784, category: 'industrial' },
+  { id: 'ethanol', name: 'Ethanol (100%)', density: 0.789, category: 'industrial' },
+  { id: 'sulfuric-acid', name: 'Sulfuric Acid (98%)', density: 1.836, category: 'industrial' },
+  { id: 'liquid-fertilizer', name: 'UAN 32 Fertilizer', density: 1.320, category: 'agriculture' }
+];
+
+const subName = specificSubstance ? specificSubstance.name : '';
+const subDensity = specificSubstance ? specificSubstance.density : 1.000;
+const specificResult = isReverse ? (amount * subDensity) : (amount / subDensity);
+
+const pageTitle = specificSubstance
+  ? isReverse
+    ? `${amount} ${fromUnit} of ${subName} to kg | Exact Mass (${specificResult.toFixed(3)} kg)`
+    : `${amount} kg of ${subName} to litres | Exact Volume (${specificResult.toFixed(3)} L)`
+  : isReverse
+    ? `Convert ${amount} ${fromUnit} to kg | Exact Mass for 16+ Liquids`
+    : `Convert ${amount} kg to litres | Exact Volume for 16+ Liquids`;
+
+const metaDescription = specificSubstance
+  ? isReverse
+    ? `${amount} ${fromUnit} of ${subName} equals ${specificResult.toFixed(3)} kg (density: ${subDensity} kg/L). Step-by-step formula: Mass = ${amount} L × ${subDensity} kg/L.`
+    : `${amount} kg of ${subName} equals ${specificResult.toFixed(3)} litres (density: ${subDensity} kg/L). Step-by-step formula: Volume = ${amount} kg ÷ ${subDensity} kg/L.`
+  : isReverse
+    ? `How many kg in ${amount} ${fromUnit}? For water: ${(amount * 1.000).toFixed(3)} kg, milk: ${(amount * 1.030).toFixed(3)} kg, diesel: ${(amount * 0.832).toFixed(3)} kg, olive oil: ${(amount * 0.910).toFixed(3)} kg. Instant formula & table.`
+    : `How many litres in ${amount} kg? For water: ${(amount / 1.000).toFixed(3)} L, milk: ${(amount / 1.030).toFixed(3)} L, diesel: ${(amount / 0.832).toFixed(3)} L, olive oil: ${(amount / 0.910).toFixed(3)} L. Instant formula & table.`;
+
+const faqs = specificSubstance
+  ? [
+      {
+        q: isReverse ? `How much does ${amount} ${fromUnit} of ${subName} weigh in kg?` : `How many litres is ${amount} kg of ${subName}?`,
+        a: isReverse
+          ? `${amount} ${fromUnit} of ${subName} weighs exactly ${specificResult.toFixed(3)} kg (${(specificResult * 1000).toLocaleString()} grams) at standard reference temperature with density ${subDensity} kg/L.`
+          : `${amount} kg of ${subName} equals exactly ${specificResult.toFixed(3)} litres (${(specificResult * 1000).toLocaleString()} mL) based on density ${subDensity} kg/L.`
+      },
+      {
+        q: `What is the calculation formula for ${amount} ${fromUnit} of ${subName}?`,
+        a: isReverse
+          ? `Mass (kg) = Volume (L) × Density (kg/L) = ${amount} × ${subDensity} = ${specificResult.toFixed(3)} kg.`
+          : `Volume (L) = Mass (kg) ÷ Density (kg/L) = ${amount} ÷ ${subDensity} = ${specificResult.toFixed(3)} Litres.`
+      }
+    ]
+  : [
+      {
+        q: isReverse ? `How many kg is ${amount} ${fromUnit} of water?` : `How many litres is ${amount} kg of water?`,
+        a: isReverse 
+          ? `${amount} ${fromUnit} of pure water equals exactly ${amount.toFixed(3)} kg at standard 20°C (density 1.000 kg/L).`
+          : `${amount} kg of pure water equals exactly ${amount.toFixed(3)} litres at standard 20°C (density 1.000 kg/L).`
+      },
+      {
+        q: isReverse ? `How many kg is ${amount} ${fromUnit} of cooking oil?` : `How many litres is ${amount} kg of cooking oil?`,
+        a: isReverse
+          ? `${amount} ${fromUnit} of olive oil (0.910 kg/L) weighs ${(amount * 0.910).toFixed(3)} kg. ${amount} ${fromUnit} of vegetable oil (0.920 kg/L) weighs ${(amount * 0.920).toFixed(3)} kg.`
+          : `${amount} kg of olive oil (0.910 kg/L) yields ${(amount / 0.910).toFixed(3)} litres. ${amount} kg of vegetable oil (0.920 kg/L) yields ${(amount / 0.920).toFixed(3)} litres.`
+      },
+      {
+        q: isReverse ? `How many kg is ${amount} ${fromUnit} of diesel fuel?` : `How many litres is ${amount} kg of diesel fuel?`,
+        a: isReverse
+          ? `${amount} ${fromUnit} of diesel (density 0.832 kg/L) weighs ${(amount * 0.832).toFixed(3)} kg.`
+          : `${amount} kg of diesel (density 0.832 kg/L) equals ${(amount / 0.832).toFixed(3)} litres.`
+      },
+      {
+        q: isReverse ? `How many kg is ${amount} ${fromUnit} of milk?` : `How many litres is ${amount} kg of milk?`,
+        a: isReverse
+          ? `${amount} ${fromUnit} of whole milk (density 1.030 kg/L) weighs ${(amount * 1.030).toFixed(3)} kg.`
+          : `${amount} kg of whole milk (density 1.030 kg/L) equals ${(amount / 1.030).toFixed(3)} litres.`
+      }
+    ];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: pageTitle,
+    description: metaDescription,
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg'
+      }
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a
+      }
+    }))
+  }
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={metaDescription}
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-10">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Quantity Conversions"
+      categorySlug="convert"
+      substanceName={specificSubstance ? `${amount} ${fromUnit} of ${subName}` : `${amount} ${fromUnit} to ${toUnit}`}
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider">
+        <span>⚡ Quick Quantity Solver</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        {specificSubstance 
+          ? `Convert ${amount} ${fromUnit} of ${subName} to ${toUnit}`
+          : `Convert ${amount} ${fromUnit} to ${toUnit}`
+        }
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        {specificSubstance
+          ? isReverse
+            ? `${amount} ${fromUnit} of ${subName} weighs ${specificResult.toFixed(3)} kg using standard density ${subDensity} kg/L.`
+            : `${amount} kg of ${subName} yields ${specificResult.toFixed(3)} litres using standard density ${subDensity} kg/L.`
+          : isReverse 
+            ? `Converting ${amount} ${fromUnit} to kilograms requires multiplying by density: Mass = ${amount} L × Density (kg/L).`
+            : `Converting ${amount} kilograms to litres requires dividing by density: Volume = ${amount} kg ÷ Density (kg/L).`
+        }
+      </p>
+    </header>
+
+    <!-- Specific Result Big Callout if substance specified -->
+    {specificSubstance && (
+      <section class="glass-card bg-surface-950/90 border border-brand-500/30 rounded-2xl p-6 sm:p-8 text-center space-y-3">
+        <span class="text-xs font-mono uppercase text-slate-400 font-bold tracking-wider">Calculated Conversion Result</span>
+        <div class="text-4xl sm:text-5xl font-extrabold text-brand-400 font-mono">
+          {amount} {fromUnit} = {specificResult.toFixed(3)} {toUnit}
+        </div>
+        <p class="text-xs text-slate-400 font-mono">
+          Formula: {isReverse ? `${amount} L × ${subDensity} kg/L` : `${amount} kg ÷ ${subDensity} kg/L`} = {specificResult.toFixed(3)} {toUnit}
+        </p>
+      </section>
+    )}
+
+    <!-- Interactive Converter -->
+    <section class="space-y-4">
+      <CalculatorWidget defaultMass={amount} defaultSubstanceId={specificSubstance ? specificSubstance.id : 'water'} />
+    </section>
+
+    <!-- Big Reference Matrix Table -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white mb-1">
+            {amount} {fromUnit} in {toUnit} Across Top Liquids
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Calculated at standard 20°C / 15°C reference temperatures with verified chemical densities.
+          </p>
+        </div>
+        <span class="badge badge-brand self-start sm:self-auto font-mono">{amount} {fromUnit}</span>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3.5 px-4">Substance</th>
+              <th class="py-3.5 px-4 text-center font-mono">Density</th>
+              <th class="py-3.5 px-4 text-right font-mono">Calculated Result</th>
+              <th class="py-3.5 px-4 text-right font-mono">Secondary Unit</th>
+              <th class="py-3.5 px-4 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {keySubstances.map((item) => {
+              const res = isReverse ? (amount * item.density) : (amount / item.density);
+              const secondary = isReverse ? (res * 1000) : (res * 1000);
+              const isCurrent = specificSubstance && specificSubstance.id === item.id;
+              return (
+                <tr class={`hover:bg-white/[0.02] ${isCurrent ? 'bg-brand-500/10' : ''}`}>
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">
+                    {item.name} {isCurrent && <span class="text-xs text-brand-400 ml-1 font-mono">(Current)</span>}
+                  </td>
+                  <td class="py-3.5 px-4 text-center text-slate-400">
+                    {item.density.toFixed(3)} kg/L
+                  </td>
+                  <td class="py-3.5 px-4 text-right font-bold text-brand-400">
+                    {res.toFixed(3)} {isReverse ? 'kg' : 'L'}
+                  </td>
+                  <td class="py-3.5 px-4 text-right text-slate-400">
+                    {secondary.toLocaleString(undefined, { maximumFractionDigits: 1 })} {isReverse ? 'g' : 'mL'}
+                  </td>
+                  <td class="py-3.5 px-4 text-center font-sans">
+                    <a
+                      href={`/${item.category}/${isReverse ? 'litres-to-kg' : 'kg-to-litres'}-${item.id}/`}
+                      class="px-2.5 py-1 rounded bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-slate-950 font-semibold text-xs border border-brand-500/20 transition-all inline-block"
+                    >
+                      {item.name} Guide &rarr;
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Other Common Quantities Grid -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-xl font-bold text-white">Other Common Quantity Conversions</h2>
+      <div class="flex flex-wrap gap-2">
+        {[1, 2, 5, 10, 20, 25, 50, 100, 200, 1000].map((q) => {
+          const forwardSlug = specificSubstance ? `${q}-kg-${specificSubstance.id}-to-litres` : `${q}-kg-to-litres`;
+          const reverseSlug = specificSubstance 
+            ? (q === 1 ? `1-litre-${specificSubstance.id}-to-kg` : `${q}-litres-${specificSubstance.id}-to-kg`)
+            : (q === 1 ? '1-litre-to-kg' : `${q}-litres-to-kg`);
+          return (
+            <div class="flex items-center gap-1 bg-surface-900 border border-white/5 rounded-lg p-1">
+              <a
+                href={`/convert/${forwardSlug}/`}
+                class={`px-2.5 py-1 rounded text-xs font-mono transition-all ${
+                  !isReverse && amount === q
+                    ? 'bg-brand-500 text-slate-950 font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-surface-800'
+                }`}
+              >
+                {q} kg &rarr; L
+              </a>
+              <span class="text-slate-700">|</span>
+              <a
+                href={`/convert/${reverseSlug}/`}
+                class={`px-2.5 py-1 rounded text-xs font-mono transition-all ${
+                  isReverse && amount === q
+                    ? 'bg-emerald-500 text-slate-950 font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-surface-800'
+                }`}
+              >
+                {q} L &rarr; kg
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Questions about this conversion.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

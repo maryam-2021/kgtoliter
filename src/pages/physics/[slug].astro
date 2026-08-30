@@ -1,0 +1,249 @@
+---
+// src/pages/physics/[slug].astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import FormulaPlayground from '../../components/interactive/FormulaPlayground.astro';
+import TemperatureDensitySlider from '../../components/interactive/TemperatureDensitySlider.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { physicsGuides, type PhysicsGuide } from '../../data/physicsGuides';
+
+export async function getStaticPaths() {
+  return physicsGuides.map((guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }));
+}
+
+interface Props {
+  guide: PhysicsGuide;
+}
+
+const { guide } = Astro.props;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: guide.title,
+    description: guide.metaDescription,
+    author: {
+      '@type': 'Organization',
+      name: guide.author,
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://kgtoliter.com/physics/${guide.slug}/`,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guide.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={`${guide.title} | Physics & Density Guide`}
+  description={guide.metaDescription}
+  canonicalUrl={`https://kgtoliter.com/physics/${guide.slug}/`}
+  schema={pageSchema}
+>
+  <article class="max-w-4xl mx-auto px-4 py-10 space-y-10">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Physics & Educational"
+      categorySlug="physics"
+      substanceName={guide.title}
+    />
+
+    <!-- Header Block -->
+    <header class="space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+          ⚛️ {guide.category}
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          {guide.readTime}
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          Reviewed: {guide.reviewedDate}
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+        {guide.title}
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {guide.subtitle}
+      </p>
+    </header>
+
+    <!-- Intro Card -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <p class="text-slate-200 leading-relaxed text-base sm:text-lg">
+        {guide.intro}
+      </p>
+    </section>
+
+    <!-- Formula Box if present -->
+    {guide.formulaBox && (
+      <section class="glass-card bg-surface-950/90 border border-brand-500/30 rounded-2xl p-6 sm:p-8 space-y-4">
+        <span class="text-xs font-mono uppercase font-bold text-brand-400 tracking-wider">
+          {guide.formulaBox.description}
+        </span>
+        <div class="p-5 rounded-xl bg-surface-900 border border-brand-500/20 text-center font-mono text-2xl sm:text-3xl font-extrabold text-brand-400">
+          {guide.formulaBox.formula}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          {guide.formulaBox.variables.map((v) => (
+            <div class="p-3 rounded-lg bg-surface-900/60 border border-white/[0.04] text-xs font-mono">
+              <span class="text-brand-300 font-bold">{v.symbol}</span> = <span class="text-slate-300">{v.meaning}</span>
+              <span class="text-slate-500 block text-[11px]">({v.unit})</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Dynamic Interactive Widget -->
+    {guide.interactiveWidget === 'temperature-slider' && (
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-white">Interactive Temperature &amp; Density Simulator</h2>
+        <TemperatureDensitySlider />
+      </section>
+    )}
+
+    {guide.interactiveWidget === 'formula-playground' && (
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-white">Interactive Formula Playground</h2>
+        <FormulaPlayground />
+      </section>
+    )}
+
+    <!-- Guide Content Sections -->
+    <div class="space-y-8">
+      {guide.sections.map((section) => (
+        <section class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+          <h2 class="text-2xl font-bold text-white mb-2">{section.heading}</h2>
+          
+          <div class="space-y-3 text-slate-300 leading-relaxed text-sm sm:text-base">
+            {section.content.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+
+          {section.callout && (
+            <div class={`p-4 rounded-xl text-xs sm:text-sm leading-relaxed border ${
+              section.callout.type === 'tip'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                : section.callout.type === 'warning'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                  : 'bg-brand-500/10 border-brand-500/30 text-brand-300'
+            }`}>
+              <span class="font-bold block mb-1 uppercase tracking-wider font-mono">{section.callout.title}</span>
+              <p class="whitespace-pre-line text-slate-200">{section.callout.text}</p>
+            </div>
+          )}
+
+          {section.table && (
+            <div class="overflow-x-auto rounded-xl border border-white/5 mt-4">
+              <table class="w-full text-left text-xs sm:text-sm font-sans">
+                <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+                  <tr>
+                    {section.table.headers.map((h) => (
+                      <th class="py-3 px-4">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-slate-300">
+                  {section.table.rows.map((row) => (
+                    <tr class="hover:bg-white/[0.02]">
+                      {row.map((cell, cIdx) => (
+                        <td class={`py-3 px-4 ${cIdx === 0 ? 'font-semibold text-white' : 'font-mono'}`}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {section.table.caption && (
+                <p class="text-[11px] text-slate-500 p-2 font-mono text-center border-t border-white/5">
+                  {section.table.caption}
+                </p>
+              )}
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+
+    <!-- Related Physics Guides Cluster Hub -->
+    <section class="glass-card bg-surface-950/90 border border-emerald-500/20 rounded-2xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <span class="badge badge-brand">Physics Cluster Silo</span>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Related Physics &amp; Educational Guides</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {physicsGuides.filter(g => g.slug !== guide.slug).map((g) => (
+          <a
+            href={`/physics/${g.slug}/`}
+            class="p-4 rounded-xl bg-surface-900/80 border border-white/[0.06] hover:border-emerald-500/50 transition-all group block"
+          >
+            <span class="text-[10px] font-mono uppercase text-emerald-400 block mb-1">{g.category}</span>
+            <h3 class="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+              {g.title} &rarr;
+            </h3>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">{g.subtitle}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Master Pillars Reciprocal Links -->
+    <section class="p-6 rounded-2xl bg-surface-950 border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h3 class="text-base font-bold text-white">Looking for substance density values?</h3>
+        <p class="text-xs text-slate-400">Search over 772+ verified substances in our master reference database.</p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/density-reference/" class="px-4 py-2 rounded-xl bg-brand-500 text-slate-950 font-bold text-xs hover:bg-brand-400 transition-all">
+          Open Substance Database &rarr;
+        </a>
+        <a href="/kg-to-litres-guide/" class="px-4 py-2 rounded-xl bg-surface-900 text-slate-300 font-semibold text-xs hover:text-white border border-white/10 transition-all">
+          Master Guide
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Common questions about this physics topic.</p>
+      </div>
+      <FAQAccordion faqs={guide.faqs} />
+    </section>
+
+  </article>
+</BaseLayout>

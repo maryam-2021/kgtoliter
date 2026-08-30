@@ -70,11 +70,12 @@ const fullImageUrl = effectiveImage.startsWith('http')
   ? effectiveImage
   : `${siteUrl}${effectiveImage}`;
 
+const cleanPathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const effectiveCanonical = canonicalUrl
   ? canonicalUrl.startsWith('http')
     ? canonicalUrl
-    : `${siteUrl}${canonicalUrl}`
-  : canonical;
+    : `${siteUrl}${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`
+  : `${siteUrl}${cleanPathname}`;
 
 const localeDir = getLocaleDirection(locale);
 

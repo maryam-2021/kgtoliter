@@ -1,0 +1,166 @@
+---
+// src/pages/industrial/kg-to-litres-bases.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+
+const baseData = [
+  { name: 'Sodium Hydroxide (Liquid Caustic Soda 50%)', formula: 'NaOH', unCode: 'UN 1824 (Class 8)', conc: '50.0% w/w', density: 1.525, massPerL: '1.525 kg', volPerKg: '0.656 L' },
+  { name: 'Sodium Hydroxide (Liquid Caustic Soda 30%)', formula: 'NaOH', unCode: 'UN 1824 (Class 8)', conc: '30.0% w/w', density: 1.328, massPerL: '1.328 kg', volPerKg: '0.753 L' },
+  { name: 'Potassium Hydroxide (Liquid Caustic Potash 45%)', formula: 'KOH', unCode: 'UN 1814 (Class 8)', conc: '45.0% w/w', density: 1.450, massPerL: '1.450 kg', volPerKg: '0.690 L' },
+  { name: 'Ammonium Hydroxide (Aqueous Ammonia 28%)', formula: 'NH₄OH', unCode: 'UN 2672 (Class 8)', conc: '28.0% w/w', density: 0.898, massPerL: '0.898 kg', volPerKg: '1.114 L' },
+  { name: 'Ammonium Hydroxide (Aqueous Ammonia 20%)', formula: 'NH₄OH', unCode: 'UN 2672 (Class 8)', conc: '20.0% w/w', density: 0.926, massPerL: '0.926 kg', volPerKg: '1.080 L' },
+  { name: 'Calcium Hydroxide (Lime Slurry 20%)', formula: 'Ca(OH)₂', unCode: 'Non-Regulated', conc: '20.0% w/w', density: 1.150, massPerL: '1.150 kg', volPerKg: '0.870 L' },
+  { name: 'Sodium Hypochlorite (Industrial Bleach 12.5%)', formula: 'NaOCl', unCode: 'UN 1791 (Class 8)', conc: '12.5% w/w', density: 1.205, massPerL: '1.205 kg', volPerKg: '0.830 L' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 1000 kg (1 metric tonne) of 50% caustic soda (NaOH)?',
+    a: '1,000 kg ÷ 1.525 kg/L = 655.74 Litres. In reverse, a 1,000-litre IBC tote of 50% caustic soda weighs 1,525 kg (excluding tote tare weight).'
+  },
+  {
+    q: 'Why is aqueous ammonia (NH₄OH) lighter than water per litre?',
+    a: 'Dissolving ammonia gas (NH₃, molar mass 17.03 g/mol) into water expands fluid volume more rapidly than it contributes mass, lowering solution density below 1.000 kg/L (down to 0.898 kg/L for concentrated 28% aqueous ammonia).'
+  },
+  {
+    q: 'How does temperature affect 50% caustic soda storage?',
+    a: '50% NaOH freezes at approximately 12°C (54°F). Bulk storage tanks must be insulated and heat-traced to maintain liquid handling temperatures between 20°C and 40°C, where density ranges from 1.525 to 1.510 kg/L.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Kg to Litres: Industrial Bases & Alkalis Density Guide',
+    description: 'Engineering guide for converting kg to litres for industrial alkalis: NaOH 50%, KOH 45%, Ammonia 28%, and Lime slurries.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Chemical Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/industrial/kg-to-litres-bases/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SpecialAnnouncement',
+    name: 'Class 8 Alkaline Caustic Chemical Safety Notice',
+    text: 'Liquid alkalis (such as 50% NaOH and 45% KOH) cause severe irreversible chemical tissue burns. Always verify concentration-specific density tables before metering bulk deliveries. Ensure tank IBCs and piping comply with UN/DOT packaging specifications.',
+    category: 'https://www.wikidata.org/wiki/Q1056580'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Industrial Bases & Alkalis Guide (NaOH, KOH, NH₄OH)"
+  description="Convert kg to litres for industrial bases: 50% Caustic Soda (1.525 kg/L), 45% Caustic Potash (1.450 kg/L), 28% Ammonia (0.898 kg/L). Density tables & SDS data."
+  canonicalUrl="https://kgtoliter.com/industrial/kg-to-litres-bases/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-10 max-w-5xl space-y-10">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Industrial Chemicals"
+      categorySlug="industrial"
+      substanceName="Bases & Alkalis"
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">
+        <span>🧪 Domain E: Alkaline Solutions QDP</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-brand-400">Industrial Bases &amp; Alkalis</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Neutralization reactor sizing, CIP cleaning dosing, and tank container logistics for caustic soda, caustic potash, and aqueous ammonia solutions.
+      </p>
+    </header>
+
+    <!-- Safety Notice -->
+    <section class="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
+      <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm uppercase font-mono tracking-wider">
+        <span>⚠️ Alkaline Chemical Handling &amp; Safety Compliance</span>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Liquid alkalis (such as 50% NaOH and 45% KOH) cause severe irreversible chemical tissue burns. Always verify concentration-specific density tables before metering bulk deliveries. Ensure tank IBCs and piping comply with UN/DOT packaging specifications.
+      </p>
+    </section>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Concentration Matrix Table -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">Bases &amp; Alkalis Concentration vs Density Matrix</h2>
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3.5 px-4">Chemical Solution</th>
+              <th class="py-3.5 px-4 text-center">UN Class</th>
+              <th class="py-3.5 px-4 text-center font-mono">Assay (% w/w)</th>
+              <th class="py-3.5 px-4 text-right font-mono">Density @ 20°C</th>
+              <th class="py-3.5 px-4 text-right font-mono">1 Litre Mass</th>
+              <th class="py-3.5 px-4 text-right font-mono">1 kg Volume</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {baseData.map((item) => (
+              <tr class="hover:bg-white/[0.02]">
+                <td class="py-3.5 px-4 font-semibold text-white font-sans">
+                  {item.name}
+                  <span class="text-slate-500 font-mono text-xs block">{item.formula}</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-xs text-cyan-400 font-mono">{item.unCode}</td>
+                <td class="py-3.5 px-4 text-center text-slate-300 font-bold">{item.conc}</td>
+                <td class="py-3.5 px-4 text-right text-brand-400 font-bold">{item.density.toFixed(3)} kg/L</td>
+                <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{item.massPerL}</td>
+                <td class="py-3.5 px-4 text-right text-purple-400 font-bold">{item.volPerKg}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Questions about industrial base density and volume.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

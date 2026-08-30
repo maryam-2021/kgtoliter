@@ -1,0 +1,560 @@
+---
+// src/pages/what-is-density.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import FAQAccordion from '@components/interactive/FAQAccordion.astro';
+import FormulaPlayground from '@components/interactive/FormulaPlayground.astro';
+import TemperatureDensitySlider from '@components/interactive/TemperatureDensitySlider.astro';
+import CustomDensitySolver from '@components/interactive/CustomDensitySolver.astro';
+import BreadcrumbNav from '@components/BreadcrumbNav.astro';
+import { useI18n } from '../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const referenceSubstances = [
+  { name: 'Air (Sea Level @ 20°C)', state: 'Gas', densityKgL: 0.0012, densityKgM3: '1.204 kg/m³', note: 'Standard dry atmospheric air' },
+  { name: 'Hydrogen Gas (H₂)', state: 'Gas', densityKgL: 0.000089, densityKgM3: '0.089 kg/m³', note: 'Lightest chemical element' },
+  { name: 'Gasoline / Petrol', state: 'Liquid', densityKgL: 0.748, densityKgM3: '748 kg/m³', note: 'Floats on water (&rho; < 1.0)' },
+  { name: 'Ethanol (Pure Alcohol)', state: 'Liquid', densityKgL: 0.789, densityKgM3: '789 kg/m³', note: 'Volatile organic solvent' },
+  { name: 'Diesel Fuel (EN 590)', state: 'Liquid', densityKgL: 0.832, densityKgM3: '832 kg/m³', note: 'Middle distillate fuel' },
+  { name: 'Olive Oil', state: 'Liquid', densityKgL: 0.910, densityKgM3: '910 kg/m³', note: 'Culinary triglyceride' },
+  { name: 'Ice (Solid Water @ 0°C)', state: 'Solid', densityKgL: 0.917, densityKgM3: '917 kg/m³', note: 'Floats on liquid water' },
+  { name: 'Pure Water (@ 4°C peak)', state: 'Liquid', densityKgL: 1.000, densityKgM3: '1,000 kg/m³', note: 'Global metric anchor (1 kg = 1 L)' },
+  { name: 'Whole Milk (3.5% fat)', state: 'Liquid', densityKgL: 1.030, densityKgM3: '1,030 kg/m³', note: 'Aqueous emulsion with milk solids' },
+  { name: 'Sea Water (3.5% Salinity)', state: 'Liquid', densityKgL: 1.025, densityKgM3: '1,025 kg/m³', note: 'Dissolved mineral salts' },
+  { name: 'Antifreeze / Coolant (50/50)', state: 'Liquid', densityKgL: 1.065, densityKgM3: '1,065 kg/m³', note: 'Ethylene glycol aqueous solution' },
+  { name: 'Glycerin / Glycerol', state: 'Liquid', densityKgL: 1.261, densityKgM3: '1,261 kg/m³', note: 'Heavy viscous triol' },
+  { name: 'Pure Natural Honey', state: 'Liquid', densityKgL: 1.420, densityKgM3: '1,420 kg/m³', note: '>80° Brix supersaturated sugar' },
+  { name: 'Concentrated Sulfuric Acid', state: 'Liquid', densityKgL: 1.836, densityKgM3: '1,836 kg/m³', note: '98% H₂SO₄ heavy mineral acid' },
+  { name: 'Wet Concrete', state: 'Slurry', densityKgL: 2.400, densityKgM3: '2,400 kg/m³', note: 'Hydrated Portland cement & aggregate' },
+  { name: 'Solid Aluminum Metal', state: 'Solid', densityKgL: 2.700, densityKgM3: '2,700 kg/m³', note: 'Lightweight structural metal' },
+  { name: 'Solid Iron / Carbon Steel', state: 'Solid', densityKgL: 7.850, densityKgM3: '7,850 kg/m³', note: 'Industrial structural steel' },
+  { name: 'Liquid Elemental Mercury', state: 'Liquid', densityKgL: 13.546, densityKgM3: '13,546 kg/m³', note: 'Heavy transition liquid metal' },
+  { name: 'Pure Solid Gold (24k)', state: 'Solid', densityKgL: 19.320, densityKgM3: '19,320 kg/m³', note: 'Dense precious noble metal' }
+];
+
+const faqs = [
+  {
+    q: 'What is the density of water?',
+    a: 'Pure water has a density of exactly 1.000 kg/L (1.000 g/cm³ or 1,000 kg/m³) at its maximum density point of 3.984°C (approximately 4°C). At standard room temperature (20°C / 68°F), pure water has a density of 0.9982 kg/L.'
+  },
+  {
+    q: 'What is the unit of density?',
+    a: 'In the International System of Units (SI), the official base unit of density is kilograms per cubic metre (kg/m³). However, in laboratory chemistry, trade, and engineering, derived units like kilograms per litre (kg/L), grams per cubic centimetre (g/cm³), and grams per millilitre (g/mL) are widely used. Note: 1 kg/L = 1 g/cm³ = 1 g/mL = 1,000 kg/m³.'
+  },
+  {
+    q: 'What is the difference between density and weight?',
+    a: 'Density is an intensive physical property representing mass per unit volume (how tightly matter is packed). Weight is a force (measured in Newtons, or commonly pounds/kg in everyday speech) resulting from gravity acting upon that mass (Weight = Mass × Gravity). A litre of water has the same density on the Moon as on Earth (1.0 kg/L), but weighs 83% less on the Moon due to lower gravity.'
+  },
+  {
+    q: 'Does density change with temperature?',
+    a: 'Yes. Heating a liquid or solid increases molecular kinetic energy, causing the substance to expand in volume (thermal expansion). Because mass remains constant while volume increases, density decreases as temperature rises. Water between 0°C and 4°C is an anomaly, expanding as it cools due to hydrogen bonding crystal arrangements.'
+  },
+  {
+    q: 'What is relative density?',
+    a: 'Relative density, commonly known as specific gravity (SG), is the dimensionless ratio of a substance\'s density compared to the density of pure water at a reference temperature (usually 4°C). Because water is 1.000 kg/L, a liquid with a density of 0.832 kg/L has a relative density of 0.832.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'What Is Density? Physics, Formula & Why It Matters for Unit Conversion',
+    description: 'Comprehensive physics guide on density (ρ = m ÷ V), SI units (kg/m³ vs kg/L), molecular packing, specific gravity, states of matter, and thermal expansion.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Physics & Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/what-is-density/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="What Is Density? Physics, Formula & Why It Matters for Unit Conversion"
+  description="Master the science of density: definition, SI units (kg/m³ vs kg/L), formula (ρ = m/V), specific gravity, thermal expansion, and molecular packing."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/what-is-density/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider">
+        <span>⚛️ Physics Foundation Pillar Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        What Is Density? Physics, Formula &amp; <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-emerald-400">Why It Matters for Unit Conversion</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Density is the single most important physical property governing how mass in kilograms (<strong class="text-white">kg</strong>) translates into physical volume in litres (<strong class="text-white">L</strong>). Discover the physics, SI units, molecular packing, and thermal behavior that dictate real-world measurements.
+      </p>
+    </header>
+
+    <!-- Quick Formula Card -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-xl">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center font-mono">
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+          <span class="text-xs font-bold text-brand-400 uppercase tracking-wider block font-sans">The Density Formula</span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white mt-2">&rho; = m &divide; V</div>
+          <p class="text-xs text-slate-400 mt-2 font-sans">Density = Mass &divide; Volume</p>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block font-sans">Solve for Volume</span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white mt-2">V = m &divide; &rho;</div>
+          <p class="text-xs text-slate-400 mt-2 font-sans">Volume = Mass &divide; Density</p>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block font-sans">Solve for Mass</span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white mt-2">m = V &times; &rho;</div>
+          <p class="text-xs text-slate-400 mt-2 font-sans">Mass = Volume &times; Density</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Live Formula Visualizer -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Live Physics Visualizer</h2>
+          <p class="text-sm text-slate-400">Drag the sliders to see how mass and density alter volume in real-time.</p>
+        </div>
+      </div>
+      <FormulaPlayground />
+    </section>
+
+    <!-- Main Content Guide Body -->
+    <article class="space-y-12">
+      
+      <!-- H2: Density Definition -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Density Definition
+        </h2>
+
+        <!-- H3: The simple definition -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-brand-300">The Simple Definition: Mass per Unit Volume</h3>
+          <p class="text-slate-300 leading-relaxed">
+            In classical physics, <strong class="text-white">density</strong> (symbolized by the lowercase Greek letter rho, <strong class="text-white">&rho;</strong>) is an intrinsic physical property of matter defined as the quantity of mass contained within a given unit of three-dimensional volume.
+          </p>
+          <p class="text-slate-300 leading-relaxed">
+            Density is an <em>intensive property</em>—it does not change whether you measure a single drop of diesel or a 50,000-tonne marine bunkering barge. Its value is determined purely by the atomic mass of its constituent elements and the tightness of their intermolecular spacing.
+          </p>
+        </div>
+
+        <!-- H3: The SI unit -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-emerald-300">The SI Unit: kg/m³ (and its everyday form: kg/L)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Under the International System of Units (SI), the coherent derived unit of density is <strong class="text-white">kilograms per cubic metre (kg/m³)</strong>. 
+            Because 1 cubic metre contains exactly 1,000 litres, commercial fluid trade, laboratory chemistry, and fuel logistics use <strong class="text-white">kilograms per litre (kg/L)</strong> or <strong class="text-white">grams per cubic centimetre (g/cm³)</strong>:
+          </p>
+          <div class="bg-surface-900 p-4 rounded-xl font-mono text-center text-sm sm:text-base text-emerald-400 border border-emerald-500/20">
+            1 kg/L = 1 g/cm³ = 1 g/mL = 1,000 kg/m³
+          </div>
+          <p class="text-xs text-slate-400">
+            Explore our complete guide on <a href="/physics/density-units-conversion/" class="text-brand-400 hover:underline">density unit conversions (kg/L vs g/mL vs kg/m³)</a>.
+          </p>
+        </div>
+
+        <!-- H3: Density vs mass vs volume -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-purple-300">Density vs. Mass vs. Volume — What Each Measures</h3>
+          <div class="overflow-x-auto rounded-xl border border-white/5">
+            <table class="w-full text-left text-sm font-sans">
+              <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+                <tr>
+                  <th class="py-3 px-4">Physical Concept</th>
+                  <th class="py-3 px-4">What It Quantifies</th>
+                  <th class="py-3 px-4">Standard SI Unit</th>
+                  <th class="py-3 px-4">Type of Property</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
+                <tr>
+                  <td class="py-3 px-4 font-bold text-white font-sans">Mass (m)</td>
+                  <td class="py-3 px-4 font-sans">Quantity of matter in an object</td>
+                  <td class="py-3 px-4 text-brand-400">Kilogram (kg)</td>
+                  <td class="py-3 px-4 font-sans text-slate-400">Extensive (scales with sample size)</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-white font-sans">Volume (V)</td>
+                  <td class="py-3 px-4 font-sans">3D space occupied by an object</td>
+                  <td class="py-3 px-4 text-emerald-400">Cubic metre (m³) / Litre (L)</td>
+                  <td class="py-3 px-4 font-sans text-slate-400">Extensive (scales with sample size)</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-bold text-white font-sans">Density (&rho;)</td>
+                  <td class="py-3 px-4 font-sans">Mass packed per unit of volume</td>
+                  <td class="py-3 px-4 text-purple-400">kg/m³ or kg/L</td>
+                  <td class="py-3 px-4 font-sans text-slate-400">Intensive (constant for substance)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: The Density Formula -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          The Density Formula
+        </h2>
+
+        <!-- H3: Formula -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">&rho; = m &divide; V (Density = Mass &divide; Volume)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            The mathematical formula stating that density is mass divided by volume is the foundational equation for all unit conversions between weight and volume:
+          </p>
+        </div>
+
+        <!-- H3: Rearranging -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Rearranging the Formula: V = m &divide; &rho; and m = V &times; &rho;</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Depending on which variables you know, the algebraic triangle can be rearranged into three forms:
+          </p>
+          <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono text-slate-300">
+            <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+              <strong class="text-brand-400 block mb-1">To find Density (&rho;):</strong>
+              &rho; = m &divide; V (kg &divide; L)
+            </li>
+            <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+              <strong class="text-emerald-400 block mb-1">To find Volume (V):</strong>
+              V = m &divide; &rho; (kg &divide; kg/L)
+            </li>
+            <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+              <strong class="text-purple-400 block mb-1">To find Mass (m):</strong>
+              m = V &times; &rho; (L &times; kg/L)
+            </li>
+          </ul>
+        </div>
+
+        <!-- H3: Worked Example: 2 kg of olive oil -->
+        <div class="p-5 rounded-xl bg-surface-900/80 border border-brand-500/20 space-y-2">
+          <h3 class="text-lg font-bold text-brand-300">
+            Worked Example: 2 kg of Olive Oil &rarr; How Many Litres?
+          </h3>
+          <p class="text-xs text-slate-300 font-sans leading-relaxed">
+            Olive oil has a verified laboratory density of <strong>0.910 kg/L</strong> at 20°C. To convert 2 kg of olive oil to litres:
+          </p>
+          <div class="p-3 bg-surface-950 rounded-lg font-mono text-xs text-brand-400 border border-white/5">
+            Volume (L) = Mass (kg) &divide; Density (kg/L) = 2 kg &divide; 0.910 kg/L = <strong>2.198 Litres (2,198 mL)</strong>
+          </div>
+          <p class="text-xs text-slate-400">
+            Because olive oil is lighter than water (&rho; &lt; 1.0), 2 kg of olive oil expands into nearly 2.2 litres of volume. Review our master guide on <a href="/kg-to-litres-guide/" class="text-brand-400 hover:underline">converting kg to litres using density</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Why Different Substances Have Different Densities -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Why Different Substances Have Different Densities
+        </h2>
+
+        <!-- H3: Molecular packing and atomic mass -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Molecular Packing and Atomic Mass</h3>
+          <p class="text-slate-300 leading-relaxed">
+            The density of any pure substance is dictated by two atomic variables:
+          </p>
+          <ol class="list-decimal list-inside space-y-1 text-sm text-slate-300">
+            <li><strong>Atomic / Molecular Mass:</strong> Heavy atoms (e.g. Lead = 207 u, Gold = 197 u, Mercury = 200.5 u) contribute immense mass per atom.</li>
+            <li><strong>Intermolecular Packing Distance:</strong> How closely neighboring molecules sit next to each other. Strong dipole-dipole or metallic bonds pull atoms into dense arrangements.</li>
+          </ol>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          
+          <!-- H3: Why water has density 1.000 -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-sky-400">Why Water is 1.000 kg/L</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              When the metric system was created in 1795, the kilogram was formally defined as the mass of 1 litre (1 dm³) of pure water at 4°C. Water's hydrogen bonds pack H₂O molecules into a baseline density of exactly 1.000 kg/L.
+            </p>
+          </div>
+
+          <!-- H3: Why honey is denser than water -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-amber-400">Why Honey is Denser (1.42 kg/L)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Honey is supersaturated with heavy glucose and fructose sugar rings (C₆H₁₂O₆, molar mass 180 g/mol). These dense sugar molecules crowd the water, boosting density to 1.420 kg/L (42% heavier than water).
+            </p>
+          </div>
+
+          <!-- H3: Why petrol floats on water -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-rose-400">Why Petrol Floats (0.75 kg/L)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Gasoline is made of branched hydrocarbon chains (octane C₈H₁₈) that cannot form hydrogen bonds. Loose Van der Waals forces cause molecules to space widely apart, creating low density (0.748 kg/L) that floats on water.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2: Density and Temperature -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Density and Temperature
+        </h2>
+
+        <!-- H3: Why heating a liquid reduces density -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Why Heating a Liquid Reduces Its Density</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Supplying thermal energy increases the kinetic velocity of liquid molecules. As molecules collide harder and vibrate more violently, they push further apart (volumetric thermal expansion). Because total mass is conserved while volume increases, density drops. Read our comprehensive analysis on <a href="/physics/temperature-and-density/" class="text-brand-400 hover:underline">how temperature changes liquid density</a>.
+          </p>
+        </div>
+
+        <!-- Interactive Temperature Slider -->
+        <div class="not-prose pt-2">
+          <TemperatureDensitySlider />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-4">
+          <!-- H3: Water's anomalous expansion -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+            <h3 class="text-sm font-bold text-cyan-300">Water's Anomalous Expansion (4°C Peak)</h3>
+            <p class="text-slate-300 leading-relaxed">
+              Water exhibits maximum density at 3.984°C (1.0000 kg/L). Below 4°C, water contracts as it warms and expands as it cools, because open hexagonal hydrogen crystal lattices begin forming as it freezes into ice (0.917 kg/L).
+            </p>
+          </div>
+
+          <!-- H3: Industry implications -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+            <h3 class="text-sm font-bold text-amber-300">Industry Standard: Why Fuel is Measured at 15°C</h3>
+            <p class="text-slate-300 leading-relaxed">
+              Because a 10°C temperature rise expands 50,000 litres of diesel by ~400 litres, global commercial fuel billing uses ASTM Table 54B to convert all meter readings back to the international standard baseline of <strong>15°C (59°F)</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Specific Gravity vs Density -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Specific Gravity vs. Density
+        </h2>
+
+        <!-- H3: What is specific gravity -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">What is Specific Gravity?</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Specific Gravity (SG), or relative density, is a dimensionless ratio comparing the density of a substance to the density of pure water at a reference temperature (usually 4°C or 20°C):
+          </p>
+          <div class="p-4 rounded-xl bg-surface-900 font-mono text-center text-sm text-brand-400 border border-brand-500/20">
+            SG = &rho;<sub>substance</sub> &divide; &rho;<sub>H₂O(ref)</sub>
+          </div>
+          <p class="text-xs text-slate-400">
+            Learn more in our guide on <a href="/physics/density-vs-specific-gravity/" class="text-brand-400 hover:underline">specific gravity vs density explained</a>.
+          </p>
+        </div>
+
+        <!-- H3: Where each is used -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Where Each Scale is Used: API Gravity &amp; Brix</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
+            <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+              <strong class="text-amber-400 font-bold block">API Gravity (°API) in Petroleum:</strong>
+              <p class="text-slate-300">Used across crude oil and fuels. Higher °API indicates a lighter, higher-value crude oil: °API = (141.5 / SG) - 131.5.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+              <strong class="text-emerald-400 font-bold block">Brix Scale (°Bx) in Food &amp; Brewing:</strong>
+              <p class="text-slate-300">1° Brix represents 1g sucrose per 100g aqueous solution, providing an instant field measurement of sugar concentration.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Density in Different States of Matter -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Density in Different States of Matter
+        </h2>
+
+        <!-- H3: Liquids vs gases vs solids -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Density of Liquids vs. Gases vs. Solids</h3>
+          <p class="text-slate-300 leading-relaxed">
+            In gases, molecules fly freely separated by vast empty space, yielding densities around <strong>0.001 kg/L (1.2 kg/m³)</strong>. 
+            In liquids, intermolecular forces pull molecules into touching contact, increasing density roughly 1,000-fold to <strong>0.7–1.8 kg/L</strong>. 
+            In solids, rigid crystal lattices pack atoms even tighter, reaching <strong>2.7 kg/L (Aluminum)</strong> to <strong>19.3 kg/L (Gold)</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <!-- H3: Why ice is less dense -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+            <h3 class="text-sm font-bold text-cyan-300">Why Ice is Less Dense Than Liquid Water</h3>
+            <p class="text-slate-300 leading-relaxed">
+              When water freezes, hydrogen bonds force molecules into an open hexagonal crystal lattice with hollow channels. This increases volume by ~9%, dropping ice density to <strong>0.917 kg/L</strong>, allowing icebergs to float.
+            </p>
+          </div>
+
+          <!-- H3: Density of solutions -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+            <h3 class="text-sm font-bold text-purple-300">Density of Solutions vs. Pure Substances</h3>
+            <p class="text-slate-300 leading-relaxed">
+              Dissolving solutes (salts, sugars, acids) into water fits foreign molecules into liquid voids and increases solution mass, steadily elevating density from 1.000 kg/L up to 1.84 kg/L (concentrated H₂SO₄).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: How to Measure Density -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How to Measure Liquid Density
+        </h2>
+        <p class="text-slate-300 leading-relaxed">
+          Depending on required accuracy and laboratory budget, fluid density is determined using three primary technologies:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          
+          <!-- H3: Pycnometer -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-brand-400">1. Pycnometer</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Laboratory Standard:</strong> Precision glass bottle with calibrated volume. Weighing the empty bottle vs liquid-filled bottle on an analytical balance yields gravimetric accuracy to &plusmn;0.0001 g/cm³.
+            </p>
+          </div>
+
+          <!-- H3: Hydrometer -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-emerald-400">2. Hydrometer</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Field Standard:</strong> Weighted glass float using Archimedes' buoyancy principle. Sinks deeper in lighter fuels and floats higher in dense brine. Accurate to &plusmn;0.001 g/cm³.
+            </p>
+          </div>
+
+          <!-- H3: Digital density meter -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-purple-400">3. Digital Density Meter</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Industrial Precision:</strong> Electronic oscillating U-tube (Anton Paar) measuring electronic resonant vibration frequency. Peltier temperature-controlled, accurate to &plusmn;0.00001 g/cm³.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2: Density Reference Values for Common Substances [QDS] -->
+      <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+              Density Reference Values for Common Substances
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-400">
+              Verified physical densities across gases, liquids, slurries, and solid metals at 20°C.
+            </p>
+          </div>
+          <a href="/density-reference/" class="text-xs font-semibold text-brand-400 hover:underline">
+            View density values for 772+ substances &rarr;
+          </a>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Substance Name</th>
+                <th class="py-3.5 px-4 text-center">State</th>
+                <th class="py-3.5 px-4 text-right font-mono">Density (kg/L)</th>
+                <th class="py-3.5 px-4 text-right font-mono">SI Unit (kg/m³)</th>
+                <th class="py-3.5 px-4">Characteristics</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+              {referenceSubstances.map((item) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-semibold text-white font-sans">{item.name}</td>
+                  <td class="py-3 px-4 text-center text-xs font-sans text-slate-400">{item.state}</td>
+                  <td class="py-3 px-4 text-right text-brand-400 font-bold">{item.densityKgL.toFixed(3)} kg/L</td>
+                  <td class="py-3 px-4 text-right text-emerald-400 font-bold">{item.densityKgM3}</td>
+                  <td class="py-3 px-4 text-slate-400 font-sans text-xs">{item.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Knowledge Silo Links -->
+      <section class="glass-card bg-surface-950/80 border border-brand-500/20 rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <span class="badge badge-brand">Physics Knowledge Network</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Explore Educational Cluster Guides</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <a href="/kg-to-litres-guide/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-brand-500/40 transition-all block">
+            <span class="text-xs font-mono text-brand-400 block mb-1">Pillar P1</span>
+            <span class="text-sm font-bold text-white block">KG to Litres Guide &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Converting kg to litres using density.</span>
+          </a>
+
+          <a href="/litre-to-kg/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-emerald-500/40 transition-all block">
+            <span class="text-xs font-mono text-emerald-400 block mb-1">Reverse Pillar</span>
+            <span class="text-sm font-bold text-white block">Litre to Kg Guide &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Density: key to volume-to-mass conversion.</span>
+          </a>
+
+          <a href="/physics/temperature-and-density/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-purple-500/40 transition-all block">
+            <span class="text-xs font-mono text-purple-400 block mb-1">Thermal Physics</span>
+            <span class="text-sm font-bold text-white block">Temperature &amp; Density &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">How temperature changes liquid density.</span>
+          </a>
+
+          <a href="/density-reference/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-amber-500/40 transition-all block">
+            <span class="text-xs font-mono text-amber-400 block mb-1">Master Portal</span>
+            <span class="text-sm font-bold text-white block">Substance Database &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Density values for 772+ substances.</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- H2: Frequently Asked Questions (QDH: FAQ) -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Physics and technical questions about density and unit conversion.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

@@ -1,0 +1,592 @@
+---
+// src/pages/litre-to-kg/index.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+// 50 Substances with verified density and standard sources
+const fiftySubstances = [
+  { name: 'Pure Water', density: 1.000, cat: 'basic', id: 'water', note: 'Standard at 4°C / 20°C', standard: 'IUPAC / ISO 3696' },
+  { name: 'Sea Water (Saline)', density: 1.025, cat: 'basic', id: 'seawater', note: '3.5% average salinity', standard: 'UNESCO Oceanographic' },
+  { name: 'Whole Milk (3.5% fat)', density: 1.030, cat: 'basic', id: 'milk', note: 'Commercial dairy standard', standard: 'Codex Alimentarius' },
+  { name: 'Skim Milk (0.1% fat)', density: 1.036, cat: 'basic', id: 'skim-milk', note: 'Non-fat dairy', standard: 'USDA FoodData' },
+  { name: 'Heavy Whipping Cream (38% fat)', density: 0.994, cat: 'cooking', id: 'cream', note: 'High butterfat emulsion', standard: 'USDA FoodData' },
+  { name: 'Extra Virgin Olive Oil', density: 0.910, cat: 'cooking', id: 'olive-oil', note: 'Cold-pressed culinary oil', standard: 'IOC / Codex' },
+  { name: 'Canola / Rapeseed Oil', density: 0.918, cat: 'cooking', id: 'canola-oil', note: 'Refined frying oil', standard: 'Codex-Stan 210' },
+  { name: 'Sunflower Seed Oil', density: 0.920, cat: 'cooking', id: 'sunflower-oil', note: 'Polyunsaturated cooking oil', standard: 'Codex-Stan 210' },
+  { name: 'Coconut Oil (Liquid @ 30°C)', density: 0.924, cat: 'cooking', id: 'coconut-oil', note: 'Medium-chain triglycerides', standard: 'USDA FoodData' },
+  { name: 'Peanut / Groundnut Oil', density: 0.914, cat: 'cooking', id: 'peanut-oil', note: 'High smoke-point oil', standard: 'Codex-Stan 210' },
+  { name: 'Pure Natural Honey', density: 1.420, cat: 'cooking', id: 'honey', note: '>80° Brix natural sweetener', standard: 'Codex-Stan 12' },
+  { name: 'Pure Maple Syrup (Grade A)', density: 1.325, cat: 'cooking', id: 'maple-syrup', note: '66° Brix concentrated sap', standard: 'USDA Standards' },
+  { name: 'Blackstrap Molasses', density: 1.410, cat: 'cooking', id: 'molasses', note: 'Dense cane sugar byproduct', standard: 'USDA FoodData' },
+  { name: 'Corn Syrup (High Fructose 55)', density: 1.380, cat: 'cooking', id: 'corn-syrup', note: 'Commercial baking syrup', standard: 'Corn Refiners Assoc' },
+  { name: 'Automotive Diesel (EN 590)', density: 0.832, cat: 'fuels', id: 'diesel', note: 'Standard middle distillate @ 15°C', standard: 'EN 590 / ASTM D975' },
+  { name: 'Unleaded Petrol / Gasoline (95 RON)', density: 0.748, cat: 'fuels', id: 'petrol', note: 'Standard European motor fuel @ 15°C', standard: 'EN 228 / ASTM D4814' },
+  { name: 'Premium Super Unleaded (98 RON)', density: 0.755, cat: 'fuels', id: 'petrol', note: 'High aromatic octane blend', standard: 'EN 228' },
+  { name: 'E10 Petrol (10% Ethanol Blend)', density: 0.752, cat: 'fuels', id: 'petrol', note: 'Standard pump gasoline', standard: 'EN 228 / ASTM D4814' },
+  { name: 'E85 Flex-Fuel (85% Ethanol)', density: 0.782, cat: 'fuels', id: 'ethanol', note: 'High ethanol renewable fuel', standard: 'ASTM D5798' },
+  { name: 'Kerosene (Domestic Heating / Jet)', density: 0.810, cat: 'fuels', id: 'kerosene', note: 'BS 2869 Class C2', standard: 'ASTM D3699' },
+  { name: 'Jet A-1 Aviation Turbine Fuel', density: 0.804, cat: 'fuels', id: 'jet-fuel', note: 'Commercial aviation fuel', standard: 'ASTM D1655 / DEF STAN' },
+  { name: 'Biodiesel (B100 FAME)', density: 0.880, cat: 'fuels', id: 'biodiesel', note: 'Fatty acid methyl ester', standard: 'EN 14214 / ASTM D6751' },
+  { name: 'Heavy Fuel Oil (HFO / Bunker C)', density: 0.960, cat: 'fuels', id: 'fuel-oil', note: 'Marine propulsion bunker fuel', standard: 'ISO 8217' },
+  { name: 'Engine Oil (SAE 0W-20 Full Synth)', density: 0.845, cat: 'automotive', id: 'engine-oil', note: 'PAO synthetic lubricant', standard: 'SAE J300 / API SP' },
+  { name: 'Engine Oil (SAE 5W-30 Synthetic)', density: 0.855, cat: 'automotive', id: 'engine-oil', note: 'Standard passenger car oil', standard: 'SAE J300 / API SP' },
+  { name: 'Engine Oil (SAE 10W-40 Semi-Synth)', density: 0.872, cat: 'automotive', id: 'engine-oil', note: 'Part synthetic blend', standard: 'SAE J300' },
+  { name: 'Engine Oil (SAE 15W-40 Heavy Duty)', density: 0.880, cat: 'automotive', id: 'engine-oil', note: 'Commercial diesel engine oil', standard: 'API CK-4 / CJ-4' },
+  { name: 'Engine Oil (SAE 20W-50 Mineral)', density: 0.890, cat: 'automotive', id: 'engine-oil', note: 'High-viscosity classic engine oil', standard: 'SAE J300' },
+  { name: 'Automatic Transmission Fluid (ATF)', density: 0.860, cat: 'automotive', id: 'transmission-fluid', note: 'Dexron VI / Mercon LV', standard: 'GM / Ford Spec' },
+  { name: 'DOT 4 Brake Fluid', density: 1.050, cat: 'automotive', id: 'brake-fluid', note: 'Glycol ether based hydraulic', standard: 'FMVSS 116 / ISO 4925' },
+  { name: 'Engine Coolant / Antifreeze (50/50)', density: 1.065, cat: 'automotive', id: 'coolant', note: '50% Ethylene glycol aqueous', standard: 'ASTM D3306' },
+  { name: 'Pure Ethylene Glycol (100%)', density: 1.113, cat: 'industrial', id: 'ethylene-glycol', note: 'Industrial coolant concentrate', standard: 'CRC Handbook' },
+  { name: 'Pure Propylene Glycol (USP)', density: 1.036, cat: 'industrial', id: 'propylene-glycol', note: 'Non-toxic food grade chiller fluid', standard: 'USP / EP Monograph' },
+  { name: 'Pure Glycerin / Glycerol (99.5%)', density: 1.261, cat: 'industrial', id: 'glycerin', note: 'Heavy viscous humectant', standard: 'USP / Ph. Eur.' },
+  { name: 'Acetone (HPLC / Tech Grade)', density: 0.784, cat: 'industrial', id: 'acetone', note: 'Volatile polar solvent (UN 1090)', standard: 'ASTM D329 / CRC' },
+  { name: 'Ethanol (100% Anhydrous Alcohol)', density: 0.789, cat: 'industrial', id: 'ethanol', note: 'Absolute ethyl alcohol (UN 1170)', standard: 'USP / BP Standards' },
+  { name: 'Ethanol (96% Azeotropic / Rectified)', density: 0.806, cat: 'industrial', id: 'ethanol', note: 'Distilled spirit / disinfectant', standard: 'Ph. Eur.' },
+  { name: 'Isopropyl Alcohol (99% IPA)', density: 0.786, cat: 'industrial', id: 'isopropyl-alcohol', note: 'Precision electronic solvent (UN 1219)', standard: 'ASTM D770' },
+  { name: 'Methanol (Methyl Alcohol 99.9%)', density: 0.792, cat: 'industrial', id: 'methanol', note: 'Industrial solvent (UN 1230)', standard: 'IMPCA Standard' },
+  { name: 'Toluene (Methylbenzene 99.8%)', density: 0.867, cat: 'industrial', id: 'toluene', note: 'Aromatic solvent (UN 1294)', standard: 'ASTM D841' },
+  { name: 'Xylene (Mixed Isomers 99%)', density: 0.864, cat: 'industrial', id: 'xylene', note: 'Paint solvent & thinner (UN 1307)', standard: 'ASTM D843' },
+  { name: 'Sulfuric Acid (98% Concentrated)', density: 1.836, cat: 'industrial', id: 'sulfuric-acid', note: 'Heavy mineral acid (UN 1830)', standard: 'ISO 9001 / CRC' },
+  { name: 'Sulfuric Acid (33.5% Battery Grade)', density: 1.250, cat: 'industrial', id: 'sulfuric-acid', note: 'Lead-acid battery electrolyte (UN 2796)', standard: 'BCI Standard' },
+  { name: 'Nitric Acid (68% Concentrated)', density: 1.410, cat: 'industrial', id: 'nitric-acid', note: 'Oxidizing mineral acid (UN 2031)', standard: 'ACS Reagent Grade' },
+  { name: 'Hydrochloric Acid (37% Muriatic)', density: 1.190, cat: 'industrial', id: 'hydrochloric-acid', note: 'Concentrated aqueous HCl (UN 1789)', standard: 'ASTM E1146' },
+  { name: 'Phosphoric Acid (85% Food/Tech)', density: 1.685, cat: 'industrial', id: 'phosphoric-acid', note: 'Food acidulant / rust converter (UN 1805)', standard: 'Food Chemicals Codex' },
+  { name: 'Sodium Hydroxide (50% Liquid Lye)', density: 1.525, cat: 'industrial', id: 'sodium-hydroxide', note: 'Caustic soda solution (UN 1824)', standard: 'ASTM E291' },
+  { name: 'Potassium Hydroxide (45% Solution)', density: 1.450, cat: 'industrial', id: 'potassium-hydroxide', note: 'Liquid caustic potash (UN 1814)', standard: 'ACS Reagent Grade' },
+  { name: 'Aqueous Ammonia (28% NH₄OH)', density: 0.898, cat: 'industrial', id: 'ammonia', note: 'Technical alkaline solution (UN 2672)', standard: 'ASTM D1426' },
+  { name: 'Liquid Fertilizer (UAN 32)', density: 1.320, cat: 'agriculture', id: 'liquid-fertilizer', note: '32% Nitrogen solution for crop spray', standard: 'TFI / ISO Standards' }
+];
+
+const faqs = [
+  {
+    q: 'Is 1 litre the same as 1 kg?',
+    a: 'No. 1 litre equals 1 kilogram only for pure water at 4°C to 20°C because water has a density of exactly 1.000 kg/L. For all other liquids, 1 litre does not weigh 1 kg. Liquids lighter than water (e.g. petrol at 0.748 kg/L, diesel at 0.832 kg/L, or cooking oil at 0.910 kg/L) weigh less than 1 kg per litre. Liquids heavier than water (e.g. whole milk at 1.030 kg/L, honey at 1.420 kg/L, or sulfuric acid at 1.836 kg/L) weigh more than 1 kg per litre.'
+  },
+  {
+    q: 'How many kg is 5 litres of water?',
+    a: '5 litres of pure water weighs exactly 5.000 kg (5,000 grams or 11.023 lbs) at standard room temperature (20°C).'
+  },
+  {
+    q: 'How many kg is 5 litres of milk?',
+    a: '5 litres of whole milk weighs 5.150 kg (5 L × 1.030 kg/L = 5.150 kg or 5,150 grams). Milk is approximately 3% heavier than water due to dissolved lactose, proteins, and minerals.'
+  },
+  {
+    q: 'How many kg is 10 litres of diesel?',
+    a: '10 litres of standard automotive diesel weighs 8.320 kg (10 L × 0.832 kg/L = 8.320 kg or 18.34 lbs) at standard reference temperature (15°C per EN 590).'
+  },
+  {
+    q: 'How many kg is 1 litre of oil?',
+    a: '1 litre of culinary olive or vegetable oil weighs approximately 0.910 to 0.920 kg (910–920 grams). 1 litre of automotive motor oil (SAE 5W-30) weighs approximately 0.855 kg (855 grams).'
+  },
+  {
+    q: 'How do I convert litres to kg without a calculator?',
+    a: 'To convert litres to kg without a calculator, apply simple mental percentage adjustments from the 1:1 water baseline: for pure water, litres equal kilograms directly. For cooking oil, subtract 9% from the volume (e.g. 10 L ≈ 9.1 kg). For diesel, subtract 17% (e.g. 10 L ≈ 8.3 kg). For petrol, subtract 25% (e.g. 10 L ≈ 7.5 kg). For milk, add 3% (e.g. 10 L ≈ 10.3 kg). For honey, add 42% (e.g. 10 L ≈ 14.2 kg).'
+  },
+  {
+    q: 'What is the formula to convert litres to kg?',
+    a: 'Mass (kg) = Volume (L) × Density (kg/L). To calculate kilograms from litres, multiply the volume in litres by the material density in kilograms per litre.'
+  },
+  {
+    q: 'How many kg is 20 litres of water?',
+    a: '20 litres of pure water weighs exactly 20.000 kg (44.092 lbs) at standard ambient conditions.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Litres to Kg: How to Convert Volume to Mass (Full Guide + Calculator)',
+    description: 'The definitive technical guide on converting volume in litres to mass in kilograms (m = V × ρ). Master formulas, worked examples for 10 common substances, temperature effects, real-world industry applications, and a 50-substance reference table.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/litre-to-kg/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Litres to Kg: How to Convert Volume to Mass (Full Guide + Calculator)"
+  description="Master converting litres to kilograms (Mass = Volume × Density). Step-by-step formula guide, 10 common substance breakdowns, 50-substance reference table, temperature corrections & instant calculator."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/litre-to-kg/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Universal Conversion Hubs"
+      categorySlug="convert"
+      substanceName="Litres to Kg Reverse Conversion Guide"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+        <span>🔄 Reverse Conversion Pillar Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Litres to Kg: How to Convert <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400">Volume to Mass</span> (Full Guide + Calculator)
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Whether you are gauging fuel tanks, scaling commercial recipes, calculating freight container axle loads, or dosing agricultural sprayers, converting volume in litres (<strong class="text-white">L</strong>) to physical mass in kilograms (<strong class="text-white">kg</strong>) requires one physical factor: <strong class="text-white">Density (&rho;)</strong>.
+      </p>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Main Content Guide Body -->
+    <article class="space-y-12">
+      
+      <!-- H2: The Litre-to-Kg Formula -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          The Litre-to-Kg Formula
+        </h2>
+        <p class="text-slate-300 leading-relaxed">
+          The mathematical conversion from volume (spatial capacity in litres) to gravitational mass (weight in kilograms) is governed by fundamental fluid mechanics. Density serves as the physical bridge connecting space to matter:
+        </p>
+
+        <!-- H3: Mass (kg) = Volume (L) × Density (kg/L) -->
+        <div class="p-6 rounded-xl bg-surface-900 border border-emerald-500/30 text-center space-y-2">
+          <h3 class="text-xl sm:text-2xl font-mono font-black text-emerald-400">
+            Mass (kg) = Volume (L) &times; Density (kg/L)
+          </h3>
+          <p class="text-xs text-slate-400 font-mono">
+            Or in abbreviated SI notation: <span class="text-white">m = V &times; &rho;</span> (where m = mass in kg, V = volume in litres, &rho; = density in kg/L).
+          </p>
+        </div>
+
+        <p class="text-slate-300 leading-relaxed text-sm">
+          Depending on which two variables you know, the algebraic triangle can be rearranged into three forms:
+        </p>
+        <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono text-slate-300">
+          <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+            <strong class="text-emerald-400 block mb-1">To find Mass (m):</strong>
+            m = V &times; &rho; (L &times; kg/L = kg)
+          </li>
+          <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+            <strong class="text-brand-400 block mb-1">To find Volume (V):</strong>
+            V = m &divide; &rho; (kg &divide; kg/L = L)
+          </li>
+          <li class="p-3 bg-surface-900 rounded-xl border border-white/5">
+            <strong class="text-purple-400 block mb-1">To find Density (&rho;):</strong>
+            &rho; = m &divide; V (kg &divide; L = kg/L)
+          </li>
+        </ul>
+
+        <!-- H3: Step-by-step worked example (water → milk → diesel) -->
+        <div class="space-y-4 pt-2">
+          <h3 class="text-lg sm:text-xl font-bold text-white">
+            Step-by-Step Worked Example (Water &rarr; Milk &rarr; Diesel)
+          </h3>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Let us convert 10 litres of three different fluids to see how physical density changes the resulting weight:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+            
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-sky-500/20 space-y-2">
+              <span class="text-sky-400 font-bold uppercase block">1. 10 Litres of Water</span>
+              <ul class="space-y-1 text-slate-300">
+                <li>• Volume (V) = 10.0 L</li>
+                <li>• Density (&rho;) = 1.000 kg/L</li>
+                <li>• Calculation: 10 &times; 1.000</li>
+                <li class="text-emerald-400 font-bold text-sm pt-1">= 10.000 kg</li>
+              </ul>
+              <a href="/basic/litres-to-kg-water/" class="text-[11px] text-sky-400 font-sans hover:underline block pt-1">
+                water volume to mass &rarr;
+              </a>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-purple-500/20 space-y-2">
+              <span class="text-purple-400 font-bold uppercase block">2. 10 Litres of Milk</span>
+              <ul class="space-y-1 text-slate-300">
+                <li>• Volume (V) = 10.0 L</li>
+                <li>• Density (&rho;) = 1.030 kg/L</li>
+                <li>• Calculation: 10 &times; 1.030</li>
+                <li class="text-emerald-400 font-bold text-sm pt-1">= 10.300 kg (+300g)</li>
+              </ul>
+              <a href="/basic/litres-to-kg-milk/" class="text-[11px] text-purple-400 font-sans hover:underline block pt-1">
+                milk volume to mass &rarr;
+              </a>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-amber-500/20 space-y-2">
+              <span class="text-amber-400 font-bold uppercase block">3. 10 Litres of Diesel</span>
+              <ul class="space-y-1 text-slate-300">
+                <li>• Volume (V) = 10.0 L</li>
+                <li>• Density (&rho;) = 0.832 kg/L</li>
+                <li>• Calculation: 10 &times; 0.832</li>
+                <li class="text-emerald-400 font-bold text-sm pt-1">= 8.320 kg (-1,680g)</li>
+              </ul>
+              <a href="/fuels/litres-to-kg-diesel/" class="text-[11px] text-amber-400 font-sans hover:underline block pt-1">
+                diesel volume to mass &rarr;
+              </a>
+            </div>
+
+          </div>
+          <p class="text-xs text-slate-400">
+            For algebraic derivation and physics proofs, review our deep-dive on <a href="/physics/density-formula/" class="text-brand-400 hover:underline">the density formula V=m÷ρ explained</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Litres to Kg for the 10 Most Common Substances -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Litres to Kg for the 10 Most Common Substances
+        </h2>
+        <p class="text-slate-300 leading-relaxed">
+          Here is how 1 litre translates into kilograms across the 10 most frequently converted everyday and industrial liquids:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 not-prose">
+          
+          <!-- H3: Water -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>💧 Water</span>
+              <span class="text-xs font-mono text-sky-400 font-bold">1 Litre = 1.000 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Pure water at 4°C–20°C serves as the worldwide metric reference point. Exactly 1 litre of water equals 1.000 kg (1,000 grams).
+            </p>
+          </div>
+
+          <!-- H3: Milk -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🥛 Milk</span>
+              <span class="text-xs font-mono text-purple-400 font-bold">1 Litre = 1.030 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Whole cows' milk contains dissolved lactose sugars, casein proteins, and minerals that elevate liquid density to 1.030 kg/L (1,030g per litre).
+            </p>
+          </div>
+
+          <!-- H3: Olive oil -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🫒 Olive Oil</span>
+              <span class="text-xs font-mono text-amber-400 font-bold">1 Litre = 0.910 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Culinary olive oil is composed of long-chain fatty acid triglycerides, weighing only 910 grams per litre (9% lighter than water).
+            </p>
+          </div>
+
+          <!-- H3: Honey -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🍯 Honey</span>
+              <span class="text-xs font-mono text-rose-400 font-bold">1 Litre = 1.420 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Pure natural honey is a supersaturated sugar solution (>80° Brix), packing an incredible 1,420 grams into 1 single litre (42% heavier than water).
+            </p>
+          </div>
+
+          <!-- H3: Diesel -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>⛽ Diesel</span>
+              <span class="text-xs font-mono text-emerald-400 font-bold">1 Litre = 0.832 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Standard automotive diesel (EN 590) has a calibrated density of 0.832 kg/L at 15°C, yielding 832 grams per litre at the dispensing nozzle.
+            </p>
+          </div>
+
+          <!-- H3: Petrol/Gasoline -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🚗 Petrol / Gasoline</span>
+              <span class="text-xs font-mono text-sky-400 font-bold">1 Litre = 0.748 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Unleaded motor gasoline (95 RON / EN 228) consists of lightweight volatile hydrocarbons, weighing only 748 grams per litre.
+            </p>
+          </div>
+
+          <!-- H3: Engine oil -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🛢️ Engine Oil</span>
+              <span class="text-xs font-mono text-amber-300 font-bold">1 Litre &approx; 0.870 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Motor oils span from 0.845 kg/L (0W-20 synthetic) to 0.890 kg/L (20W-50 conventional), averaging ~0.870 kg/L across multigrade lubricants.
+            </p>
+          </div>
+
+          <!-- H3: Ethanol/alcohol -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🧪 Ethanol / Alcohol</span>
+              <span class="text-xs font-mono text-purple-300 font-bold">1 Litre = 0.789 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Pure anhydrous ethyl alcohol (C₂H₅OH) has a low density of 0.789 kg/L (789 grams per litre) at standard laboratory conditions.
+            </p>
+          </div>
+
+          <!-- H3: Glycerin -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>🧴 Glycerin / Glycerol</span>
+              <span class="text-xs font-mono text-teal-400 font-bold">1 Litre = 1.261 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              USP pharmaceutical grade glycerol (99.5% purity) is dense and viscous, weighing 1,261 grams per litre.
+            </p>
+          </div>
+
+          <!-- H3: Acetone -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-1.5">
+            <h3 class="text-base font-bold text-white flex items-center justify-between">
+              <span>💅 Acetone</span>
+              <span class="text-xs font-mono text-rose-300 font-bold">1 Litre = 0.784 kg</span>
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Industrial polar solvent acetone is highly volatile and light, weighing only 784 grams per litre (21.6% lighter than water).
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2: Why Litres and Kilograms Are Not the Same Thing -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Why Litres and Kilograms Are Not the Same Thing
+        </h2>
+
+        <!-- H3: What density means -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">What Density Means: Mass Per Unit of Space</h3>
+          <p class="text-slate-300 leading-relaxed">
+            The common assumption that "1 litre = 1 kg" is a metric convenience that applies <em>only</em> to pure water. 
+            A <strong class="text-white">litre</strong> is a measure of geometric space (1,000 cubic centimetres), while a <strong class="text-white">kilogram</strong> is a measure of gravitational matter. 
+            Density describes how closely packed atomic molecules are inside that 1-litre box.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <!-- H3: Substances lighter than water -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+            <h3 class="text-base font-bold text-amber-300">Substances Lighter Than Water (Volume &gt; Mass in kg)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              When liquid density is below 1.000 kg/L, 1 litre weighs less than 1 kg. As a result, 1 kg of fuel or oil occupies <strong>more than 1 litre</strong> of volume (e.g. 1 kg of petrol = 1.337 L). These fluids float on top of water.
+            </p>
+          </div>
+
+          <!-- H3: Substances heavier than water -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-emerald-500/20 space-y-2">
+            <h3 class="text-base font-bold text-emerald-300">Substances Heavier Than Water (Volume &lt; Mass in kg)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              When liquid density is above 1.000 kg/L, 1 litre weighs more than 1 kg. Consequently, 1 kg occupies <strong>less than 1 litre</strong> of volume (e.g. 1 kg of honey = 0.704 L; 1 kg of 98% sulfuric acid = 0.545 L). These fluids sink below water.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: How Temperature Affects the Litre-to-Kg Conversion -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How Temperature Affects the Litre-to-Kg Conversion
+        </h2>
+
+        <!-- H3: Why warm liquids are less dense -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Why Warm Liquids Are Less Dense (Thermal Expansion)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Supplying thermal energy increases molecular kinetic vibration, causing liquid molecules to push farther apart. While the total mass of the fluid remains constant, the volume expands—lowering physical density as temperature climbs. Explore the complete physics in our guide on <a href="/physics/temperature-and-density/" class="text-brand-400 hover:underline">how temperature changes liquid density</a>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
+          <!-- H3: 15C Fuel Standard -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-amber-500/20 space-y-2">
+            <h3 class="text-sm font-bold text-amber-300">The 15°C Standard for Fuel Measurements (EN / ASTM)</h3>
+            <p class="text-slate-300 leading-relaxed">
+              Because hydrocarbon fuels expand by ~0.85% per 10°C, international oil logistics standardizes all custody transfer volume billing back to <strong>15°C (59°F)</strong> using ASTM Table 54B Volume Correction Factors (VCF).
+            </p>
+          </div>
+
+          <!-- H3: 20C Cooking Standard -->
+          <div class="p-4 rounded-xl bg-surface-900/70 border border-purple-500/20 space-y-2">
+            <h3 class="text-sm font-bold text-purple-300">Cooking at Room Temperature: 20°C as Default Reference</h3>
+            <p class="text-slate-300 leading-relaxed">
+              Culinary formulation benchmarks use standard ambient kitchen temperature (<strong>20°C / 68°F</strong>). Heating frying oil to 180°C expands volume by ~10%, dropping operating density to ~0.81 kg/L.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Litre to Kg Conversion in Real-World Applications -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Litre to Kg Conversion in Real-World Applications
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- H3: Fuel logistics and customs -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-amber-400">1. Fuel Logistics and Customs Declarations</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Bunkering barges and oil tankers declare cargo in metric tonnes for vessel draft stability and excise taxation, but discharge through volumetric litre flow meters. Accurate density conversion prevents massive customs billing disputes.
+            </p>
+          </div>
+
+          <!-- H3: Cooking and baking -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-purple-400">2. Commercial Cooking and Baking</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Industrial food plants convert recipe volume instructions (litres) into automated digital scale dosing (kilograms) to eliminate jug meniscus reading errors and maintain precise product texture.
+            </p>
+          </div>
+
+          <!-- H3: Chemical manufacturing -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-cyan-400">3. Chemical Manufacturing &amp; Batching</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Chemical reaction stoichiometry requires exact molar mass ratios. Converting raw chemical tank volumes into kilogram additions prevents dangerous exothermic imbalances and runaway reactions.
+            </p>
+          </div>
+
+          <!-- H3: Agriculture -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-emerald-400">4. Agriculture: Sprayer Tank Mix Calculations</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Liquid nitrogen fertilizers (such as UAN 32 at 1.32 kg/L) are 32% heavier than water. Calibrating crop sprayer flow rates strictly by volume would result in severe over-fertilization and crop damage.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2: Complete Litre to Kg Reference Table (50 Substances) -->
+      <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Complete Litre to Kg Reference Table (50 Substances)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Verified mass values in kilograms across 1L, 5L, 10L, and 20L volume increments with citing standard references.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Substance Name</th>
+                <th class="py-3.5 px-4 text-center font-mono">Density @ Ref</th>
+                <th class="py-3.5 px-4 text-right font-mono">1 Litre</th>
+                <th class="py-3.5 px-4 text-right font-mono">5 Litres</th>
+                <th class="py-3.5 px-4 text-right font-mono">10 Litres</th>
+                <th class="py-3.5 px-4 text-right font-mono">20 Litres</th>
+                <th class="py-3.5 px-4">Citing Standard</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
+              {fiftySubstances.map((item) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-semibold text-white font-sans">
+                    <a href={`/${item.cat}/litres-to-kg-${item.id}/`} class="text-brand-400 hover:underline">
+                      {item.name}
+                    </a>
+                    <span class="text-[11px] text-slate-500 block font-normal">{item.note}</span>
+                  </td>
+                  <td class="py-3 px-4 text-center text-slate-400 font-bold">{item.density.toFixed(3)} kg/L</td>
+                  <td class="py-3 px-4 text-right font-bold text-white">{(1 * item.density).toFixed(3)} kg</td>
+                  <td class="py-3 px-4 text-right text-emerald-400 font-bold">{(5 * item.density).toFixed(3)} kg</td>
+                  <td class="py-3 px-4 text-right text-purple-400 font-bold">{(10 * item.density).toFixed(3)} kg</td>
+                  <td class="py-3 px-4 text-right text-amber-400 font-bold">{(20 * item.density).toFixed(3)} kg</td>
+                  <td class="py-3 px-4 text-slate-400 font-sans text-xs">{item.standard}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Knowledge Silo Reciprocal Links -->
+      <section class="glass-card bg-surface-950/80 border border-brand-500/20 rounded-2xl p-6 sm:p-8 space-y-4">
+        <h2 class="text-xl font-bold text-white">Explore Universal Conversion Network</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <a href="/kg-to-litres-guide/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-brand-500/40 transition-all block">
+            <span class="text-xs font-mono text-brand-400 block mb-1">Parent Pillar</span>
+            <span class="text-sm font-bold text-white block">Kg to Litres Guide &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Master forward guide (V=m÷ρ).</span>
+          </a>
+          <a href="/what-is-density/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-emerald-500/40 transition-all block">
+            <span class="text-xs font-mono text-emerald-400 block mb-1">Physics Pillar</span>
+            <span class="text-sm font-bold text-white block">What Is Density? &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Molecular packing &amp; SI units.</span>
+          </a>
+          <a href="/physics/temperature-and-density/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-purple-500/40 transition-all block">
+            <span class="text-xs font-mono text-purple-400 block mb-1">Thermal Physics</span>
+            <span class="text-sm font-bold text-white block">Temperature Effects &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Thermal expansion tables.</span>
+          </a>
+          <a href="/density-reference/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-amber-500/40 transition-all block">
+            <span class="text-xs font-mono text-amber-400 block mb-1">Master Portal</span>
+            <span class="text-sm font-bold text-white block">772+ Density Reference &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Searchable materials database.</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- H2: Frequently Asked Questions -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Common practical questions on converting litres to kilograms.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

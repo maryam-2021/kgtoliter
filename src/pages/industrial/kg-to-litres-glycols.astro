@@ -1,0 +1,149 @@
+---
+// src/pages/industrial/kg-to-litres-glycols.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+
+const glycolData = [
+  { name: 'Propylene Glycol (USP Food / Pharma Grade 100%)', formula: 'C₃H₈O₂', grade: 'USP / Food Safe', density: 1.036, massPerL: '1.036 kg', volPerKg: '0.965 L', freeze: '-59°C' },
+  { name: 'Propylene Glycol 50% Aqueous Solution', formula: 'C₃H₈O₂ / H₂O', grade: 'HVAC / Food Chiller', density: 1.040, massPerL: '1.040 kg', volPerKg: '0.962 L', freeze: '-33°C' },
+  { name: 'Ethylene Glycol (Industrial / Automotive 100%)', formula: 'C₂H₆O₂', grade: 'Industrial (Toxic)', density: 1.113, massPerL: '1.113 kg', volPerKg: '0.898 L', freeze: '-13°C' },
+  { name: 'Ethylene Glycol 50% Aqueous Solution', formula: 'C₂H₆O₂ / H₂O', grade: 'Standard Coolant 50/50', density: 1.065, massPerL: '1.065 kg', volPerKg: '0.939 L', freeze: '-37°C' },
+  { name: 'Glycerin / Glycerol (USP 99.5%)', formula: 'C₃H₈O₃', grade: 'Pharma / Food', density: 1.261, massPerL: '1.261 kg', volPerKg: '0.793 L', freeze: '18°C (Melts)' },
+  { name: 'Diethylene Glycol (DEG 99%)', formula: 'C₄H₁₀O₃', grade: 'Industrial Solvent', density: 1.118, massPerL: '1.118 kg', volPerKg: '0.894 L', freeze: '-10°C' },
+  { name: 'Triethylene Glycol (TEG 99%)', formula: 'C₆H₁₄O₄', grade: 'Natural Gas Dehydration', density: 1.125, massPerL: '1.125 kg', volPerKg: '0.889 L', freeze: '-7°C' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 200 kg of pure propylene glycol?',
+    a: '200 kg ÷ 1.036 kg/L = 193.05 Litres. For a standard 208-litre (55 US gal) drum, net liquid mass is 215.5 kg.'
+  },
+  {
+    q: 'Why is ethylene glycol denser than propylene glycol?',
+    a: 'Ethylene glycol has a shorter, more symmetrical carbon backbone with two hydroxyl (-OH) groups, allowing molecules to pack more tightly (1.113 kg/L vs 1.036 kg/L for propylene glycol).'
+  },
+  {
+    q: 'Why is propylene glycol preferred in food and brewing chillers?',
+    a: 'Propylene glycol is classified as GRAS (Generally Recognized as Safe) by the US FDA and non-toxic, whereas ethylene glycol is highly toxic and metabolizes into harmful oxalic acid if ingested.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Kg to Litres: Glycols & Polyols Guide (Propylene, Ethylene, Glycerin)',
+    description: 'Engineering guide for converting kg to litres for glycols: Propylene glycol (1.036 kg/L), Ethylene glycol (1.113 kg/L), and Glycerin (1.261 kg/L).',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/industrial/kg-to-litres-glycols/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Glycols & Polyols Guide (Propylene, Ethylene, Glycerin)"
+  description="Convert kg to litres for glycols & polyols. Technical density tables for Propylene Glycol (1.036 kg/L), Ethylene Glycol (1.113 kg/L), and Glycerol (1.261 kg/L)."
+  canonicalUrl="https://kgtoliter.com/industrial/kg-to-litres-glycols/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-10 max-w-5xl space-y-10">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Industrial Chemicals"
+      categorySlug="industrial"
+      substanceName="Glycols & Polyols"
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-wider">
+        <span>🧪 Domain E: Polyols & Heat Transfer QDP</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-brand-400">Glycols &amp; Polyols Guide</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        HVAC chiller charge sizing, food-grade coolant batching, and pharmaceutical formulation for propylene glycol, ethylene glycol, and glycerin.
+      </p>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Master Comparative Table -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">Glycols &amp; Polyols Density &amp; Freezing Point Table</h2>
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3.5 px-4">Chemical Compound</th>
+              <th class="py-3.5 px-4 text-center">Grade / Safety</th>
+              <th class="py-3.5 px-4 text-right font-mono">Density @ 20°C</th>
+              <th class="py-3.5 px-4 text-right font-mono">1 Litre Mass</th>
+              <th class="py-3.5 px-4 text-right font-mono">1 kg Volume</th>
+              <th class="py-3.5 px-4 text-center font-mono">Freeze Point</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {glycolData.map((item) => (
+              <tr class="hover:bg-white/[0.02]">
+                <td class="py-3.5 px-4 font-semibold text-white font-sans">
+                  {item.name}
+                  <span class="text-slate-500 font-mono text-xs block">{item.formula}</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-xs text-blue-400 font-sans">{item.grade}</td>
+                <td class="py-3.5 px-4 text-right text-brand-400 font-bold">{item.density.toFixed(3)} kg/L</td>
+                <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{item.massPerL}</td>
+                <td class="py-3.5 px-4 text-right text-purple-400 font-bold">{item.volPerKg}</td>
+                <td class="py-3.5 px-4 text-center text-slate-400">{item.freeze}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Questions about glycol mass and volume calculations.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

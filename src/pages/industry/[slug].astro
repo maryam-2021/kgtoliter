@@ -1,0 +1,226 @@
+---
+// src/pages/industry/[slug].astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { industryGuides, type IndustryGuide } from '../../data/industryGuides';
+
+export async function getStaticPaths() {
+  return industryGuides.map((guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }));
+}
+
+interface Props {
+  guide: IndustryGuide;
+}
+
+const { guide } = Astro.props;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: guide.title,
+    description: guide.metaDescription,
+    author: {
+      '@type': 'Organization',
+      name: guide.author,
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://kgtoliter.com/industry/${guide.slug}/`,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guide.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={`${guide.title} | Industry Operations Guide`}
+  description={guide.metaDescription}
+  canonicalUrl={`https://kgtoliter.com/industry/${guide.slug}/`}
+  schema={pageSchema}
+>
+  <article class="max-w-4xl mx-auto px-4 py-10 space-y-10">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Industry Operations"
+      categorySlug="industry"
+      substanceName={guide.title}
+    />
+
+    <!-- Header Block -->
+    <header class="space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+          🏭 {guide.industry}
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          {guide.readTime}
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          Standardized: {guide.reviewedDate}
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+        {guide.title}
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {guide.subtitle}
+      </p>
+    </header>
+
+    <!-- Intro Card -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8">
+      <p class="text-slate-200 leading-relaxed text-base sm:text-lg">
+        {guide.intro}
+      </p>
+    </section>
+
+    <!-- Key Metric Formula Box -->
+    {guide.keyMetricBox && (
+      <section class="glass-card bg-surface-950/90 border border-amber-500/30 rounded-2xl p-6 sm:p-8 space-y-4">
+        <span class="text-xs font-mono uppercase font-bold text-amber-400 tracking-wider">
+          {guide.keyMetricBox.label}
+        </span>
+        <div class="p-5 rounded-xl bg-surface-900 border border-amber-500/20 text-center font-mono text-xl sm:text-2xl font-extrabold text-amber-400">
+          {guide.keyMetricBox.formula}
+        </div>
+        <p class="text-xs text-slate-400 text-center">
+          {guide.keyMetricBox.details}
+        </p>
+      </section>
+    )}
+
+    <!-- Guide Content Sections -->
+    <div class="space-y-8">
+      {guide.sections.map((section) => (
+        <section class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+          <h2 class="text-2xl font-bold text-white mb-2">{section.heading}</h2>
+          
+          <div class="space-y-3 text-slate-300 leading-relaxed text-sm sm:text-base">
+            {section.content.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+
+          {section.callout && (
+            <div class={`p-4 rounded-xl text-xs sm:text-sm leading-relaxed border ${
+              section.callout.type === 'tip'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                : section.callout.type === 'warning'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                  : 'bg-brand-500/10 border-brand-500/30 text-brand-300'
+            }`}>
+              <span class="font-bold block mb-1 uppercase tracking-wider font-mono">{section.callout.title}</span>
+              <p class="whitespace-pre-line text-slate-200">{section.callout.text}</p>
+            </div>
+          )}
+
+          {section.table && (
+            <div class="overflow-x-auto rounded-xl border border-white/5 mt-4">
+              <table class="w-full text-left text-xs sm:text-sm font-sans">
+                <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+                  <tr>
+                    {section.table.headers.map((h) => (
+                      <th class="py-3 px-4">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-slate-300">
+                  {section.table.rows.map((row) => (
+                    <tr class="hover:bg-white/[0.02]">
+                      {row.map((cell, cIdx) => (
+                        <td class={`py-3 px-4 ${cIdx === 0 ? 'font-semibold text-white' : 'font-mono'}`}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {section.table.caption && (
+                <p class="text-[11px] text-slate-500 p-2 font-mono text-center border-t border-white/5">
+                  {section.table.caption}
+                </p>
+              )}
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+
+    <!-- Related Industry Guides Cluster Hub -->
+    <section class="glass-card bg-surface-950/90 border border-amber-500/20 rounded-2xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <span class="badge badge-brand">Industry Cluster Silo</span>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Related B2B &amp; Operational Guides</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {industryGuides.filter(g => g.slug !== guide.slug).map((g) => (
+          <a
+            href={`/industry/${g.slug}/`}
+            class="p-4 rounded-xl bg-surface-900/80 border border-white/[0.06] hover:border-amber-500/50 transition-all group block"
+          >
+            <span class="text-[10px] font-mono uppercase text-amber-400 block mb-1">{g.industry}</span>
+            <h3 class="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">
+              {g.title} &rarr;
+            </h3>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">{g.subtitle}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Master Pillars Reciprocal Links -->
+    <section class="p-6 rounded-2xl bg-surface-950 border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h3 class="text-base font-bold text-white">Need density values for bulk calculations?</h3>
+        <p class="text-xs text-slate-400">Search over 772+ substances with ASTM, IUPAC &amp; CRC standards.</p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/density-reference/" class="px-4 py-2 rounded-xl bg-brand-500 text-slate-950 font-bold text-xs hover:bg-brand-400 transition-all">
+          Master Database &rarr;
+        </a>
+        <a href="/kg-to-litres-guide/" class="px-4 py-2 rounded-xl bg-surface-900 text-slate-300 font-semibold text-xs hover:text-white border border-white/10 transition-all">
+          Conversion Guide
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Common practical questions regarding {guide.industry}.</p>
+      </div>
+      <FAQAccordion faqs={guide.faqs} />
+    </section>
+
+  </article>
+</BaseLayout>

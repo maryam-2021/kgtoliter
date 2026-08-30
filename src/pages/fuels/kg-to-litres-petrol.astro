@@ -1,0 +1,439 @@
+---
+// src/pages/fuels/kg-to-litres-petrol.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import VolumeComparisonSlider from '../../components/interactive/VolumeComparisonSlider.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+// Conversion steps table
+const petrolSteps = [1, 2, 5, 10, 20, 25, 50, 75, 100, 200, 500, 1000];
+const standardDensity = 0.748; // Standard 95 RON Unleaded at 15°C
+
+const petrolGrades = [
+  { name: 'Standard Unleaded (95 RON / 87 AKI)', density: 0.748, volPerKg: '1.337 L', massPerL: '0.748 kg', energy: '32.2 MJ/L', note: 'Standard European EN 228 / US regular' },
+  { name: 'Premium Super Unleaded (98 RON / 93 AKI)', density: 0.755, volPerKg: '1.325 L', massPerL: '0.755 kg', energy: '32.8 MJ/L', note: 'Higher aromatic content increases density slightly' },
+  { name: 'E10 Petrol (10% Fuel Ethanol Blend)', density: 0.752, volPerKg: '1.330 L', massPerL: '0.752 kg', energy: '31.8 MJ/L', note: 'Standard UK/EU pump fuel (Ethanol density: 0.789)' },
+  { name: 'E85 Flex-Fuel (85% Ethanol Blend)', density: 0.782, volPerKg: '1.279 L', massPerL: '0.782 kg', energy: '26.8 MJ/L', note: 'High ethanol proportion significantly increases density' },
+  { name: 'Aviation Gasoline (AvGas 100LL)', density: 0.715, volPerKg: '1.399 L', massPerL: '0.715 kg', energy: '31.5 MJ/L', note: 'Lightweight aviation piston fuel (ASTM D910)' },
+  { name: 'Competition Racing Fuel (102+ Octane)', density: 0.765, volPerKg: '1.307 L', massPerL: '0.765 kg', energy: '33.2 MJ/L', note: 'High-density oxygenated racing blend' },
+];
+
+const tempPetrolData = [
+  { temp: '-10°C (Freezing Winter)', density: 0.772, volPer10Kg: '12.95 L', diff: '+3.2% denser than standard' },
+  { temp: '0°C (Cold Ambient)', density: 0.762, volPer10Kg: '13.12 L', diff: '+1.9% denser' },
+  { temp: '15°C (International Standard Ref)', density: 0.748, volPer10Kg: '13.37 L', diff: '0.0% (EN 228 Baseline)' },
+  { temp: '25°C (Warm Summer Ambient)', density: 0.738, volPer10Kg: '13.55 L', diff: '-1.3% lighter' },
+  { temp: '35°C (Hot Tank / Direct Sun)', density: 0.728, volPer10Kg: '13.74 L', diff: '-2.7% expanded volume' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 1 kg of petrol?',
+    a: '1 kg of standard unleaded petrol equals approximately 1.337 litres (1,337 mL) based on a reference density of 0.748 kg/L at 15°C. At higher ambient temperatures (30°C), 1 kg expands to 1.365 litres.'
+  },
+  {
+    q: 'How many kg is 50 litres of petrol?',
+    a: '50 litres of standard petrol weighs 37.40 kg (50 L × 0.748 kg/L = 37.40 kg or 82.45 lbs). Because petrol is much lighter than water, a full 50-litre tank weighs only 37.4 kg compared to 50.0 kg for water.'
+  },
+  {
+    q: 'Is petrol heavier or lighter than water?',
+    a: 'Petrol is significantly lighter than water. Petrol has a density of ~0.748 kg/L compared to pure water at 1.000 kg/L. If spilled on water, petrol floats on the surface without dissolving.'
+  },
+  {
+    q: 'What is the density of petrol at 20°C?',
+    a: 'At 20°C (68°F), the density of standard unleaded petrol is approximately 0.743 kg/L (743 kg/m³), dropping from its standardized 15°C baseline of 0.748 kg/L due to thermal expansion.'
+  },
+  {
+    q: 'How do I convert petrol from litres to kg?',
+    a: 'Multiply the volume in litres by the petrol density (0.748 kg/L at 15°C). Formula: Mass (kg) = Volume (L) × 0.748. For example, 60 litres of petrol weighs 60 × 0.748 = 44.88 kg.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Kg to Litres: Petrol & Gasoline Conversion Guide (With Calculator)',
+    description: 'Complete technical guide for converting petrol and gasoline from kg to litres. Covers density ranges (0.720–0.775 kg/L), E10/E85 blends, octane ratings, seasonal variations, and temperature corrections.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Petroleum Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/fuels/kg-to-litres-petrol/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Convert Kg to Litres of Petrol',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Determine Mass and Grade',
+        text: 'Identify the total petrol mass in kilograms (kg) and the fuel grade (e.g. 95 RON unleaded = 0.748 kg/L at 15°C).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Apply the Density Formula',
+        text: 'Divide the mass in kg by the petrol density in kg/L: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Apply Temperature Correction if Required',
+        text: 'If fuel temperature differs significantly from 15°C, apply the thermal expansion coefficient (β ≈ 0.0011 /°C) for custody precision.',
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Petrol & Gasoline Conversion Guide (With Calculator)"
+  description="Convert petrol / gasoline kg to litres. Density ranges (0.720–0.775 kg/L), E10/E85 ethanol blends, temperature expansion tables, worked examples & interactive calculator."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/fuels/kg-to-litres-petrol/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Fuels & Hydrocarbons"
+      categorySlug="fuels"
+      substanceName="Petrol & Gasoline Conversion Guide"
+    />
+
+    <!-- Header Block (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+        <span>⛽ Domain C: Fuel & Energy Authority Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-brand-400">Petrol &amp; Gasoline Conversion Guide</span> (With Calculator)
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Master mass-to-volume calculations for motor gasoline and unleaded petrol. Learn how octane grades, ethanol blends (E10, E85), seasonal refining specs, and temperature dictate exact volume.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/fuels/litres-to-kg-petrol/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          Reverse: litres of petrol to kg &rarr;
+        </a>
+        <a
+          href="/compare/diesel-vs-petrol-density/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          Compare: petrol vs diesel density &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Core Interactive Calculator -->
+    <section class="space-y-4">
+      <CalculatorWidget defaultSubstanceId="petrol" />
+    </section>
+
+    <!-- Content Sections -->
+    <article class="space-y-12">
+      
+      <!-- H2: Petrol Density: What Is It and Why Does It Matter? -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Petrol Density: What Is It and Why Does It Matter?
+        </h2>
+
+        <!-- H3: Standard petrol density -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-amber-300">Standard Petrol Density: 0.720–0.775 kg/L at 15°C</h3>
+          <p class="text-slate-300 leading-relaxed">
+            According to European standard <strong class="text-white">EN 228</strong> and American standard <strong class="text-white">ASTM D4814</strong>, finished motor gasoline must have a density between <strong class="text-white">0.720 and 0.775 kg/L</strong> (720 to 775 kg/m³) at the standard reference temperature of 15°C (59°F). Commercial 95 RON unleaded typically averages <strong>0.748 kg/L</strong>.
+          </p>
+        </div>
+
+        <!-- H3: Why petrol density varies -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Why Petrol Density Varies: Octane, Ethanol &amp; Season</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Unlike pure chemical compounds with fixed densities, petrol is a complex refined blend of over 200 distinct hydrocarbon fractions (paraffins, naphthenes, aromatics, and olefins). Density shifts depending on three key factors:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-sm text-slate-300">
+            <li><strong>Aromatic Hydrocarbon Fraction:</strong> Premium high-octane fuels contain higher percentages of dense aromatic rings (toluene, xylene, benzene) to boost octane ratings, raising density.</li>
+            <li><strong>Oxygenate &amp; Ethanol Content:</strong> Adding 10% ethanol (E10) increases density because anhydrous ethanol (0.789 kg/L) is denser than base gasoline (0.740 kg/L).</li>
+            <li><strong>Reid Vapour Pressure (RVP) Adjustments:</strong> Winter blends include lighter volatile butane molecules (0.58 kg/L) to assist engine starting in sub-zero weather, reducing overall density.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- H2: How to Convert Kg to Litres of Petrol -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How to Convert Kg to Litres of Petrol
+        </h2>
+
+        <!-- H3: Formula -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">The Conversion Formula</h3>
+          <div class="p-6 rounded-xl bg-surface-900 border border-amber-500/30 text-center font-mono text-xl sm:text-2xl text-amber-400 font-bold">
+            Volume (L) = Mass (kg) &divide; Density (kg/L)
+          </div>
+          <p class="text-xs text-slate-400 text-center font-mono">
+            Using standard 95 RON baseline: <span class="text-white">Volume (L) = Mass (kg) &divide; 0.748</span>
+          </p>
+        </div>
+
+        <!-- H3: Worked examples -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Worked Examples: 10 kg, 25 kg, and 50 kg of Petrol</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+            <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+              <span class="text-slate-500 uppercase block">10 kg of Petrol</span>
+              <span class="text-white text-base font-bold block">10 &divide; 0.748 = 13.369 L</span>
+              <span class="text-brand-400 block">13 Litres 369 mL</span>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+              <span class="text-slate-500 uppercase block">25 kg of Petrol</span>
+              <span class="text-white text-base font-bold block">25 &divide; 0.748 = 33.422 L</span>
+              <span class="text-brand-400 block">33 Litres 422 mL</span>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+              <span class="text-slate-500 uppercase block">50 kg of Petrol</span>
+              <span class="text-white text-base font-bold block">50 &divide; 0.748 = 66.845 L</span>
+              <span class="text-brand-400 block">66 Litres 845 mL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- H3: Petrol conversion table (1–1000 kg) -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-lg font-bold text-white">Petrol Mass to Volume Conversion Table (1 kg to 1,000 kg)</h3>
+          <div class="overflow-x-auto rounded-xl border border-white/5">
+            <table class="w-full text-left text-sm font-mono">
+              <thead class="bg-surface-900 text-xs text-slate-400 uppercase">
+                <tr>
+                  <th class="py-3 px-4">Mass (Kilograms)</th>
+                  <th class="py-3 px-4 text-right">Volume (Litres @ 15°C)</th>
+                  <th class="py-3 px-4 text-right">Volume (Litres @ 30°C)</th>
+                  <th class="py-3 px-4 text-right">US Gallons</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                {petrolSteps.map((kg) => {
+                  const volStd = kg / 0.748;
+                  const volWarm = kg / 0.732;
+                  const gallons = volStd * 0.264172;
+                  return (
+                    <tr class="hover:bg-white/[0.02]">
+                      <td class="py-3 px-4 font-bold text-white">{kg} kg</td>
+                      <td class="py-3 px-4 text-right text-amber-400 font-bold">{volStd.toFixed(3)} L</td>
+                      <td class="py-3 px-4 text-right text-slate-400">{volWarm.toFixed(3)} L</td>
+                      <td class="py-3 px-4 text-right text-slate-400">{gallons.toFixed(2)} gal</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Petrol vs Gasoline: Is There a Density Difference? -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Petrol vs. Gasoline: Is There a Density Difference?
+        </h2>
+
+        <!-- H3: UK petrol vs US gasoline -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">UK Petrol vs. US Gasoline: Same Fuel, Different Names</h3>
+          <p class="text-slate-300 leading-relaxed">
+            "Petrol" (British English, Commonwealth) and "Gasoline / Gas" (American English) refer to the chemically identical refined spark-ignition motor fuel. Both conform to the same density envelope (0.720–0.775 kg/L).
+          </p>
+        </div>
+
+        <!-- Density table across fuel grades -->
+        <div class="overflow-x-auto rounded-xl border border-white/5 pt-2">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Fuel Grade / Blend</th>
+                <th class="py-3.5 px-4 text-center font-mono">Density @ 15°C</th>
+                <th class="py-3.5 px-4 text-right font-mono">1 kg in Litres</th>
+                <th class="py-3.5 px-4 text-right font-mono">1 Litre Weight</th>
+                <th class="py-3.5 px-4">Composition Impact</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+              {petrolGrades.map((g) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">{g.name}</td>
+                  <td class="py-3.5 px-4 text-center text-amber-400 font-bold">{g.density.toFixed(3)} kg/L</td>
+                  <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{g.volPerKg}</td>
+                  <td class="py-3.5 px-4 text-right text-purple-400 font-bold">{g.massPerL}</td>
+                  <td class="py-3.5 px-4 text-slate-400 font-sans text-xs">{g.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- H2: How Temperature Affects Petrol Density -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How Temperature Affects Petrol Density
+        </h2>
+
+        <!-- H3: Temperature table -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Petrol Density at 0°C vs 15°C vs 30°C</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Gasoline has one of the highest volumetric thermal expansion coefficients of all liquid fuels (&beta; &approx; 0.0011 /°C), expanding nearly 5 times more than water when heated. Read our educational guide on <a href="/physics/temperature-and-density/" class="text-brand-400 hover:underline">how temperature changes fuel density</a>.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3 px-4">Fuel Temperature</th>
+                <th class="py-3 px-4 text-center font-mono">Effective Density</th>
+                <th class="py-3 px-4 text-right font-mono">10 kg Volume</th>
+                <th class="py-3 px-4">Thermal Expansion Variance</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
+              {tempPetrolData.map((td) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-semibold text-white font-sans">{td.temp}</td>
+                  <td class="py-3 px-4 text-center text-amber-400 font-bold">{td.density.toFixed(3)} kg/L</td>
+                  <td class="py-3 px-4 text-right text-emerald-400 font-bold">{td.volPer10Kg}</td>
+                  <td class="py-3 px-4 text-slate-400 font-sans text-xs">{td.diff}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- H3: ASTM D4052 Standard -->
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 text-xs text-slate-300 space-y-1">
+          <strong class="text-white font-bold block">ASTM D4052 Standard Measurement Method</strong>
+          <p>
+            Refineries and custody transfer metering use digital oscillating U-tube density meters under ASTM D4052, compensating for expansion using API MPMS Chapter 11.1 Volume Correction Factors (VCF).
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Seasonal Petrol Blends and Density Variation -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Seasonal Petrol Blends and Density Variation
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+            <h3 class="text-base font-bold text-amber-300">Summer Petrol Blend (Higher Density: ~0.755 kg/L)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              In summer, fuel regulations require lower Reid Vapour Pressure (RVP &le; 60 kPa) to prevent fuel vapour lock and evaporative smog. Refineries remove light butane and add heavier alkylates, resulting in slightly higher energy density per litre.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-sky-500/20 space-y-2">
+            <h3 class="text-base font-bold text-sky-300">Winter Petrol Blend (Lower Density: ~0.738 kg/L)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              In winter, refineries blend up to 10% lightweight volatile butane (density 0.58 kg/L) into petrol to boost vapour pressure (RVP up to 90 kPa) for reliable cold engine starts, lowering the net density at the dispensing pump.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Petrol vs Diesel Density: Side-by-Side Comparison -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h2 class="text-2xl font-bold text-white">Petrol vs. Diesel Density: Side-by-Side Comparison</h2>
+          <a href="/compare/diesel-vs-petrol-density/" class="text-xs font-semibold text-amber-400 hover:underline">
+            View full diesel vs petrol guide &rarr;
+          </a>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Standard automotive diesel (0.832 kg/L) is approximately <strong>11.2% denser</strong> than unleaded petrol (0.748 kg/L). Because diesel packs more mass and hydrocarbon energy into every litre, diesel vehicles achieve greater mileage per tank.
+        </p>
+        <div class="not-prose pt-2">
+          <VolumeComparisonSlider />
+        </div>
+      </section>
+
+      <!-- H2: Real-World Applications -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Real-World Applications of Petrol Mass-to-Volume Conversion
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-amber-400">1. Bulk Fuel Logistics</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Road tanker gross vehicle weight (GVW) limits are governed in kilograms (e.g. 44-tonne axle limits), while delivery drop meters bill in litres. Discover more in our guide on <a href="/industry/kg-to-litres-fuel-management/" class="text-amber-300 underline">fuel logistics mass calculations</a>.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-sky-400">2. Aircraft Fuel Planning</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Aviation dispatchers calculate takeoff weight-and-balance strictly in kilograms or pounds, converting flight tanker fuel litres into precise mass based on daily hydrometer checks.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-emerald-400">3. Race Fuel Tuning</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Motorsport engine calibration (ECU fuel mapping) relies on mass airflow (MAF) and fuel mass injection per cylinder, requiring exact fuel specific gravity measurements before races.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Frequently Asked Questions -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Common questions regarding petrol and gasoline mass-to-volume conversions.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

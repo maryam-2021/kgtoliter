@@ -1,0 +1,226 @@
+---
+// src/pages/substances/[id]/kg-to-litres.astro
+import Layout from '../../../layouts/Layout.astro';
+import CalculatorWidget from '../../../components/CalculatorWidget.astro';
+import HeroDensityVisualizer from '../../../components/interactive/HeroDensityVisualizer.astro';
+import FormulaPlayground from '../../../components/interactive/FormulaPlayground.astro';
+import VolumeComparisonSlider from '../../../components/interactive/VolumeComparisonSlider.astro';
+import FAQAccordion from '../../../components/interactive/FAQAccordion.astro';
+import RelatedTools from '../../../components/RelatedTools.astro';
+import BreadcrumbNav from '../../../components/BreadcrumbNav.astro';
+import { substances, type Substance } from '../../../data/substances';
+
+export async function getStaticPaths() {
+  return substances.map((substance) => ({
+    params: { id: substance.id },
+    props: { substance },
+  }));
+}
+
+interface Props {
+  substance: Substance;
+}
+
+const { substance } = Astro.props;
+const categorySlug = substance.category || 'basic';
+const volumePer1Kg = (1 / substance.density_kg_per_l).toFixed(3);
+const massPer1L = substance.density_kg_per_l.toFixed(3);
+
+const canonicalUrl = `https://kgtoliter.com/substances/${substance.id}/kg-to-litres/`;
+
+const substanceFaqs = [
+  {
+    q: `How do I convert kilograms of ${substance.name} to litres?`,
+    a: `Divide the mass in kg by the substance density: Volume (L) = Mass (kg) ÷ ${substance.density_kg_per_l} kg/L. For example, 5 kg of ${substance.name} equals ${(5 / substance.density_kg_per_l).toFixed(3)} litres.`,
+  },
+  {
+    q: `How many litres is 1 kg of ${substance.name}?`,
+    a: `1 kg of ${substance.name} equals exactly ${volumePer1Kg} litres (${(parseFloat(volumePer1Kg) * 1000).toFixed(0)} mL) based on a calibrated density of ${substance.density_kg_per_l} kg/L.`,
+  },
+  {
+    q: `How much does 1 litre of ${substance.name} weigh in kg?`,
+    a: `1 litre of ${substance.name} weighs ${massPer1L} kg (${(parseFloat(massPer1L) * 1000).toFixed(0)} grams).`,
+  },
+  {
+    q: `Is 1 kg of ${substance.name} equal to 1 litre?`,
+    a: substance.density_kg_per_l === 1.000
+      ? `Yes, because ${substance.name} has a density of exactly 1.000 kg/L.`
+      : `No. Because ${substance.name} has a density of ${substance.density_kg_per_l} kg/L, 1 kg occupies ${volumePer1Kg} litres (${substance.density_kg_per_l < 1.0 ? 'more than 1 L' : 'less than 1 L'}).`,
+  },
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://kgtoliter.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: `${substance.category.charAt(0).toUpperCase() + substance.category.slice(1)} Category`,
+        item: `https://kgtoliter.com/${substance.category}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: `${substance.name} kg to litres`,
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: `${substance.name} kg to Litres Calculator`,
+    applicationCategory: 'UtilityApplication',
+    description: `Convert ${substance.name} from kilograms (kg) to litres (L) using verified density of ${substance.density_kg_per_l} kg/L.`,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: substanceFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<Layout
+  title={`${substance.name} kg to Litres: Conversion Calculator & Formula`}
+  description={`Convert ${substance.name} kilograms to litres. Density: ${substance.density_kg_per_l} kg/L (1 kg = ${volumePer1Kg} L). Interactive calculator, conversion table & step-by-step formula.`}
+  canonicalUrl={canonicalUrl}
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-4xl space-y-10">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName={substance.category.charAt(0).toUpperCase() + substance.category.slice(1)}
+      categorySlug={substance.category}
+      substanceName={`${substance.name} kg to litres`}
+    />
+
+    <!-- Header Block -->
+    <header class="space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider">
+          ⚖️ Mass &rarr; Volume Specific QDP
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          Density: {substance.density_kg_per_l} kg/L
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        {substance.name}: kg to Litres Conversion
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {substance.seo.description}
+      </p>
+
+      <div class="flex items-center gap-3 pt-2">
+        <span class="text-xs text-slate-400 font-mono">Direction:</span>
+        <span class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-slate-950 shadow-sm">
+          Kg &rarr; Litres
+        </span>
+        <a
+          href={`/${categorySlug}/litres-to-kg-${substance.id}/`}
+          class="px-3 py-1 rounded-lg text-xs font-semibold bg-surface-900 text-slate-400 hover:text-white border border-white/5 transition-all"
+        >
+          Litres &rarr; Kg (Reverse)
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Calculator -->
+    <section class="space-y-4">
+      <CalculatorWidget defaultSubstanceId={substance.id} />
+    </section>
+
+    <!-- Material Technical Spec -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white mb-2">Technical Material Specification</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5">
+          <span class="text-slate-500 uppercase block mb-1">Standard Density</span>
+          <span class="text-brand-400 text-base font-bold block">{substance.density_kg_per_l.toFixed(3)} kg/L</span>
+          <span class="text-slate-400 block mt-1">({(substance.density_kg_per_l * 1000).toFixed(0)} kg/m³)</span>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5">
+          <span class="text-slate-500 uppercase block mb-1">1 kg Volume</span>
+          <span class="text-emerald-400 text-base font-bold block">1 kg = {volumePer1Kg} L</span>
+          <span class="text-slate-400 block mt-1">({(parseFloat(volumePer1Kg) * 1000).toFixed(0)} mL)</span>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5">
+          <span class="text-slate-500 uppercase block mb-1">1 Litre Mass</span>
+          <span class="text-purple-400 text-base font-bold block">1 L = {massPer1L} kg</span>
+          <span class="text-slate-400 block mt-1">({(parseFloat(massPer1L) * 1000).toFixed(0)} grams)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formula Breakdown -->
+    <section class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">How to Convert {substance.name} kg to Litres</h2>
+      <p class="text-slate-300 text-sm leading-relaxed">
+        To calculate volume in litres from a known mass of {substance.name} in kilograms, divide mass by density ({substance.density_kg_per_l} kg/L):
+      </p>
+      <div class="p-4 rounded-xl bg-surface-900 border border-brand-500/20 text-center font-mono text-xl text-brand-400">
+        Volume (L) = Mass (kg) &divide; {substance.density_kg_per_l} kg/L
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Example: To convert 10 kg of {substance.name}: 10 &divide; {substance.density_kg_per_l} = <strong class="text-white">{(10 / substance.density_kg_per_l).toFixed(3)} Litres</strong>.
+      </p>
+    </section>
+
+    <!-- Interactive Visualizers -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold text-white">Visual Density Behavior</h2>
+      <HeroDensityVisualizer />
+    </section>
+
+    <!-- Real-World Notes -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4 border border-white/[0.08]">
+      <h2 class="text-2xl font-bold text-white">Engineering &amp; Practical Notes</h2>
+      <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+        {substance.content.real_world_context || substance.content.intro}
+      </p>
+      {substance.density_note && (
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs leading-relaxed">
+          <strong>Note:</strong> {substance.density_note}
+        </div>
+      )}
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Common questions about converting {substance.name}.</p>
+      </div>
+      <FAQAccordion faqs={substanceFaqs} />
+    </section>
+
+    <!-- Related Tools -->
+    <section class="pt-8 border-t border-slate-800">
+      <RelatedTools currentSubstance={substance} categorySlug={categorySlug} />
+    </section>
+
+  </main>
+</Layout>

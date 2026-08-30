@@ -1,0 +1,144 @@
+---
+// src/pages/construction/kg-to-litres-insulation.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+
+const insulationData = [
+  { name: 'Expanded Polystyrene (EPS White Foam Board)', density: 0.020, densityKgM3: '15–30 kg/m³', volPer10Kg: '500 Litres (0.5 m³)', rValue: 'R-3.8 / inch', note: 'Rigid board insulation' },
+  { name: 'Extruded Polystyrene (XPS Pink / Blue Board)', density: 0.035, densityKgM3: '30–40 kg/m³', volPer10Kg: '285 Litres (0.285 m³)', rValue: 'R-5.0 / inch', note: 'Below-grade moisture resistant board' },
+  { name: 'Polyurethane Spray Foam (Closed Cell 2lb)', density: 0.032, densityKgM3: '32 kg/m³', volPer10Kg: '312 Litres (0.312 m³)', rValue: 'R-6.5 / inch', note: 'Air barrier spray insulation' },
+  { name: 'Polyurethane Spray Foam (Open Cell 0.5lb)', density: 0.008, densityKgM3: '8 kg/m³', volPer10Kg: '1,250 Litres (1.25 m³)', rValue: 'R-3.7 / inch', note: 'Soundproofing cavity insulation' },
+  { name: 'Mineral Wool / Rockwool Batts', density: 0.045, densityKgM3: '45 kg/m³', volPer10Kg: '222 Litres (0.222 m³)', rValue: 'R-4.2 / inch', note: 'Fire-resistant stone wool' },
+  { name: 'Glass Fiber (Fiberglass Loose Fill Attic)', density: 0.012, densityKgM3: '10–15 kg/m³', volPer10Kg: '833 Litres (0.833 m³)', rValue: 'R-2.5 / inch', note: 'Blown attic insulation' },
+  { name: 'Cellulose Loose Fill (Treated Newsprint)', density: 0.025, densityKgM3: '24–32 kg/m³', volPer10Kg: '400 Litres (0.4 m³)', rValue: 'R-3.5 / inch', note: 'Dense-pack cavity insulation' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 10 kg of closed-cell spray foam insulation?',
+    a: '10 kg ÷ 0.032 kg/L = 312.5 Litres (0.312 m³). Because insulation materials consist of 95% to 98% trapped micro-air cells, they have very low densities.'
+  },
+  {
+    q: 'Why are insulation densities reported in kg/m³ instead of kg/L?',
+    a: 'Because insulation is extremely lightweight (less than 0.05 kg/L), reporting in kilograms per cubic metre (e.g. 30 kg/m³) provides clean integer numbers without multiple leading zeroes.'
+  },
+  {
+    q: 'How does insulation density relate to thermal R-value?',
+    a: 'Higher density closed-cell foams contain more micro-cell walls per centimetre, restricting radiative and convective thermal transfer, achieving R-6.5 per inch compared to R-3.7 for lightweight open-cell foam.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Kg to Litres: Insulation & Lightweight Building Materials Guide',
+    description: 'Thermal engineering guide for converting kg to litres and cubic metres for EPS, XPS, spray foam, rockwool, and fiberglass insulation.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Thermal Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/construction/kg-to-litres-insulation/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Insulation Materials Guide (EPS, XPS, Spray Foam)"
+  description="Convert kg to litres and m³ for insulation materials: EPS foam (20 kg/m³), XPS board (35 kg/m³), Rockwool (45 kg/m³), Closed-cell foam (32 kg/m³). R-value specs."
+  canonicalUrl="https://kgtoliter.com/construction/kg-to-litres-insulation/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-10 max-w-5xl space-y-10">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Construction Materials"
+      categorySlug="construction"
+      substanceName="Insulation Materials"
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 uppercase tracking-wider">
+        <span>🏗️ Domain F: Thermal Insulation QDP</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-brand-400">Insulation Materials Guide</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Building envelope thermal calculations, spray foam drum yield estimation, and attic blown-insulation mass-to-volume sizing.
+      </p>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Master Comparative Table -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">Insulation Materials Density &amp; Volume Matrix</h2>
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3.5 px-4">Insulation Type</th>
+              <th class="py-3.5 px-4 text-right font-mono">Density (kg/L)</th>
+              <th class="py-3.5 px-4 text-right font-mono">Density (kg/m³)</th>
+              <th class="py-3.5 px-4 text-right font-mono">10 kg Volume</th>
+              <th class="py-3.5 px-4 text-center">Thermal R-Value</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {insulationData.map((item) => (
+              <tr class="hover:bg-white/[0.02]">
+                <td class="py-3.5 px-4 font-semibold text-white font-sans">{item.name}</td>
+                <td class="py-3.5 px-4 text-right text-brand-400 font-bold">{item.density.toFixed(3)} kg/L</td>
+                <td class="py-3.5 px-4 text-right text-slate-300">{item.densityKgM3}</td>
+                <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{item.volPer10Kg}</td>
+                <td class="py-3.5 px-4 text-center text-teal-400 font-sans text-xs">{item.rValue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Insulation density and coverage estimation FAQs.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

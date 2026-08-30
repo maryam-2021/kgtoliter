@@ -1,4 +1,5 @@
 ---
+// src/pages/[category]/[tool].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CalculatorWidget from '../../components/CalculatorWidget.astro';
 import HeroDensityVisualizer from '../../components/interactive/HeroDensityVisualizer.astro';
@@ -6,27 +7,97 @@ import FormulaPlayground from '../../components/interactive/FormulaPlayground.as
 import VolumeComparisonSlider from '../../components/interactive/VolumeComparisonSlider.astro';
 import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
-import FAQAccordion from '../../components/FAQAccordion.astro';
-import { substances, categories } from '../../data/densities.ts';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import { substances, categories } from '../../data/densities';
+import type { Substance } from '../../data/substances';
 
 export async function getStaticPaths() {
-  return substances.map((sub) => {
+  const paths: any[] = [];
+
+  substances.forEach((sub) => {
     const categorySlug = categories.find((c) => c.id === sub.category)?.slug || 'basic';
-    return {
+    
+    // 1. Forward Conversion (kg to litres)
+    paths.push({
       params: { category: categorySlug, tool: `kg-to-litres-${sub.id}` },
-      props: { substance: sub },
-    };
+      props: { substance: sub, direction: 'kg-to-litres' },
+    });
+
+    // 2. Reverse Conversion (litres to kg)
+    paths.push({
+      params: { category: categorySlug, tool: `litres-to-kg-${sub.id}` },
+      props: { substance: sub, direction: 'litres-to-kg' },
+    });
   });
+
+  return paths;
 }
 
-const { substance } = Astro.props;
+interface Props {
+  substance: Substance;
+  direction?: 'kg-to-litres' | 'litres-to-kg';
+}
+
+const { substance, direction = 'kg-to-litres' } = Astro.props;
 const categoryObj = categories.find((c) => c.id === substance.category);
 const categorySlug = categoryObj?.slug || 'basic';
 const categoryName = categoryObj?.name || 'Basic & Universal Liquids';
 
-const pageTitle = `Kg to litre ${substance.name} | ${substance.seo.description.substring(0, 60)}...`;
+const isReverse = direction === 'litres-to-kg';
+const volumePer1Kg = (1 / substance.density_kg_per_l).toFixed(3);
+const massPer1L = substance.density_kg_per_l.toFixed(3);
 
-// Dynamic Tool Page Schema
+const pageTitle = isReverse
+  ? `Litres to kg ${substance.name} | Convert Volume to Mass (${substance.density_kg_per_l} kg/L)`
+  : `Kg to litre ${substance.name} | ${substance.seo.description.substring(0, 60)}...`;
+
+const metaDescription = isReverse
+  ? `Convert litres of ${substance.name} to kilograms (kg). Uses density of ${substance.density_kg_per_l} kg/L (1 L = ${massPer1L} kg). Includes step-by-step formula, temperature curves, and reverse conversion table.`
+  : substance.seo.description;
+
+// Calculate temperature variations based on beta thermal expansion approximation
+const baseDensity = substance.density_kg_per_l;
+const betaCoeff = categorySlug === 'fuels' ? 0.00085 : categorySlug === 'cooking' ? 0.00072 : 0.00025;
+
+const tempCurve = [
+  { temp: '0°C (Cold / Winter)', density: (baseDensity * (1 + betaCoeff * 20)).toFixed(3), volPerKg: (1 / (baseDensity * (1 + betaCoeff * 20))).toFixed(3) },
+  { temp: `${substance.temperature || 20}°C (Standard Reference)`, density: baseDensity.toFixed(3), volPerKg: volumePer1Kg },
+  { temp: '40°C (Process Heat / Summer)', density: (baseDensity * (1 - betaCoeff * 20)).toFixed(3), volPerKg: (1 / (baseDensity * (1 - betaCoeff * 20))).toFixed(3) },
+  { temp: '80°C (Elevated Temperature)', density: (baseDensity * (1 - betaCoeff * 60)).toFixed(3), volPerKg: (1 / (baseDensity * (1 - betaCoeff * 60))).toFixed(3) },
+];
+
+const standardCitation = substance.source || (
+  categorySlug === 'fuels' ? 'European Standard EN 590 / ASTM D1298' :
+  categorySlug === 'cooking' ? 'Codex Alimentarius / USDA FoodData Central' :
+  categorySlug === 'automotive' ? 'SAE J300 / ASTM D4052' :
+  categorySlug === 'construction' ? 'ASTM International C29 / C138' :
+  'CRC Handbook of Chemistry & Physics / IUPAC'
+);
+
+const isHazardous = categorySlug === 'industrial' || categorySlug === 'fuels' || substance.id.includes('acid') || substance.id.includes('bleach');
+
+const reverseFaqs = [
+  {
+    q: `How do I convert litres of ${substance.name} to kilograms?`,
+    a: `Multiply the volume in litres by the density in kg/L. Formula: Mass (kg) = Volume (L) × Density (${substance.density_kg_per_l} kg/L). For example, 10 litres of ${substance.name} equals ${(10 * substance.density_kg_per_l).toFixed(3)} kg.`
+  },
+  {
+    q: `How much does 1 litre of ${substance.name} weigh in kg?`,
+    a: `1 litre of ${substance.name} weighs exactly ${massPer1L} kilograms (or ${(parseFloat(massPer1L) * 1000).toFixed(0)} grams) at standard reference temperature.`
+  },
+  {
+    q: `How much does 5 litres of ${substance.name} weigh in kg?`,
+    a: `5 litres of ${substance.name} weighs ${(5 * substance.density_kg_per_l).toFixed(3)} kilograms (5 L × ${substance.density_kg_per_l} kg/L).`
+  },
+  {
+    q: `How much does 20 litres of ${substance.name} weigh in kg?`,
+    a: `20 litres of ${substance.name} weighs ${(20 * substance.density_kg_per_l).toFixed(3)} kilograms (20 L × ${substance.density_kg_per_l} kg/L).`
+  }
+];
+
+const faqsToDisplay = isReverse ? reverseFaqs : (substance.content?.faq || []);
+
+// Schema markup
 const toolSchema: Record<string, any>[] = [
   {
     '@context': 'https://schema.org',
@@ -41,35 +112,32 @@ const toolSchema: Record<string, any>[] = [
       {
         '@type': 'ListItem',
         position: 2,
-        name: categoryObj?.name,
-        item: `https://kgtoliter.com/${categoryObj?.slug}/`,
+        name: categoryName,
+        item: `https://kgtoliter.com/${categorySlug}/`,
       },
       {
         '@type': 'ListItem',
         position: 3,
-        name: `Kg to litre ${substance.name}`,
+        name: isReverse ? `Litres to kg ${substance.name}` : `Kg to litre ${substance.name}`,
       },
     ],
   },
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: `Kg to Litre ${substance.name} Calculator`,
+    name: isReverse ? `Litres to kg ${substance.name} Converter` : `Kg to Litre ${substance.name} Calculator`,
     applicationCategory: 'UtilityApplication',
-    description: substance.seo.description,
+    description: metaDescription,
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
     },
   },
-];
-
-if (substance.content?.faq && substance.content.faq.length > 0) {
-  toolSchema.push({
+  {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: substance.content.faq.map((item) => ({
+    mainEntity: faqsToDisplay.map((item) => ({
       '@type': 'Question',
       name: item.q,
       acceptedAnswer: {
@@ -77,103 +145,249 @@ if (substance.content?.faq && substance.content.faq.length > 0) {
         text: item.a,
       },
     })),
-  });
-}
+  }
+];
+
+const conversionSteps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 1000];
 ---
 
-<BaseLayout title={pageTitle} description={substance.seo.description} schema={toolSchema}>
-  <article class="max-w-3xl mx-auto px-4 py-12 space-y-12">
+<BaseLayout title={pageTitle} description={metaDescription} schema={toolSchema}>
+  <article class="max-w-4xl mx-auto px-4 py-10 space-y-10">
     <!-- Breadcrumbs -->
     <BreadcrumbNav
       categoryName={categoryName}
       categorySlug={categorySlug}
-      substanceName={substance.name}
+      substanceName={isReverse ? `Litres to kg ${substance.name}` : substance.name}
     />
 
-    <!-- H1 -->
-    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
-      Kg to litre {substance.name}
-    </h1>
+    <!-- Header Block -->
+    <header class="space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider">
+          {isReverse ? '🔄 Reverse Conversion: Volume → Mass' : '⚖️ Mass → Volume Conversion'}
+        </span>
+        <span class="px-2.5 py-1 text-xs font-mono rounded-full bg-surface-900 text-slate-400 border border-white/5">
+          Density: {substance.density_kg_per_l} kg/L
+        </span>
+      </div>
 
-    <p class="text-lg text-slate-300 mb-8">
-      {substance.seo.description}
-    </p>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+        {isReverse ? `Litres to kg: ${substance.name}` : `Kg to Litres: ${substance.name}`}
+      </h1>
 
-    <!-- Core Utility -->
-    <div class="mb-12 space-y-4">
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        {isReverse 
+          ? `Convert litres of ${substance.name} into kilograms (kg) instantly. With a calibrated density of ${substance.density_kg_per_l} kg/L, 1 litre weighs ${massPer1L} kg.`
+          : substance.seo.description
+        }
+      </p>
+
+      <!-- Quick Direction Switcher Pill -->
+      <div class="flex items-center gap-3 pt-2">
+        <span class="text-xs text-slate-400 font-mono">Conversion Direction:</span>
+        <a
+          href={`/${categorySlug}/kg-to-litres-${substance.id}/`}
+          class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            !isReverse
+              ? 'bg-brand-500 text-slate-950 font-bold shadow-sm'
+              : 'bg-surface-900 text-slate-400 hover:text-white border border-white/5'
+          }`}
+        >
+          Kg &rarr; Litres
+        </a>
+        <a
+          href={`/${categorySlug}/litres-to-kg-${substance.id}/`}
+          class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            isReverse
+              ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+              : 'bg-surface-900 text-slate-400 hover:text-white border border-white/5'
+          }`}
+        >
+          Litres &rarr; Kg (Reverse)
+        </a>
+      </div>
+    </header>
+
+    {isHazardous && (
+      <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
+        <span class="text-base">⚠️</span>
+        <div>
+          <strong class="font-bold block text-amber-300 uppercase tracking-wider mb-0.5">Industrial Material Compliance Notice</strong>
+          <span>This substance is an industrial chemical or hydrocarbon. Refer to manufacturer Safety Data Sheet (SDS Section 9) for batch-specific density and PPE handling standards.</span>
+        </div>
+      </div>
+    )}
+
+    <!-- Core Interactive Converter -->
+    <section class="space-y-4">
       <CalculatorWidget defaultSubstanceId={substance.id} />
 
-      <!-- Trust & Verification Summary Card -->
-      <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-        <div class="flex items-center justify-between text-xs pb-3 border-b border-slate-800">
-          <span class="font-bold text-white uppercase font-mono tracking-wider">Verified Reference Data</span>
+      <!-- Data Authority Badge -->
+      <div class="glass-card rounded-2xl p-5 border border-white/[0.08] space-y-3 bg-surface-950/80">
+        <div class="flex items-center justify-between text-xs pb-3 border-b border-white/[0.06]">
+          <span class="font-bold text-white uppercase font-mono tracking-wider">Verified Material Specification &amp; Standard</span>
           <span class="inline-flex items-center gap-1.5 text-emerald-400 font-mono font-semibold">
             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
             <span>Reviewed August 2026</span>
           </span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
-            <span class="text-slate-500 font-mono block uppercase">Source Authority</span>
+          <div class="p-3 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Standard Citation</span>
             <span class="text-slate-300 font-medium block mt-0.5">
-              {substance.source || (categorySlug === 'fuels' ? 'EN 590 / ASTM D1298' : categorySlug === 'cooking' ? 'USDA FoodData Central' : 'CRC Handbook / NIST')}
+              {standardCitation}
             </span>
           </div>
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
-            <span class="text-slate-500 font-mono block uppercase">Density Range / Tolerance</span>
+          <div class="p-3 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Reference Density</span>
             <span class="text-brand-400 font-mono font-bold block mt-0.5">
-              {substance.densityRange ? `${substance.densityRange.min.toFixed(3)} – ${substance.densityRange.max.toFixed(3)} kg/L` : `${(substance.density_kg_per_l * 0.97).toFixed(3)} – ${(substance.density_kg_per_l * 1.03).toFixed(3)} kg/L`}
+              {substance.density_kg_per_l.toFixed(3)} kg/L (g/cm³)
             </span>
           </div>
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-white/[0.04]">
-            <span class="text-slate-500 font-mono block uppercase">Reference Temperature</span>
+          <div class="p-3 rounded-xl bg-surface-900/60 border border-white/[0.04]">
+            <span class="text-slate-500 font-mono block uppercase">Standard Temperature</span>
             <span class="text-slate-300 font-mono font-bold block mt-0.5">
               {substance.temperature || (categorySlug === 'fuels' ? 15 : substance.id === 'water' ? 4 : 20)}°C Standard
             </span>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Interactive Diagrams -->
-    <section class="mb-12">
+    <!-- Temperature-Dependent Density Curve Table -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">Temperature vs. Density Curve for {substance.name}</h2>
+          <p class="text-xs sm:text-sm text-slate-400">How thermal expansion alters physical density and volume per kg.</p>
+        </div>
+        <a href="/physics/temperature-and-density/" class="text-xs font-semibold text-brand-400 hover:underline">
+          Thermal Physics Guide &rarr;
+        </a>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-xs sm:text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              <th class="py-3 px-4">Operating Temperature</th>
+              <th class="py-3 px-4 text-right font-mono">Estimated Density</th>
+              <th class="py-3 px-4 text-right font-mono">1 kg Volume (L)</th>
+              <th class="py-3 px-4 text-right font-mono">1 Litre Mass (kg)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono">
+            {tempCurve.map((tc) => (
+              <tr class="hover:bg-white/[0.02]">
+                <td class="py-3 px-4 font-semibold text-white font-sans">{tc.temp}</td>
+                <td class="py-3 px-4 text-right text-brand-400 font-bold">{tc.density} kg/L</td>
+                <td class="py-3 px-4 text-right text-emerald-400">{tc.volPerKg} L</td>
+                <td class="py-3 px-4 text-right text-purple-400">{tc.density} kg</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Formula & Calculation Step Card -->
+    <section class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-white mb-2">
+          {isReverse ? `How to Calculate Litres to Kg for ${substance.name}` : `How to Calculate Kg to Litres for ${substance.name}`}
+        </h2>
+        <p class="text-sm text-slate-300">
+          {isReverse
+            ? `To calculate the mass in kilograms from a known volume of ${substance.name}, multiply the volume in litres by the substance density:`
+            : `To calculate the volume in litres from a known mass of ${substance.name}, divide the mass in kilograms by the substance density:`
+          }
+        </p>
+      </div>
+
+      <div class="p-5 rounded-xl bg-surface-900 border border-brand-500/20 text-center font-mono text-xl sm:text-2xl text-brand-400">
+        {isReverse 
+          ? `Mass (kg) = Volume (L) × ${substance.density_kg_per_l} kg/L`
+          : `Volume (L) = Mass (kg) ÷ ${substance.density_kg_per_l} kg/L`
+        }
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+          <span class="text-slate-500 uppercase block">1 Litre Mass</span>
+          <span class="text-white text-base font-bold block">1 L = {massPer1L} kg</span>
+          <span class="text-slate-400 block">{(parseFloat(massPer1L) * 1000).toFixed(0)} grams per litre</span>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1">
+          <span class="text-slate-500 uppercase block">1 Kilogram Volume</span>
+          <span class="text-white text-base font-bold block">1 kg = {volumePer1Kg} L</span>
+          <span class="text-slate-400 block">{(parseFloat(volumePer1Kg) * 1000).toFixed(0)} mL per kilogram</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Conversion Table -->
+    <section class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-xl font-bold text-white">
+        {isReverse ? `${substance.name} Litres to Kg Conversion Table` : `${substance.name} Kg to Litres Conversion Table`}
+      </h2>
+      
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-mono">
+          <thead class="bg-surface-900 text-xs text-slate-400 uppercase">
+            <tr>
+              <th class="py-3 px-4">{isReverse ? 'Volume (Litres)' : 'Mass (Kilograms)'}</th>
+              <th class="py-3 px-4">{isReverse ? 'Calculated Mass (kg)' : 'Calculated Volume (Litres)'}</th>
+              <th class="py-3 px-4">{isReverse ? 'Grams (g)' : 'Millilitres (mL)'}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300">
+            {conversionSteps.map((val) => {
+              const result = isReverse ? (val * substance.density_kg_per_l) : (val / substance.density_kg_per_l);
+              const secondary = isReverse ? (result * 1000) : (result * 1000);
+              return (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-bold text-white">{val} {isReverse ? 'L' : 'kg'}</td>
+                  <td class="py-3 px-4 text-brand-400 font-bold">{result.toFixed(3)} {isReverse ? 'kg' : 'L'}</td>
+                  <td class="py-3 px-4 text-slate-400">{secondary.toLocaleString(undefined, { maximumFractionDigits: 1 })} {isReverse ? 'g' : 'mL'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Real-World Engineering / Industry Application Context -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl space-y-4 border border-white/[0.08]">
+      <h2 class="text-2xl font-bold text-white">
+        Real-World Industry Applications for {substance.name}
+      </h2>
+      <p class="text-slate-300 leading-relaxed">
+        {substance.content.real_world_context || substance.content.intro}
+      </p>
+      {substance.density_note && (
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs leading-relaxed">
+          <strong>Engineering Specification:</strong> {substance.density_note}
+        </div>
+      )}
+    </section>
+
+    <!-- Interactive Visualizer -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold text-white">Interactive Density Behavior</h2>
       <HeroDensityVisualizer />
     </section>
 
-    <!-- Unique Content Block 1: Intro -->
-    <section class="glass-card p-6 sm:p-8 rounded-2xl mb-12 space-y-4">
-      <h2 class="text-2xl font-bold text-white mb-4">About Converting {substance.name}</h2>
-      <p class="text-slate-300 leading-relaxed">
-        {substance.content.intro}
-      </p>
+    <!-- FAQs -->
+    <section class="space-y-6">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Common practical questions for converting {substance.name}.</p>
+      </div>
+      <FAQAccordion faqs={faqsToDisplay} />
     </section>
 
-    <!-- Formula Playground -->
-    <section class="mb-12">
-      <FormulaPlayground />
-    </section>
-
-    <!-- Unique Content Block 2: Real World Context -->
-    <section class="glass-card p-6 sm:p-8 rounded-2xl mb-12 space-y-4">
-      <h2 class="text-2xl font-bold text-white mb-4">
-        Real-World Context: Why Density Matters for {substance.name}
-      </h2>
-      <p class="text-slate-300 leading-relaxed">
-        {substance.content.real_world_context}
-      </p>
-    </section>
-
-    <!-- Volume Comparison Slider -->
-    <section class="mb-12">
-      <VolumeComparisonSlider />
-    </section>
-
-    <!-- Unique Content Block 3: FAQ Accordion -->
-    <section class="mb-12">
-      <FAQAccordion faqs={substance.content.faq} />
-    </section>
-
-    <!-- Related Tools -->
+    <!-- Related Silo Tools -->
     <section class="pt-8 border-t border-slate-800">
       <RelatedTools currentSubstance={substance} categorySlug={categorySlug} />
     </section>

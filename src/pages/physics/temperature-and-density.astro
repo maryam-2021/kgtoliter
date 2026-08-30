@@ -1,0 +1,484 @@
+---
+// src/pages/physics/temperature-and-density.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import TemperatureDensitySlider from '../../components/interactive/TemperatureDensitySlider.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const waterTempCurve = [
+  { temp: '0°C (Ice / Freezing point)', state: 'Solid (Ice)', density: 0.9167, volPerKg: '1.0909 L', note: 'Hexagonal open lattice expansion' },
+  { temp: '0°C (Liquid Supercooled)', state: 'Liquid', density: 0.9998, volPerKg: '1.0002 L', note: 'Molecules closely packed' },
+  { temp: '3.98°C (~4°C Maximum Density)', state: 'Liquid', density: 1.0000, volPerKg: '1.0000 L', note: 'Peak density anomaly of water' },
+  { temp: '15°C (Standard Fuel Reference)', state: 'Liquid', density: 0.9991, volPerKg: '1.0009 L', note: 'Slight thermal expansion' },
+  { temp: '20°C (Room Ambient / Culinary)', state: 'Liquid', density: 0.9982, volPerKg: '1.0018 L', note: 'Standard kitchen reference point' },
+  { temp: '25°C (Standard Lab STP)', state: 'Liquid', density: 0.9970, volPerKg: '1.0030 L', note: 'IUPAC laboratory benchmark' },
+  { temp: '40°C (Warm Process Water)', state: 'Liquid', density: 0.9922, volPerKg: '1.0078 L', note: '0.78% volumetric expansion' },
+  { temp: '60°C (Domestic Hot Water)', state: 'Liquid', density: 0.9832, volPerKg: '1.0171 L', note: '1.71% volumetric expansion' },
+  { temp: '80°C (Industrial Wash)', state: 'Liquid', density: 0.9718, volPerKg: '1.0290 L', note: '2.90% volumetric expansion' },
+  { temp: '100°C (Boiling point @ 1 atm)', state: 'Liquid', density: 0.9584, volPerKg: '1.0434 L', note: '4.34% expanded before steam' },
+];
+
+const dieselTempCurve = [
+  { temp: '0°C (Winter Ambient)', density: 0.843, volPer10Kg: '11.86 L' },
+  { temp: '10°C (Cool Fuel Tank)', density: 0.836, volPer10Kg: '11.96 L' },
+  { temp: '15°C (EN 590 Baseline)', density: 0.832, volPer10Kg: '12.02 L' },
+  { temp: '20°C (Ambient Dispensing)', density: 0.828, volPer10Kg: '12.08 L' },
+  { temp: '40°C (Hot Engine Return / Summer)', density: 0.814, volPer10Kg: '12.29 L' },
+];
+
+const petrolTempCurve = [
+  { temp: '0°C (Winter Ambient)', density: 0.762, volPer10Kg: '13.12 L' },
+  { temp: '10°C (Cool Tank)', density: 0.753, volPer10Kg: '13.28 L' },
+  { temp: '15°C (EN 228 Standard)', density: 0.748, volPer10Kg: '13.37 L' },
+  { temp: '20°C (Ambient Pump)', density: 0.743, volPer10Kg: '13.46 L' },
+  { temp: '40°C (Summer Tank / Sun)', density: 0.723, volPer10Kg: '13.83 L' },
+];
+
+const ethanolTempCurve = [
+  { temp: '0°C (Cold Storage)', density: 0.806, volPer10Kg: '12.41 L' },
+  { temp: '10°C (Cool Ambient)', density: 0.798, volPer10Kg: '12.53 L' },
+  { temp: '15°C (Custody Reference)', density: 0.793, volPer10Kg: '12.61 L' },
+  { temp: '20°C (Lab Reference)', density: 0.789, volPer10Kg: '12.67 L' },
+  { temp: '40°C (Process Heat)', density: 0.772, volPer10Kg: '12.95 L' },
+];
+
+const oliveOilTempCurve = [
+  { temp: '10°C (Cool Pantry - Viscous)', density: 0.917, volPer10Kg: '10.91 L' },
+  { temp: '20°C (Standard Ambient Culinary)', density: 0.910, volPer10Kg: '10.99 L' },
+  { temp: '40°C (Warm Storage)', density: 0.896, volPer10Kg: '11.16 L' },
+  { temp: '80°C (Commercial Fryer Warmup)', density: 0.868, volPer10Kg: '11.52 L' },
+];
+
+const expansionCoefficients = [
+  { substance: 'Automotive Gasoline / Petrol', beta: '0.00110 /°C (1.10 × 10⁻³)', factorPer10C: '+1.10%', category: 'Fuels' },
+  { substance: 'Automotive Diesel (EN 590)', beta: '0.00085 /°C (0.85 × 10⁻³)', factorPer10C: '+0.85%', category: 'Fuels' },
+  { substance: 'Pure Ethanol (100%)', beta: '0.00112 /°C (1.12 × 10⁻³)', factorPer10C: '+1.12%', category: 'Solvents' },
+  { substance: 'Acetone', beta: '0.00143 /°C (1.43 × 10⁻³)', factorPer10C: '+1.43%', category: 'Solvents' },
+  { substance: 'Olive Oil / Vegetable Oils', beta: '0.00072 /°C (0.72 × 10⁻³)', factorPer10C: '+0.72%', category: 'Cooking' },
+  { substance: 'Ethylene Glycol (Coolant)', beta: '0.00057 /°C (0.57 × 10⁻³)', factorPer10C: '+0.57%', category: 'Automotive' },
+  { substance: 'Pure Water (@ 20°C)', beta: '0.00021 /°C (0.21 × 10⁻³)', factorPer10C: '+0.21%', category: 'Basic' },
+  { substance: 'Mercury (Liquid Metal)', beta: '0.00018 /°C (0.18 × 10⁻³)', factorPer10C: '+0.18%', category: 'Metals' },
+];
+
+const faqs = [
+  {
+    q: 'Does hot water weigh less than cold water?',
+    a: 'For a fixed volume (e.g. 1 litre), hot water weighs less than cold water because hot water expands and has lower density (1 L of water at 90°C weighs 0.965 kg, while 1 L at 4°C weighs 1.000 kg). However, for a fixed mass (e.g. 1 kg), hot and cold water have identical gravitational weight, but the hot water occupies greater physical volume.'
+  },
+  {
+    q: 'Why is fuel measured at 15°C at the pump?',
+    a: 'Petroleum products expand significantly when warmed (expanding by ~0.85% per 10°C). To eliminate financial discrepancies between winter deliveries and hot summer sales, international standards (ASTM Table 54B / EN 590) standardize all custody transfer billing back to 15°C (59°F).'
+  },
+  {
+    q: 'Does density increase or decrease with temperature for liquids?',
+    a: 'For almost all liquids, density decreases as temperature increases because heating adds kinetic energy, pushing molecules farther apart (thermal expansion). The only notable exception is pure water between 0°C and 4°C, where density increases as temperature rises due to breaking hydrogen ice-crystal bonds.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'How Temperature Affects Liquid Density (And Why It Matters for Conversion)',
+    description: 'Comprehensive physics and engineering guide on thermal expansion, liquid density-temperature curves, water anomaly, Volume Correction Factors (VCF), and ASTM 15°C fuel standards.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Physics Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/physics/temperature-and-density/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="How Temperature Affects Liquid Density (Physics & Conversion Guide)"
+  description="Master temperature vs liquid density: thermal expansion coefficient, water 4°C anomaly, density curves for diesel, petrol, ethanol, and ASTM 15°C standards."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/physics/temperature-and-density/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Physics & Engineering"
+      categorySlug="physics"
+      substanceName="Temperature and Liquid Density"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wider">
+        <span>🌡️ Physics Authority Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        How Temperature Affects Liquid Density <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-brand-400">(And Why It Matters for Conversion)</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Why does 1 kg of hot diesel take up more space than 1 kg of cold diesel? Understand volumetric thermal expansion, water's anomalous 4°C peak density, and how global industries apply temperature corrections.
+      </p>
+    </header>
+
+    <!-- Interactive Thermal Slider -->
+    <section class="space-y-4">
+      <TemperatureDensitySlider />
+    </section>
+
+    <!-- Main Content Guide Body -->
+    <article class="space-y-12">
+      
+      <!-- H2: Why Temperature Changes Density -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Why Temperature Changes Density
+        </h2>
+
+        <!-- H3: Thermal expansion -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-purple-300">Thermal Expansion: Molecules Move Farther Apart When Heated</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Temperature is a direct measurement of the average kinetic energy of molecules within a substance. In liquids, supplying heat causes molecules to vibrate and rotate more rapidly, colliding with greater force and overcoming intermolecular cohesive bonds.
+          </p>
+          <p class="text-slate-300 leading-relaxed">
+            This increased molecular agitation increases the average intermolecular distance—a physical phenomenon known as <strong class="text-white">volumetric thermal expansion</strong>.
+          </p>
+        </div>
+
+        <!-- H3: Inverse relationship -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-emerald-300">The Density-Temperature Inverse Relationship</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Because thermal expansion alters spatial volume while total mass remains strictly conserved, density (&rho; = m &divide; V) is inversely proportional to temperature:
+          </p>
+          <div class="p-4 rounded-xl bg-surface-900 font-mono text-center text-sm sm:text-base text-brand-400 border border-brand-500/20">
+            &Delta;V = V₀ &times; &beta; &times; &Delta;T &nbsp;&implies;&nbsp; &rho;(T) &approx; &rho;₀ &divide; [1 + &beta;(T - T₀)]
+          </div>
+          <p class="text-xs text-slate-400">
+            Where &beta; is the volumetric coefficient of thermal expansion (/°C), T₀ is reference temperature, and &rho;₀ is reference density.
+          </p>
+        </div>
+
+        <!-- H3: Why this matters (1kg diesel at 0C vs 40C) -->
+        <div class="p-5 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+          <h3 class="text-lg font-bold text-white">Why This Matters: 1 kg of Diesel at 0°C &ne; 1 kg at 40°C in Litres</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Consider 1,000 kg (1 metric tonne) of EN 590 diesel fuel:
+          </p>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono pt-1 text-slate-300">
+            <li class="p-3 bg-surface-950 rounded-lg border border-sky-500/20">
+              <span class="text-sky-400 font-bold block mb-1">Cold Fuel (0°C, &rho; = 0.843 kg/L):</span>
+              1,000 kg &divide; 0.843 = <strong>1,186.2 Litres</strong>
+            </li>
+            <li class="p-3 bg-surface-950 rounded-lg border border-amber-500/20">
+              <span class="text-amber-400 font-bold block mb-1">Hot Fuel (40°C, &rho; = 0.814 kg/L):</span>
+              1,000 kg &divide; 0.814 = <strong>1,228.5 Litres</strong>
+            </li>
+          </ul>
+          <p class="text-xs text-slate-400 pt-1">
+            The same 1,000 kg of fuel expands by <strong>+42.3 Litres</strong> simply by heating from 0°C to 40°C! Learn how to convert formulas in <a href="/kg-to-litres-guide/" class="text-brand-400 hover:underline">applying density to kg-to-litre conversions</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Water's Unique Density Behaviour -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Water's Unique Density Behaviour
+        </h2>
+
+        <!-- H3: Water 4C anomaly -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-cyan-300">Water Reaches Maximum Density at 3.98°C (~4°C)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Almost all fluids expand when heated and contract when cooled. Pure water is a famous exception to this rule due to its polar hydrogen bonds (H-O-H).
+          </p>
+          <p class="text-slate-300 leading-relaxed">
+            Between 0°C and 3.98°C, warming water actually causes it to <em>contract and become denser</em> as collapsing ice-like molecular clusters pack closer together. Water reaches its absolute peak density of <strong class="text-white">1.00000 kg/L (0.99997 g/cm³)</strong> at 3.98°C before standard thermal expansion takes over above 4°C.
+          </p>
+        </div>
+
+        <!-- H3: Why ice floats -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Why Ice is Less Dense Than Liquid Water (Floats)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            When liquid water freezes at 0°C, hydrogen bonds lock into a rigid, open hexagonal crystal lattice containing hollow micro-channels. This creates a sudden 9% volume expansion, lowering ice density to <strong class="text-white">0.9167 kg/L</strong>. Because ice is lighter than liquid water, it floats on lakes and oceans, insulating aquatic life below.
+          </p>
+        </div>
+
+        <!-- H3: Data table water 0C to 100C -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-lg font-bold text-white">Water Density &amp; Volume from 0°C to 100°C</h3>
+          <div class="overflow-x-auto rounded-xl border border-white/5">
+            <table class="w-full text-left text-sm font-sans">
+              <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+                <tr>
+                  <th class="py-3 px-4">Temperature</th>
+                  <th class="py-3 px-4 text-center">Physical State</th>
+                  <th class="py-3 px-4 text-right font-mono">Density (kg/L)</th>
+                  <th class="py-3 px-4 text-right font-mono">1 kg Volume</th>
+                  <th class="py-3 px-4">Thermodynamic Behavior</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
+                {waterTempCurve.map((row) => (
+                  <tr class="hover:bg-white/[0.02]">
+                    <td class="py-3 px-4 font-semibold text-white font-sans">{row.temp}</td>
+                    <td class="py-3 px-4 text-center text-slate-400 font-sans text-xs">{row.state}</td>
+                    <td class="py-3 px-4 text-right text-brand-400 font-bold">{row.density.toFixed(4)} kg/L</td>
+                    <td class="py-3 px-4 text-right text-emerald-400 font-bold">{row.volPerKg}</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans text-xs">{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400">
+            For dedicated water conversion calculators, visit our <a href="/substances/water/" class="text-brand-400 hover:underline">water density full guide</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Density-Temperature Tables for Common Substances -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Density-Temperature Tables for Common Substances
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- H3: Diesel -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-3">
+            <h3 class="text-lg font-bold text-amber-400">1. Diesel Fuel Density (EN 590)</h3>
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="text-slate-500 uppercase border-b border-white/5">
+                <tr><th class="py-1">Temp</th><th class="py-1 text-right">Density</th><th class="py-1 text-right">10 kg Volume</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                {dieselTempCurve.map((d) => (
+                  <tr>
+                    <td class="py-1.5 font-sans">{d.temp}</td>
+                    <td class="py-1.5 text-right text-brand-400 font-bold">{d.density} kg/L</td>
+                    <td class="py-1.5 text-right text-emerald-400">{d.volPer10Kg}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- H3: Petrol -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-3">
+            <h3 class="text-lg font-bold text-sky-400">2. Unleaded Petrol Density (95 RON)</h3>
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="text-slate-500 uppercase border-b border-white/5">
+                <tr><th class="py-1">Temp</th><th class="py-1 text-right">Density</th><th class="py-1 text-right">10 kg Volume</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                {petrolTempCurve.map((p) => (
+                  <tr>
+                    <td class="py-1.5 font-sans">{p.temp}</td>
+                    <td class="py-1.5 text-right text-brand-400 font-bold">{p.density} kg/L</td>
+                    <td class="py-1.5 text-right text-emerald-400">{p.volPer10Kg}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- H3: Ethanol -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-3">
+            <h3 class="text-lg font-bold text-purple-400">3. Pure Ethanol (100% Alcohol)</h3>
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="text-slate-500 uppercase border-b border-white/5">
+                <tr><th class="py-1">Temp</th><th class="py-1 text-right">Density</th><th class="py-1 text-right">10 kg Volume</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                {ethanolTempCurve.map((e) => (
+                  <tr>
+                    <td class="py-1.5 font-sans">{e.temp}</td>
+                    <td class="py-1.5 text-right text-brand-400 font-bold">{e.density} kg/L</td>
+                    <td class="py-1.5 text-right text-emerald-400">{e.volPer10Kg}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- H3: Olive Oil -->
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-white/5 space-y-3">
+            <h3 class="text-lg font-bold text-emerald-400">4. Extra Virgin Olive Oil</h3>
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="text-slate-500 uppercase border-b border-white/5">
+                <tr><th class="py-1">Temp</th><th class="py-1 text-right">Density</th><th class="py-1 text-right">10 kg Volume</th></tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                {oliveOilTempCurve.map((o) => (
+                  <tr>
+                    <td class="py-1.5 font-sans">{o.temp}</td>
+                    <td class="py-1.5 text-right text-brand-400 font-bold">{o.density} kg/L</td>
+                    <td class="py-1.5 text-right text-emerald-400">{o.volPer10Kg}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- H3: Honey Note -->
+        <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 text-xs text-slate-300 space-y-1">
+          <strong class="text-amber-300 font-bold block">5. Pure Honey Density &amp; Crystallisation Note</strong>
+          <p>
+            Pure natural honey shifts from 1.430 kg/L at 10°C to 1.420 kg/L at 20°C and 1.405 kg/L at 40°C. Storing honey below 14°C accelerates glucose crystallisation without altering total mass.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Industry Standard Temperature References -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Industry Standard Temperature References
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          
+          <!-- H3: Fuel standard 15C -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-amber-500/20 space-y-2">
+            <h3 class="text-base font-bold text-amber-400">15°C (59°F): Petroleum &amp; Fuel</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Standardized by <strong>ISO 8217</strong>, <strong>ASTM D1298</strong>, and <strong>EN 590</strong>. All commercial custody transfer meters convert volumetric deliveries back to standard 15°C mass values.
+            </p>
+          </div>
+
+          <!-- H3: Food standard 20C -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-purple-500/20 space-y-2">
+            <h3 class="text-base font-bold text-purple-400">20°C (68°F): Food &amp; Culinary</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Standardized by <strong>Codex Alimentarius</strong> and <strong>USDA FoodData</strong>. Room ambient temperature is used for food ingredient labeling, Brix refractor calibration, and nutrition panels.
+            </p>
+          </div>
+
+          <!-- H3: Lab standard 25C -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-cyan-500/20 space-y-2">
+            <h3 class="text-base font-bold text-cyan-400">25°C (77°F): Chemical STP</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Standardized by <strong>IUPAC</strong> and <strong>NIST</strong>. Standard Ambient Temperature and Pressure (SATP) for pure reagent chemistry and thermodynamic tables.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- H2: How to Apply Temperature Correction -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How to Apply Temperature Correction to Kg-to-Litre Conversions
+        </h2>
+
+        <!-- H3: VCF Formula -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Volume Correction Factor (VCF) Formula</h3>
+          <p class="text-slate-300 leading-relaxed">
+            In custody metering, the measured volume at operating temperature (T) is converted to standard volume at 15°C using the Volume Correction Factor (VCF):
+          </p>
+          <div class="p-4 rounded-xl bg-surface-900 font-mono text-center text-sm sm:text-base text-brand-400 border border-brand-500/20">
+            V<sub>15°C</sub> = V<sub>measured</sub> &times; VCF &nbsp;&nbsp;|&nbsp;&nbsp; VCF &approx; exp[-&beta; &times; (T - 15) &times; (1 + 0.8&beta;(T - 15))]
+          </div>
+        </div>
+
+        <!-- H3: Worked example -->
+        <div class="p-5 rounded-xl bg-surface-900/80 border border-emerald-500/20 space-y-2">
+          <h3 class="text-lg font-bold text-emerald-300">
+            Worked Example: 1,000 kg of Diesel at 35°C &rarr; Standard Litres at 15°C
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Suppose a road tanker dispenses diesel at an ambient operating temperature of 35°C (density = 0.815 kg/L):
+          </p>
+          <ul class="space-y-1 text-xs font-mono text-slate-300 pt-1">
+            <li>1. Measured physical volume dispensed: 1,000 kg &divide; 0.815 kg/L = <strong>1,226.99 Litres</strong></li>
+            <li>2. Temperature delta (&Delta;T): 35°C - 15°C = +20°C</li>
+            <li>3. VCF (ASTM Table 54B): 0.9830</li>
+            <li>4. Standard volume billed at 15°C: 1,226.99 L &times; 0.9830 = <strong>1,206.13 Litres</strong></li>
+          </ul>
+          <p class="text-xs text-slate-400 pt-1">
+            Learn more about custody reconciliation in our guide on <a href="/industry/kg-to-litres-fuel-management/" class="text-brand-400 hover:underline">fuel temperature correction in logistics</a> and <a href="/physics/density-formula/" class="text-brand-400 hover:underline">the density formula V=m÷ρ</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Thermal Expansion Coefficients Table -->
+      <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Thermal Expansion Coefficients Table (Volumetric &beta;)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Verified expansion coefficients (&beta;) per degree Celsius across standard industrial fluids.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Fluid / Liquid</th>
+                <th class="py-3.5 px-4 text-center">Category</th>
+                <th class="py-3.5 px-4 text-right font-mono">Expansion Coeff (&beta;)</th>
+                <th class="py-3.5 px-4 text-right font-mono">Volume Change / 10°C</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+              {expansionCoefficients.map((ec) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-semibold text-white font-sans">{ec.substance}</td>
+                  <td class="py-3 px-4 text-center text-xs text-slate-400 font-sans">{ec.category}</td>
+                  <td class="py-3 px-4 text-right text-brand-400 font-bold">{ec.beta}</td>
+                  <td class="py-3 px-4 text-right text-emerald-400 font-bold">{ec.factorPer10C}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- H2: Frequently Asked Questions -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Common questions on thermal effects and liquid density.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

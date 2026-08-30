@@ -1,0 +1,215 @@
+---
+// src/pages/physics/density-units-conversion.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const unitEquivalents = [
+  { unit: '1 kg/L (Kilograms per Litre)', equivKgL: 1.000, equivKgM3: '1,000 kg/m³', equivGmL: '1.000 g/mL', equivLbGal: '8.345 lb/gal', equivLbFt3: '62.428 lb/ft³', system: 'Metric / Fluid Trade' },
+  { unit: '1 g/mL (Grams per Millilitre)', equivKgL: 1.000, equivKgM3: '1,000 kg/m³', equivGmL: '1.000 g/mL', equivLbGal: '8.345 lb/gal', equivLbFt3: '62.428 lb/ft³', system: 'Metric / Laboratory' },
+  { unit: '1 g/cm³ (Grams per Cubic Centimetre)', equivKgL: 1.000, equivKgM3: '1,000 kg/m³', equivGmL: '1.000 g/mL', equivLbGal: '8.345 lb/gal', equivLbFt3: '62.428 lb/ft³', system: 'Metric / CGS Physics' },
+  { unit: '1,000 kg/m³ (Kilograms per Cubic Metre)', equivKgL: 1.000, equivKgM3: '1,000 kg/m³', equivGmL: '1.000 g/mL', equivLbGal: '8.345 lb/gal', equivLbFt3: '62.428 lb/ft³', system: 'SI Base Standard' },
+  { unit: '1 lb/gal (Pounds per US Gallon)', equivKgL: 0.1198, equivKgM3: '119.83 kg/m³', equivGmL: '0.1198 g/mL', equivLbGal: '1.000 lb/gal', equivLbFt3: '7.481 lb/ft³', system: 'US Customary Fluid' },
+  { unit: '1 lb/ft³ (Pounds per Cubic Foot)', equivKgL: 0.01602, equivKgM3: '16.018 kg/m³', equivGmL: '0.01602 g/mL', equivLbGal: '0.1337 lb/gal', equivLbFt3: '1.000 lb/ft³', system: 'Imperial / Civil Eng' },
+];
+
+const faqs = [
+  {
+    q: 'Why is 1 kg/L exactly equal to 1 g/mL and 1 g/cm³?',
+    a: 'Because 1 kilogram = 1,000 grams and 1 litre = 1,000 millilitres (or 1,000 cm³). Dividing (1,000 g) ÷ (1,000 mL) gives a mathematical ratio of exactly 1:1. Therefore: 1 kg/L = 1 g/mL = 1 g/cm³ = 1,000 kg/m³.'
+  },
+  {
+    q: 'What is the official SI base unit of density?',
+    a: 'The official SI coherent derived unit for density is kilograms per cubic metre (kg/m³). To convert from kg/L to SI kg/m³, multiply by 1,000 (e.g. diesel at 0.832 kg/L = 832 kg/m³).'
+  },
+  {
+    q: 'How many pounds per gallon (lb/gal) is 1 kg/L of liquid?',
+    a: '1 kg/L equals 8.3454 pounds per US liquid gallon (lb/gal). For water (1.000 kg/L), 1 US gallon weighs exactly 8.345 lbs. For diesel (0.832 kg/L), 1 US gallon weighs 6.943 lbs.'
+  },
+  {
+    q: 'How do you convert lb/ft³ to kg/m³?',
+    a: 'Multiply the value in lb/ft³ by 16.0185. For example, concrete at 150 lb/ft³ equals 150 × 16.0185 = 2,402.8 kg/m³ (2.40 kg/L).'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Kg/L vs g/mL vs kg/m³: Complete Density Units Conversion Guide',
+    description: 'Master all 6 common density units (kg/L, g/mL, g/cm³, kg/m³, lb/gal, lb/ft³). Exact conversion factors, SI vs Imperial formulas, and industry usage.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Physics Metrology Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/physics/density-units-conversion/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Convert Between Density Units',
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Identify Starting Unit',
+        text: 'Determine your input density unit (e.g. kg/L, g/cm³, kg/m³, or lb/gal).',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Apply Exact Metric Conversion Factor',
+        text: 'Note that 1 kg/L = 1 g/mL = 1 g/cm³. To convert to kg/m³, multiply by 1,000.',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Convert Between Metric and Imperial Units',
+        text: 'Multiply kg/L by 8.3454 to get lb/US gal, or multiply by 62.428 to get lb/ft³.',
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg/L vs g/mL vs kg/m³: Density Units Conversion Guide & Formulas"
+  description="Convert between all 6 density units: kg/L, g/mL, g/cm³, kg/m³, lb/gal, and lb/ft³. Learn why 1 kg/L = 1 g/mL = 1,000 kg/m³ with instant conversion factors."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/physics/density-units-conversion/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Physics & Engineering"
+      categorySlug="physics"
+      substanceName="Density Units Conversion Guide"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+        <span>📐 SI &amp; Imperial Metrology Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Kg/L vs. g/mL vs. kg/m³: <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-brand-400">Density Units Conversion</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Why does <strong class="text-white">1 kg/L = 1 g/mL = 1 g/cm³</strong>? Master the exact conversion factors between SI base units, laboratory chemistry scales, and US customary imperial units (lb/gal, lb/ft³).
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/density-reference/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          772+ Density Reference Hub &rarr;
+        </a>
+        <a
+          href="/physics/density-formula/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          Density Formula V=m÷ρ &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Main Content -->
+    <article class="space-y-12">
+      
+      <!-- Master Conversion Table -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Master Density Unit Conversion Matrix
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Equivalent values across all 6 standard global density units for 1 unit of density.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Starting Unit</th>
+                <th class="py-3.5 px-4 text-center font-mono">kg/L (g/cm³)</th>
+                <th class="py-3.5 px-4 text-center font-mono">kg/m³ (SI)</th>
+                <th class="py-3.5 px-4 text-right font-mono">lb/US gal</th>
+                <th class="py-3.5 px-4 text-right font-mono">lb/ft³</th>
+                <th class="py-3.5 px-4">Standard Usage</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+              {unitEquivalents.map((ue) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">{ue.unit}</td>
+                  <td class="py-3.5 px-4 text-center text-brand-400 font-bold">{ue.equivKgL}</td>
+                  <td class="py-3.5 px-4 text-center text-emerald-400">{ue.equivKgM3}</td>
+                  <td class="py-3.5 px-4 text-right text-purple-400">{ue.equivLbGal}</td>
+                  <td class="py-3.5 px-4 text-right text-amber-400">{ue.equivLbFt3}</td>
+                  <td class="py-3.5 px-4 text-slate-400 font-sans text-xs">{ue.system}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Why 1 kg/L = 1 g/mL -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+        <h2 class="text-2xl font-bold text-white">Why 1 kg/L = 1 g/mL = 1 g/cm³ (The Metric Harmony)</h2>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          The French metric system was intentionally designed so that units scale by powers of 10. Because 1 kilogram equals 1,000 grams and 1 litre equals 1,000 millilitres (or 1,000 cubic centimetres), dividing them results in an identical mathematical ratio:
+        </p>
+        <div class="p-4 rounded-xl bg-surface-900 font-mono text-center text-sm sm:text-base text-emerald-400 border border-emerald-500/20">
+          (1 kg / 1 L) = (1,000 g / 1,000 mL) = 1 g/mL = 1 g/cm³
+        </div>
+      </section>
+
+      <!-- FAQs -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Common metrology questions on density unit conversions.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

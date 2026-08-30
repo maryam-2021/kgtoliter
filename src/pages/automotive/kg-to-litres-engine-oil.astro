@@ -1,0 +1,434 @@
+---
+// src/pages/automotive/kg-to-litres-engine-oil.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const saeGrades = [
+  { grade: 'SAE 0W-20', type: 'Full Synthetic (PAO / Group IV)', densityRange: '0.840–0.850 kg/L', avgDensity: 0.845, volPer5Kg: '5.917 L', massPer5L: '4.225 kg', apiSpec: 'API SP / ILSAC GF-6A', note: 'Hybrid & modern eco-engines' },
+  { grade: 'SAE 5W-30', type: 'Full Synthetic / Synthetic Blend', densityRange: '0.848–0.868 kg/L', avgDensity: 0.855, volPer5Kg: '5.848 L', massPer5L: '4.275 kg', apiSpec: 'API SP / ACEA C3', note: 'Most common passenger car grade' },
+  { grade: 'SAE 5W-40', type: 'Full Synthetic (Group III/IV)', densityRange: '0.855–0.875 kg/L', avgDensity: 0.860, volPer5Kg: '5.814 L', massPer5L: '4.300 kg', apiSpec: 'API SN / ACEA A3/B4', note: 'European turbo petrol & diesels' },
+  { grade: 'SAE 10W-40', type: 'Semi-Synthetic (Part Synthetic)', densityRange: '0.865–0.885 kg/L', avgDensity: 0.872, volPer5Kg: '5.734 L', massPer5L: '4.360 kg', apiSpec: 'API SN / ACEA A3/B4', note: 'Older passenger cars & light commercial' },
+  { grade: 'SAE 15W-40', type: 'Heavy Duty Mineral (Group II)', densityRange: '0.870–0.890 kg/L', avgDensity: 0.880, volPer5Kg: '5.682 L', massPer5L: '4.400 kg', apiSpec: 'API CK-4 / CJ-4', note: 'Commercial trucks & agricultural diesel' },
+  { grade: 'SAE 20W-50', type: 'High Viscosity Conventional', densityRange: '0.880–0.900 kg/L', avgDensity: 0.890, volPer5Kg: '5.618 L', massPer5L: '4.450 kg', apiSpec: 'API SL / SJ', note: 'Classic engines & high-temp racing' },
+];
+
+const oilSteps = [1, 2, 4, 5, 10, 20, 25, 50, 100, 208, 1000]; // 208L is standard 55-gal drum
+
+const oilTempData = [
+  { temp: '-20°C (Sub-Zero Cold Soak)', density: 0.882, volPer5Kg: '5.669 L', desc: 'Thick honey-like flow, peak density' },
+  { temp: '0°C (Cold Winter Start)', density: 0.869, volPer5Kg: '5.754 L', desc: 'Cold crankcase oil' },
+  { temp: '15°C (Standard Lab Baseline)', density: 0.855, volPer5Kg: '5.848 L', desc: 'ASTM D4052 reference temperature' },
+  { temp: '40°C (ISO Kinematic Baseline)', density: 0.840, volPer5Kg: '5.952 L', desc: 'ASTM D445 viscosity benchmark' },
+  { temp: '100°C (Engine Operating Temp)', density: 0.802, volPer5Kg: '6.234 L', desc: 'Expanded hot oil in running crankcase' },
+];
+
+const faqs = [
+  {
+    q: 'How many litres is 5 kg of engine oil?',
+    a: '5 kg of standard 5W-30 synthetic engine oil equals 5.848 litres (5 kg ÷ 0.855 kg/L = 5.848 L or 5,848 mL). For 10W-40, 5 kg yields 5.734 litres; for heavy 20W-50, 5 kg yields 5.618 litres.'
+  },
+  {
+    q: 'What is the density of 5W-30 engine oil?',
+    a: 'Standard 5W-30 motor oil has an average density of 0.855 kg/L (855 kg/m³) at 15°C. Depending on the brand and base stock formulation (Group III synthetic vs Group IV PAO), density typically spans from 0.848 to 0.868 kg/L.'
+  },
+  {
+    q: 'Is engine oil heavier or lighter than water?',
+    a: 'Engine oil is significantly lighter than water. With a density between 0.840 and 0.900 kg/L, engine oil floats on water (1.000 kg/L). If engine oil contaminates a cooling system, it rises to the top of the expansion tank.'
+  },
+  {
+    q: 'Does engine oil grade affect its density?',
+    a: 'Yes. Lower viscosity synthetic grades (like 0W-20 at 0.845 kg/L) are composed of lighter synthetic polyalphaolefins (PAO), while higher viscosity grades (like 20W-50 mineral at 0.890 kg/L) contain heavier base oil stocks and denser polymer viscosity index (VI) improvers, making them ~5% heavier per litre.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Kg to Litres: Engine Oil Conversion Guide (All Viscosity Grades)',
+    description: 'Technical conversion guide for engine oils: SAE 0W-20 to 20W-50. Density ranges (0.840–0.900 kg/L), synthetic vs mineral base stocks, viscosity vs density physics, and temperature expansion.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Automotive Lubrication Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/automotive/kg-to-litres-engine-oil/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kg to Litres: Engine Oil Conversion Guide (All SAE Grades)"
+  description="Convert kg to litres for engine oil (SAE 0W-20, 5W-30, 5W-40, 10W-40, 15W-40, 20W-50). Density range (0.840–0.900 kg/L), temperature tables, worked formulas & calculator."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/automotive/kg-to-litres-engine-oil/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Automotive & Lubricants"
+      categorySlug="automotive"
+      substanceName="Engine Oil Conversion Guide"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+        <span>🚗 Domain D: Automotive Lubrication QDP</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Kg to Litres: <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-brand-400">Engine Oil Conversion Guide</span> (All Viscosity Grades)
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Whether you are ordering 208-litre bulk drums by the kilogram, balancing waste oil disposal manifests, or performing precise crankcase fill calculations, convert mass (<strong class="text-white">kg</strong>) to volume (<strong class="text-white">litres</strong>) across all SAE multigrade engine oils.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/litre-to-kg/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          convert litres of engine oil to kg &rarr;
+        </a>
+        <a
+          href="/automotive/kg-to-litres-coolant/"
+          class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-900 text-slate-300 hover:text-white border border-white/10 transition-all"
+        >
+          coolant and antifreeze density &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Core Interactive Calculator -->
+    <section class="space-y-4">
+      <CalculatorWidget defaultSubstanceId="engine-oil" />
+    </section>
+
+    <!-- Content Sections -->
+    <article class="space-y-12">
+      
+      <!-- H2: Engine Oil Density: The Key to Accurate Conversion -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Engine Oil Density: The Key to Accurate Conversion
+        </h2>
+
+        <!-- H3: Why engine oil density matters -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-amber-300">Why Engine Oil Density Matters for Kg-to-Litre Conversion</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Unlike water (where 1 kg equals 1 litre), all motor oils have densities well below 1.000 kg/L. If a mechanic assumes a 1:1 ratio and pours 5 kg of 5W-30 oil into an engine expecting 5.0 litres, they will actually deliver <strong>5.85 litres</strong>—overfilling the crankcase by nearly a whole litre and risking oil aeration, crankshaft foaming, and blown oil seals.
+          </p>
+        </div>
+
+        <!-- H3: Engine oil density range -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Engine Oil Density Range: 0.840–0.900 kg/L (Typical Values)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Per <strong class="text-white">SAE J300</strong> and <strong class="text-white">ASTM D4052</strong> specifications, commercial automotive engine oils exhibit physical densities between <strong>0.840 kg/L</strong> (light synthetic 0W-16/0W-20) and <strong>0.900 kg/L</strong> (heavy mono-grade or high-viscosity 20W-50). The benchmark industry average for standard multigrade oil is <strong>0.855 kg/L</strong>.
+          </p>
+        </div>
+
+        <!-- H3: Synthetic vs conventional vs semi-synthetic -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-emerald-300">Synthetic vs. Conventional vs. Semi-Synthetic Density Differences</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose text-xs">
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+              <strong class="text-sky-400 font-bold block">Full Synthetic (Group IV PAO / Ester):</strong>
+              <p class="text-slate-300">Density: <strong>0.840–0.855 kg/L</strong>. Synthesized uniform branched molecules pack loosely with superior cold flow, making synthetic oils the lightest per litre.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+              <strong class="text-purple-400 font-bold block">Semi-Synthetic (Synthetic Blend):</strong>
+              <p class="text-slate-300">Density: <strong>0.860–0.875 kg/L</strong>. A hybrid blend of Group III hydrocracked base oil and Group II mineral oil with intermediate molecular mass.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-surface-900/70 border border-white/5 space-y-2">
+              <strong class="text-amber-400 font-bold block">Conventional Mineral Oil (Group I/II):</strong>
+              <p class="text-slate-300">Density: <strong>0.875–0.900 kg/L</strong>. Refined straight from crude petroleum fractions containing diverse naphthenic and aromatic hydrocarbons.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: How to Convert Kg to Litres of Engine Oil -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          How to Convert Kg to Litres of Engine Oil
+        </h2>
+
+        <!-- H3: Formula -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">The Conversion Formula</h3>
+          <div class="p-6 rounded-xl bg-surface-900 border border-amber-500/30 text-center font-mono text-xl sm:text-2xl text-amber-400 font-bold">
+            Volume (L) = Mass (kg) &divide; Density (kg/L)
+          </div>
+          <p class="text-xs text-slate-400 text-center font-mono">
+            Or in reverse: <span class="text-white">Mass (kg) = Volume (L) &times; Density (kg/L)</span>
+          </p>
+        </div>
+
+        <!-- H3: Worked example 5kg 5W-30 -->
+        <div class="p-5 rounded-xl bg-surface-900/80 border border-brand-500/20 space-y-2">
+          <h3 class="text-lg font-bold text-brand-300">
+            Worked Example: 5 kg of 5W-30 Synthetic Engine Oil &rarr; Litres
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Standard 5W-30 full synthetic oil has a calibrated density of <strong>0.855 kg/L</strong> at 15°C:
+          </p>
+          <div class="p-3 bg-surface-950 rounded-lg font-mono text-xs text-brand-400 border border-white/5">
+            Volume (L) = 5.0 kg &divide; 0.855 kg/L = <strong>5.848 Litres (5,848 mL)</strong>
+          </div>
+          <p class="text-xs text-slate-400">
+            In reverse, a standard 5-litre commercial bottle of 5W-30 weighs: <code>5 L &times; 0.855 kg/L = 4.275 kg</code>.
+          </p>
+        </div>
+
+        <!-- H3: Conversion table all SAE grades -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-lg font-bold text-white">Engine Oil Mass to Volume Conversion Table (1 kg to 1,000 kg)</h3>
+          <div class="overflow-x-auto rounded-xl border border-white/5">
+            <table class="w-full text-left text-sm font-mono">
+              <thead class="bg-surface-900 text-xs text-slate-400 uppercase">
+                <tr>
+                  <th class="py-3 px-4">Mass (kg)</th>
+                  <th class="py-3 px-4 text-right">0W-20 (0.845 kg/L)</th>
+                  <th class="py-3 px-4 text-right">5W-30 (0.855 kg/L)</th>
+                  <th class="py-3 px-4 text-right">10W-40 (0.872 kg/L)</th>
+                  <th class="py-3 px-4 text-right">15W-40 (0.880 kg/L)</th>
+                  <th class="py-3 px-4 text-right">20W-50 (0.890 kg/L)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300 text-xs">
+                {oilSteps.map((kg) => (
+                  <tr class="hover:bg-white/[0.02]">
+                    <td class="py-3 px-4 font-bold text-white">{kg} kg</td>
+                    <td class="py-3 px-4 text-right text-brand-400">{(kg / 0.845).toFixed(2)} L</td>
+                    <td class="py-3 px-4 text-right text-emerald-400 font-bold">{(kg / 0.855).toFixed(2)} L</td>
+                    <td class="py-3 px-4 text-right text-purple-400">{(kg / 0.872).toFixed(2)} L</td>
+                    <td class="py-3 px-4 text-right text-amber-400">{(kg / 0.880).toFixed(2)} L</td>
+                    <td class="py-3 px-4 text-right text-slate-400">{(kg / 0.890).toFixed(2)} L</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- H2: Engine Oil Density by SAE Grade -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Engine Oil Density by SAE Viscosity Grade
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Physical density specifications measured at 15°C (59°F) per ASTM D4052.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">SAE Grade</th>
+                <th class="py-3.5 px-4 text-center font-mono">Density Range</th>
+                <th class="py-3.5 px-4 text-right font-mono">5 kg Volume</th>
+                <th class="py-3.5 px-4 text-right font-mono">5 Litre Mass</th>
+                <th class="py-3.5 px-4">Base Stock &amp; Application</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+              {saeGrades.map((g) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">
+                    {g.grade}
+                    <span class="text-slate-500 font-mono text-xs block">{g.apiSpec}</span>
+                  </td>
+                  <td class="py-3.5 px-4 text-center text-amber-400 font-bold">{g.densityRange}</td>
+                  <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">{g.volPer5Kg}</td>
+                  <td class="py-3.5 px-4 text-right text-purple-400 font-bold">{g.massPer5L}</td>
+                  <td class="py-3.5 px-4 text-slate-400 font-sans text-xs">{g.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- H2: Viscosity vs Density: What Is the Difference? -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Viscosity vs. Density: What Is the Difference?
+        </h2>
+
+        <!-- H3: Viscosity vs Density -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+            <h3 class="text-base font-bold text-amber-300">Viscosity (&eta; / cSt): Resistance to Fluid Flow</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Viscosity measures a fluid's internal friction and thickness (resistance to shear and flow). High viscosity oils (e.g. gear oil 75W-90) pour very slowly like cold syrup, but this slow flow is caused by long-chain polymer entanglement, not weight.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-brand-500/20 space-y-2">
+            <h3 class="text-base font-bold text-brand-300">Density (&rho; / kg/L): Mass Per Unit Volume</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Density measures gravitational matter packed into spatial volume. A heavy gear oil (viscosity 150 cSt, density 0.89 kg/L) pours much slower than water (viscosity 1.0 cSt, density 1.00 kg/L), yet gear oil is <em>11% lighter than water</em> and floats on top.
+            </p>
+          </div>
+        </div>
+
+        <!-- H3: Why thick oil isn't heavier -->
+        <div class="p-4 rounded-xl bg-surface-900/40 border border-white/5 text-xs text-slate-300">
+          <strong class="text-white block font-bold mb-1">Critical Engineering Takeaway:</strong>
+          Never confuse fluid thickness (viscosity) with gravitational weight (density). Liquid honey is both thick and dense (1.42 kg/L), while heavy motor oil is thick but light (0.88 kg/L).
+        </div>
+      </section>
+
+      <!-- H2: Temperature Effect on Engine Oil Density -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Temperature Effect on Engine Oil Density
+        </h2>
+
+        <!-- H3: Cold start vs 100C -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold text-white">Cold Start Density (0°C) vs. Operating Temperature (100°C)</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Engine oils have a volumetric thermal expansion coefficient of approximately &beta; = 0.00070 /°C. As engine oil heats up from cold morning ambient to operating crankcase temperature (100°C / 212°F), it expands in volume by <strong>over 7%</strong>, lowering operating density from 0.869 kg/L to 0.802 kg/L. Read our comprehensive analysis on <a href="/physics/temperature-and-density/" class="text-brand-400 hover:underline">how temperature changes oil density</a>.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3 px-4">Operating State</th>
+                <th class="py-3 px-4 text-center font-mono">Oil Density</th>
+                <th class="py-3 px-4 text-right font-mono">5 kg Volume</th>
+                <th class="py-3 px-4">Dipstick Expansion Impact</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
+              {oilTempData.map((ot) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3 px-4 font-semibold text-white font-sans">{ot.temp}</td>
+                  <td class="py-3 px-4 text-center text-amber-400 font-bold">{ot.density.toFixed(3)} kg/L</td>
+                  <td class="py-3 px-4 text-right text-emerald-400 font-bold">{ot.volPer5Kg}</td>
+                  <td class="py-3 px-4 text-slate-400 font-sans text-xs">{ot.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- H3: Practical dipstick checking -->
+        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 text-xs text-slate-300 space-y-1">
+          <strong class="text-white font-bold block">Practical Automotive Implication: Checking Oil Level Hot vs. Cold</strong>
+          <p>
+            Because hot oil expands by ~0.35 litres in a typical 5-litre crankcase, vehicle manufacturers calibrate dipsticks specifically for hot oil (checked 5 minutes after engine shutoff) or cold oil (before morning startup). Always follow the OEM owner's manual.
+          </p>
+        </div>
+      </section>
+
+      <!-- H2: Real-World Engine Oil Conversion Scenarios -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          Real-World Engine Oil Conversion Scenarios
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          
+          <!-- H3: Ordering oil by the kg -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-amber-400">1. Commercial Drum Purchasing</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Industrial lubricant distributors bill 208-litre (55 US gal) drums by net weight. A 208L drum of 15W-40 contains <code>208 L &times; 0.880 kg/L = 183.04 kg</code> of net lubricant (plus ~18 kg steel drum tare).
+            </p>
+          </div>
+
+          <!-- H3: Waste oil weight -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-sky-400">2. Waste Oil Environmental Disposal</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Licensed hazardous waste disposal contractors weigh collection tankers over weighbridges in kilograms. Used engine oil contains soot and fuel dilution, shifting density to ~0.895 kg/L on waste manifests.
+            </p>
+          </div>
+
+          <!-- H3: Fleet maintenance -->
+          <div class="p-4 rounded-xl bg-surface-900/80 border border-white/5 space-y-2">
+            <h3 class="text-base font-bold text-emerald-400">3. Fleet Maintenance Logistics</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Commercial bus and truck fleet depots meter bulk oil dispensing electronically, reconciling IBC tote deliveries in metric tonnes against individual vehicle sump litres.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Related Silo Tools -->
+      <section class="glass-card bg-surface-950/80 border border-brand-500/20 rounded-2xl p-6 sm:p-8 space-y-4">
+        <h2 class="text-xl font-bold text-white">Explore Automotive &amp; Fluid Knowledge Network</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <a href="/automotive/kg-to-litres-coolant/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-cyan-500/40 transition-all block">
+            <span class="text-xs font-mono text-cyan-400 block mb-1">Coolant &amp; Antifreeze</span>
+            <span class="text-sm font-bold text-white block">Coolant: Kg to Litres &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">50/50 ethylene glycol solutions (1.065 kg/L).</span>
+          </a>
+          <a href="/automotive/kg-to-litres-brake-fluid/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-amber-500/40 transition-all block">
+            <span class="text-xs font-mono text-amber-400 block mb-1">Brake Fluid</span>
+            <span class="text-sm font-bold text-white block">Brake Fluid: Kg to Litres &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">DOT 3, DOT 4, and DOT 5.1 glycol fluids.</span>
+          </a>
+          <a href="/density-reference/" class="p-4 rounded-xl bg-surface-900/60 border border-white/5 hover:border-emerald-500/40 transition-all block">
+            <span class="text-xs font-mono text-emerald-400 block mb-1">Master Database</span>
+            <span class="text-sm font-bold text-white block">Full Lubricant Database &rarr;</span>
+            <span class="text-xs text-slate-400 mt-1 block">Explore 772+ verified liquid densities.</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- H2: Frequently Asked Questions -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Common practical questions on engine oil mass-to-volume conversions.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>

@@ -1,0 +1,174 @@
+---
+// src/pages/fuels/diesel-vs-petrol-density.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import VolumeComparisonSlider from '../../components/interactive/VolumeComparisonSlider.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import { comparisonGuides } from '../../data/comparisonGuides';
+
+const guide = comparisonGuides.find(g => g.slug === 'diesel-vs-petrol-density')!;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Diesel vs Petrol (Gasoline) Density: Fuel Comparison Guide',
+    description: 'Compare diesel vs petrol (gasoline) density. Learn why diesel (0.832 kg/L) is heavier than petrol (0.748 kg/L) and how density affects fuel economy.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/fuels/diesel-vs-petrol-density/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guide.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Diesel vs Petrol Density: Complete Fuel Comparison Guide"
+  description="Compare automotive diesel vs petrol (gasoline) density. Energy density per litre, EN 590 vs EN 228 specs, and volume per tonne calculations."
+  canonicalUrl="https://kgtoliter.com/fuels/diesel-vs-petrol-density/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-10 max-w-5xl space-y-10">
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Fuels & Hydrocarbons"
+      categorySlug="fuels"
+      substanceName="Diesel vs Petrol Density"
+    />
+
+    <!-- Header Block -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+        <span>⛽ Domain C: Fuels Cluster</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+        Diesel vs Petrol (Gasoline): <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-brand-400">Density Comparison</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        {guide.subtitle}
+      </p>
+    </header>
+
+    <!-- Side by Side Dual Visual Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card bg-surface-950/90 border border-brand-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <span class="text-xs font-mono font-bold text-brand-400 uppercase tracking-wider">{guide.itemA.category}</span>
+          <span class="text-xs font-mono text-slate-400">{guide.itemA.temp}°C Ref</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-white">{guide.itemA.name}</h2>
+          <p class="text-xs text-slate-400 mt-1">{guide.itemA.notes}</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center pt-2">
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">Density</span>
+            <span class="text-sm font-bold text-brand-400 font-mono block mt-1">{guide.itemA.density.toFixed(3)} kg/L</span>
+          </div>
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">1 Litre</span>
+            <span class="text-sm font-bold text-white font-mono block mt-1">{guide.itemA.massPerLiter}</span>
+          </div>
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">1 kg Volume</span>
+            <span class="text-sm font-bold text-emerald-400 font-mono block mt-1">{guide.itemA.volumePerKg}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card bg-surface-950/90 border border-amber-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">{guide.itemB.category}</span>
+          <span class="text-xs font-mono text-slate-400">{guide.itemB.temp}°C Ref</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-white">{guide.itemB.name}</h2>
+          <p class="text-xs text-slate-400 mt-1">{guide.itemB.notes}</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center pt-2">
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">Density</span>
+            <span class="text-sm font-bold text-amber-400 font-mono block mt-1">{guide.itemB.density.toFixed(3)} kg/L</span>
+          </div>
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">1 Litre</span>
+            <span class="text-sm font-bold text-white font-mono block mt-1">{guide.itemB.massPerLiter}</span>
+          </div>
+          <div class="p-3 rounded-xl bg-surface-900 border border-white/5">
+            <span class="text-[10px] font-mono text-slate-500 uppercase block">1 kg Volume</span>
+            <span class="text-sm font-bold text-emerald-400 font-mono block mt-1">{guide.itemB.volumePerKg}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparative Table -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
+      <h2 class="text-2xl font-bold text-white">Fuel Engineering Comparison Matrix</h2>
+      <div class="overflow-x-auto rounded-xl border border-white/5">
+        <table class="w-full text-left text-sm font-sans">
+          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+            <tr>
+              {guide.comparisonTable.headers.map((h) => (
+                <th class="py-3.5 px-4">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
+            {guide.comparisonTable.rows.map((row) => (
+              <tr class="hover:bg-white/[0.02]">
+                {row.map((cell, idx) => (
+                  <td class={`py-3.5 px-4 ${idx === 0 ? 'font-semibold text-white font-sans' : idx === 3 ? 'text-amber-400 font-sans' : ''}`}>
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Interactive Visualizer -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-bold text-white">Interactive Fuel Volume Comparison</h2>
+      <VolumeComparisonSlider />
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-4">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Fuel density and mass-to-volume FAQs.</p>
+      </div>
+      <FAQAccordion faqs={guide.faqs} />
+    </section>
+
+  </main>
+</BaseLayout>

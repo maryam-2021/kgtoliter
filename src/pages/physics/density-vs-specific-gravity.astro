@@ -1,0 +1,214 @@
+---
+// src/pages/physics/density-vs-specific-gravity.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
+import { useI18n } from '../../utils/i18n';
+
+const { locale = 'en' } = Astro.params;
+const { t } = useI18n(locale);
+
+const scaleComparisons = [
+  { scale: 'Density (ρ)', unit: 'kg/L or kg/m³', reference: 'Absolute Mass per Unit Volume', formula: 'ρ = m / V', primaryIndustry: 'Physics, Chemical Engineering, General Trade' },
+  { scale: 'Specific Gravity (SG / RD)', unit: 'Dimensionless (ratio)', reference: 'Pure Water @ 4°C (1.000 kg/L)', formula: 'SG = ρ_substance / ρ_water', primaryIndustry: 'Hydraulics, Battery Testing, Mining Slurries' },
+  { scale: 'API Gravity (°API)', unit: 'Degrees API', reference: 'Water @ 60°F (15.56°C)', formula: '°API = (141.5 / SG @ 60°F) - 131.5', primaryIndustry: 'Global Petroleum, Crude Oil & Refining' },
+  { scale: 'Brix Scale (°Bx)', unit: 'Degrees Brix (% sucrose wt)', reference: 'Pure Sucrose Solution @ 20°C', formula: '1° Bx = 1g sucrose / 100g aqueous', primaryIndustry: 'Wine, Brewing, Sugar Refining, Fruit Juices' },
+  { scale: 'Baumé Scale (°Bé Heavy)', unit: 'Degrees Baumé', reference: 'Water (0°Bé) & 15% NaCl (15°Bé)', formula: '°Bé = 145 - (145 / SG)', primaryIndustry: 'Industrial Mineral Acids, Heavy Syrups, Electroplating' },
+  { scale: 'Plato Scale (°P)', unit: 'Degrees Plato', reference: 'Specific gravity of beer wort', formula: '°P ≈ °Bx ≈ (SG - 1) × 1000 / 4', primaryIndustry: 'Commercial Brewing & Distilling' },
+];
+
+const faqs = [
+  {
+    q: 'What is the fundamental difference between density and specific gravity?',
+    a: 'Density is an absolute physical property with units (e.g. 0.832 kg/L or 832 kg/m³), measuring mass per unit volume. Specific gravity (SG), or relative density, is a dimensionless ratio comparing the substance density against pure water at a reference temperature (SG = 0.832 / 1.000 = 0.832).'
+  },
+  {
+    q: 'How do you convert Specific Gravity to kg/m³ and kg/L?',
+    a: 'Because the reference density of water is 1.000 kg/L (or 1,000 kg/m³), converting is direct: Density (kg/L) = Specific Gravity × 1.000. Density (kg/m³) = Specific Gravity × 1,000.'
+  },
+  {
+    q: 'Why does higher API gravity mean a lighter petroleum fuel?',
+    a: 'The API gravity formula has an inverse relationship with specific gravity: °API = (141.5 / SG) - 131.5. Heavy crude oil (SG = 0.95) yields a low 17.4° API, while light gasoline (SG = 0.74) yields a high 59.7° API. Higher API numbers represent lighter, more volatile, and more valuable fuels.'
+  },
+  {
+    q: 'What is Baumé scale and where is it used today?',
+    a: 'Developed by French chemist Antoine Baumé in 1768, the Baumé scale (°Bé) measures density via hydrometer. For liquids heavier than water (like 66° Bé concentrated sulfuric acid or heavy sugar syrups), °Bé = 145 - (145 / SG).'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Density vs Specific Gravity: The Complete Comparison & Conversion Guide',
+    description: 'Master the difference between density (kg/L, kg/m³) and specific gravity (SG). Conversion formulas for API Gravity, Baumé, and Brix scales with industry usage.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Physics & Metrology Team',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/physics/density-vs-specific-gravity/',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Density vs Specific Gravity: Formulas, Scales (API, Brix, Baumé)"
+  description="Learn the difference between density (kg/L) and specific gravity (dimensionless SG). Formulas and conversions for API Gravity, Brix, and Baumé scales across industries."
+  locale={locale}
+  canonicalUrl="https://kgtoliter.com/physics/density-vs-specific-gravity/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-12">
+    
+    <!-- Breadcrumbs -->
+    <BreadcrumbNav
+      categoryName="Physics & Engineering"
+      categorySlug="physics"
+      substanceName="Density vs Specific Gravity"
+    />
+
+    <!-- Hero Header (H1) -->
+    <header class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">
+        <span>⚖️ Metrology & Physics Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+        Density vs. Specific Gravity: <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-brand-400">Comparison &amp; Formulas</span>
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        While density measures absolute mass per unit of physical volume, specific gravity (SG) expresses relative density against pure water. Understand the mathematical relationship and specialized industry hydrometer scales.
+      </p>
+    </header>
+
+    <!-- Interactive Solver -->
+    <section class="space-y-4">
+      <CustomDensitySolver />
+    </section>
+
+    <!-- Main Content -->
+    <article class="space-y-12">
+      
+      <!-- Core Conceptual Difference -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+          What is the Difference Between Density and Specific Gravity?
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-brand-500/20 space-y-2">
+            <h3 class="text-lg font-bold text-brand-300">Density (&rho;) — Absolute Measurement</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Density is a dimensional physical quantity defined as mass divided by volume. It requires physical units such as <strong>kg/L</strong>, <strong>g/cm³</strong>, or <strong>kg/m³</strong>. For example, standard diesel fuel has a density of <strong>0.832 kg/L</strong>. Review our master guide on <a href="/physics/density-formula/" class="text-brand-400 hover:underline">the density formula V=m÷ρ</a>.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-surface-900/60 border border-cyan-500/20 space-y-2">
+            <h3 class="text-lg font-bold text-cyan-300">Specific Gravity (SG) — Relative Dimensionless Ratio</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Specific gravity (also called relative density) is a pure number without units. It compares the density of a substance directly against the density of pure reference water (1.000 kg/L at 4°C): <code>SG = 0.832 kg/L ÷ 1.000 kg/L = 0.832</code>. Check out <a href="/fuels/kg-to-litres-diesel/" class="text-cyan-300 hover:underline">diesel mass to volume conversions</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Specialized Industry Scales -->
+      <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+            Specialized Hydrometer Density Scales by Industry
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            How major global industries express relative density and concentration.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/5">
+          <table class="w-full text-left text-sm font-sans">
+            <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+              <tr>
+                <th class="py-3.5 px-4">Scale Name</th>
+                <th class="py-3.5 px-4">Units</th>
+                <th class="py-3.5 px-4 font-mono">Conversion Formula</th>
+                <th class="py-3.5 px-4">Primary Industry</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-300 text-xs sm:text-sm">
+              {scaleComparisons.map((sc) => (
+                <tr class="hover:bg-white/[0.02]">
+                  <td class="py-3.5 px-4 font-semibold text-white font-sans">{sc.scale}</td>
+                  <td class="py-3.5 px-4 text-slate-400 font-mono">{sc.unit}</td>
+                  <td class="py-3.5 px-4 font-mono text-cyan-400">{sc.formula}</td>
+                  <td class="py-3.5 px-4 text-slate-300 font-sans text-xs">{sc.primaryIndustry}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Detailed Scale Breakdown -->
+      <section class="space-y-6">
+        
+        <!-- API Gravity -->
+        <div class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 space-y-3">
+          <h3 class="text-xl font-bold text-amber-400">1. API Gravity (°API) in Petroleum Logistics</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            The American Petroleum Institute (°API) scale is universally used in crude oil pricing. Water has an API gravity of 10.0° API. Light crude oils (e.g. Brent, WTI) exceed 38° API (SG &lt; 0.835), whereas heavy bitumen drops below 20° API (SG &gt; 0.934).
+          </p>
+        </div>
+
+        <!-- Brix Scale -->
+        <div class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 space-y-3">
+          <h3 class="text-xl font-bold text-purple-400">2. Brix Scale (°Bx) in Food, Wine &amp; Agriculture</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Named after Adolf Brix, 1° Brix represents 1 gram of dissolved sucrose sugar per 100 grams of aqueous solution. Used with optical refractometers to determine grape ripeness, honey quality (>80° Bx), and maple syrup density (66° Bx).
+          </p>
+        </div>
+
+        <!-- Baumé Scale -->
+        <div class="glass-card bg-surface-950/70 border border-white/[0.08] rounded-2xl p-6 space-y-3">
+          <h3 class="text-xl font-bold text-emerald-400">3. Baumé Scale (°Bé) in Chemical Manufacturing</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Widely used in industrial acid production. For example, commercial 93.2% sulfuric acid is traditionally sold as 66° Baumé (SG = 1.835), providing a quick hydrometer quality check without chemical titration.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- FAQs -->
+      <section class="space-y-6" id="faq">
+        <div class="text-center space-y-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <p class="text-slate-400 text-sm">Metrology questions on specific gravity and relative density.</p>
+        </div>
+        <FAQAccordion faqs={faqs} />
+      </section>
+
+    </article>
+  </main>
+</BaseLayout>
