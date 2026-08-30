@@ -11,8 +11,21 @@ import { useI18n } from '../utils/i18n';
 const { locale = 'en' } = Astro.params;
 const { t } = useI18n(locale);
 
+// 1 to 20 kg Comparison Matrix across the 5 benchmark liquids (like Inch Calculator, with high-precision physics)
+const oneToTwentyMatrix = Array.from({ length: 20 }, (_, i) => {
+  const kg = i + 1;
+  return {
+    kg,
+    water: (kg / 1.000).toFixed(3),
+    milk: (kg / 1.030).toFixed(3),
+    oil: (kg / 0.910).toFixed(3),
+    gasoline: (kg / 0.748).toFixed(3),
+    diesel: (kg / 0.832).toFixed(3),
+  };
+});
+
 const keySubstances = [
-  { name: 'Pure Water', density: 1.000, category: 'basic', id: 'water', vol1Kg: '1.000 L', vol5Kg: '5.000 L', vol10Kg: '10.000 L', note: 'Standard at 20°C' },
+  { name: 'Pure Water', density: 1.000, category: 'basic', id: 'water', vol1Kg: '1.000 L', vol5Kg: '5.000 L', vol10Kg: '10.000 L', note: 'Standard at 20°C (1 kg = 1 L)' },
   { name: 'Whole Milk (3.5% fat)', density: 1.030, category: 'basic', id: 'milk', vol1Kg: '0.971 L', vol5Kg: '4.854 L', vol10Kg: '9.709 L', note: 'Dairy standard' },
   { name: 'Extra Virgin Olive Oil', density: 0.910, category: 'cooking', id: 'olive-oil', vol1Kg: '1.099 L', vol5Kg: '5.495 L', vol10Kg: '10.989 L', note: 'Culinary oil' },
   { name: 'Sunflower Cooking Oil', density: 0.920, category: 'cooking', id: 'sunflower-oil', vol1Kg: '1.087 L', vol5Kg: '5.435 L', vol10Kg: '10.870 L', note: 'Frying oil' },
@@ -26,16 +39,23 @@ const keySubstances = [
   { name: 'Sulfuric Acid (98% Reagent)', density: 1.836, category: 'industrial', id: 'sulfuric-acid', vol1Kg: '0.545 L', vol5Kg: '2.723 L', vol10Kg: '5.447 L', note: 'Heavy mineral acid' },
 ];
 
-const conversionSteps = [1, 2, 3, 5, 10, 15, 20, 25, 50, 100, 250, 500, 1000];
+const crossUnitConversions = [
+  { name: 'Kg to Millilitres (mL)', desc: '1 kg water = 1,000 mL', href: '/physics/density-units-conversion/' },
+  { name: 'Kg to Gallons (US / UK)', desc: '1 kg water = 0.264 US gal / 0.220 UK gal', href: '/tools/' },
+  { name: 'Kg to Fluid Ounces (fl oz)', desc: '1 kg water = 33.814 fl oz', href: '/tools/' },
+  { name: 'Kg to Cups & Tablespoons', desc: 'Culinary volumetric conversion', href: '/industry/kg-to-litres-cooking/' },
+  { name: 'Kg to Grams (g) & Pounds (lb)', desc: 'Mass to mass unit scaling', href: '/physics/density-units-conversion/' },
+  { name: 'Liters to Kg (Reverse)', desc: 'Calculate weight from liquid volume', href: '/litre-to-kg/' },
+];
 
 const faqs = [
   {
     q: 'How do you convert kg to liters?',
-    a: 'To convert kilograms (kg) to liters (L), divide the mass in kilograms by the density of the substance in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For example, 10 kg of diesel (density 0.832 kg/L) equals 10 ÷ 0.832 = 12.019 liters.'
+    a: 'To convert kilograms (kg) to liters (L), divide the mass in kilograms by the density of the substance in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For example, 5 kg of diesel (density 0.832 kg/L) equals 5 ÷ 0.832 = 6.010 liters.'
   },
   {
     q: 'Is 1 kg always equal to 1 liter?',
-    a: 'No. 1 kg equals exactly 1 liter only for pure water at 4°C to 20°C (density 1.000 kg/L). For lighter liquids like gasoline (0.748 kg/L) or olive oil (0.910 kg/L), 1 kg occupies more than 1 liter (1.34 L and 1.10 L respectively). For heavier liquids like honey (1.420 kg/L), 1 kg occupies only 0.704 liters.'
+    a: 'No. 1 kg equals exactly 1 liter only for pure water at 4°C to 20°C because water has a density of 1.000 kg/L. For lighter liquids like gasoline (0.748 kg/L) or olive oil (0.910 kg/L), 1 kg occupies more than 1 liter (1.34 L and 1.10 L respectively). For heavier liquids like honey (1.420 kg/L), 1 kg occupies only 0.704 liters.'
   },
   {
     q: 'What is the difference between liters and litres?',
@@ -48,6 +68,10 @@ const faqs = [
   {
     q: 'How do you convert liters back to kg (reverse conversion)?',
     a: 'To convert liters to kilograms, multiply the volume in liters by the substance density: Mass (kg) = Volume (L) × Density (kg/L). For example, 20 liters of milk weighs 20 × 1.030 = 20.60 kg.'
+  },
+  {
+    q: 'Why does temperature change the kg to liters calculation?',
+    a: 'Thermal expansion causes liquids to expand as they warm up. While the mass in kilograms remains unchanged, the molecules spread out, increasing the volume in liters and lowering physical density. Petroleum fuels expand ~0.85% per 10°C, which is why fuel billing is standardized to 15°C.'
   }
 ];
 
@@ -64,6 +88,30 @@ const pageSchema = [
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'KG to Liters Converter: Mass to Volume Conversion Guide & Calculator',
+    description: 'Convert kilograms to liters for water, milk, cooking oil, fuels, and chemicals. Learn the exact density formula, worked examples, 1-20 kg conversion table, and physics definitions.',
+    author: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Metrology & Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://kgtoliter.com/kg-to-liters-converter/',
     },
   },
   {
@@ -104,7 +152,7 @@ const pageSchema = [
 ---
 
 <BaseLayout
-  title="KG to Liters Converter | Fast Mass to Volume Calculator"
+  title="KG to Liters Converter | Free Mass to Volume Calculator"
   description="Convert kilograms (kg) to liters (L) instantly. Free online converter for water, milk, cooking oil, diesel, petrol, and 772+ substances with step-by-step formulas."
   locale={locale}
   canonicalUrl="https://kgtoliter.com/kg-to-liters-converter/"
@@ -120,15 +168,15 @@ const pageSchema = [
     />
 
     <!-- Hero Header (H1) -->
-    <header class="text-center space-y-4 max-w-3xl mx-auto">
+    <header class="text-center space-y-4 max-w-3xl mx-auto" id="idx_page_heading">
       <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider">
-        <span>⚡ Instant Mass to Volume Tool</span>
+        <span>⚡ Instant Mass to Volume Calculator</span>
       </div>
       <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
         KG to Liters Converter <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-emerald-400">(Mass to Volume Calculator)</span>
       </h1>
       <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-        Convert kilograms (<strong class="text-white">kg</strong>) to liters (<strong class="text-white">L</strong>) instantly with high accuracy. Select from over <strong class="text-white">772+ verified substances</strong> or enter a custom density.
+        Use our free <strong class="text-white">kg to liters converter</strong> to calculate the exact volume in liters (<strong class="text-white">L</strong>) from weight in kilograms (<strong class="text-white">kg</strong>). Enter your mass below and select from <strong class="text-white">772+ verified substances</strong> or enter a custom density.
       </p>
 
       <!-- Quick Action Buttons -->
@@ -140,110 +188,129 @@ const pageSchema = [
           🔄 Reverse: Liters to KG Converter &rarr;
         </a>
         <a
-          href="/kg-to-litres-guide/"
+          href="/what-is-density/"
+          class="px-4 py-2 rounded-xl bg-surface-900 border border-purple-500/30 text-purple-400 text-xs font-semibold hover:bg-purple-500 hover:text-slate-950 transition-all shadow-sm"
+        >
+          ⚛️ What Is Density? (Physics) &rarr;
+        </a>
+        <a
+          href="/density-reference/"
           class="px-4 py-2 rounded-xl bg-surface-900 border border-brand-500/30 text-brand-400 text-xs font-semibold hover:bg-brand-500 hover:text-slate-950 transition-all shadow-sm"
         >
-          📖 Complete Conversion Guide &rarr;
+          📖 772+ Substance Database &rarr;
         </a>
       </div>
     </header>
 
+    <!-- Table of Contents Anchor Box -->
+    <nav class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-5 text-xs text-slate-300">
+      <span class="font-bold text-white uppercase tracking-wider font-mono block mb-2">On this page:</span>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono">
+        <a href="#how-to-convert" class="hover:text-brand-400 hover:underline">1. How to Convert &rarr;</a>
+        <a href="#formula" class="hover:text-brand-400 hover:underline">2. Conversion Formula &rarr;</a>
+        <a href="#conversion-table" class="hover:text-brand-400 hover:underline">3. 1–20 kg Table &rarr;</a>
+        <a href="#when-to-convert" class="hover:text-brand-400 hover:underline">4. Applications &rarr;</a>
+        <a href="#what-is-a-kilogram" class="hover:text-brand-400 hover:underline">5. What Is a Kg? &rarr;</a>
+        <a href="#what-is-a-liter" class="hover:text-brand-400 hover:underline">6. What Is a Liter? &rarr;</a>
+        <a href="#faq" class="hover:text-brand-400 hover:underline">7. FAQ &rarr;</a>
+        <a href="#references" class="hover:text-brand-400 hover:underline">8. References &rarr;</a>
+      </div>
+    </nav>
+
     <!-- Core Interactive Calculator Widget -->
-    <section class="space-y-4">
+    <section class="space-y-4" id="calculator-root">
       <CalculatorWidget defaultMass={1} defaultSubstanceId="water" />
     </section>
 
     <!-- 3-Way Multi-Unit Solver -->
     <section class="space-y-4">
       <div class="text-center space-y-1">
-        <h2 class="text-xl sm:text-2xl font-bold text-white">Custom Density &amp; 3-Way Solver</h2>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Custom Density &amp; 3-Way Multi-Unit Solver</h2>
         <p class="text-xs sm:text-sm text-slate-400">Calculate Volume, Mass, or Density with temperature correction.</p>
       </div>
       <CustomDensitySolver />
     </section>
 
-    <!-- Conversion Formula & How It Works -->
-    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+    <!-- How to Convert Kilograms to Liters -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4" id="how-to-convert">
       <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
-        How the KG to Liters Converter Works
+        How to Convert Kilograms to Liters
+      </h2>
+      <p class="text-slate-300 leading-relaxed">
+        Since <strong class="text-white">kilograms</strong> are a unit of mass and <strong class="text-white">liters</strong> are a unit of volume, they measure completely different physical dimensions. To convert between mass and volume, we must account for the <strong class="text-white">density (&rho;)</strong> of the substance.
+      </p>
+      <p class="text-slate-300 leading-relaxed text-sm">
+        Density represents the amount of mass packed into a given unit of spatial volume. Therefore, to convert kilograms to liters of any liquid, powder, or solid material, you must <strong>divide the mass in kilograms by its density in kg/L</strong>.
+      </p>
+    </section>
+
+    <!-- Kilograms to Liters Formula -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6" id="formula">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+        Kilograms to Liters Formula
       </h2>
       <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
-        Because kilograms measure gravitational mass and liters measure three-dimensional volume, the conversion requires the physical density of the substance:
+        To convert a measurement in kilograms to liters, divide the weight by the density of the ingredient or material in kilograms per liter (kg/L):
       </p>
 
       <div class="p-6 rounded-xl bg-surface-900 border border-brand-500/30 text-center space-y-2">
         <div class="text-2xl sm:text-3xl font-mono font-black text-brand-400">
-          Volume (Liters) = Mass (kg) &divide; Density (kg/L)
+          Liters = Kilograms &divide; Density (kg/L)
         </div>
         <p class="text-xs text-slate-400 font-mono">
-          Or in algebraic form: <span class="text-white">V = m &divide; &rho;</span> (where V = liters, m = kg, &rho; = density in kg/L).
+          SI Algebraic Notation: <span class="text-white">V = m &divide; &rho;</span> (where V = volume in L, m = mass in kg, &rho; = density in kg/L).
         </p>
       </div>
 
-      <!-- 3 Step Guide -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
-        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1.5">
-          <span class="text-brand-400 font-bold uppercase block font-sans">Step 1: Input Mass</span>
-          <p class="text-slate-300 font-sans">Enter the mass in kilograms (kg) you want to convert.</p>
+      <!-- Worked Examples -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-emerald-500/20 space-y-2">
+          <span class="text-emerald-400 font-bold uppercase block font-sans text-sm">Worked Example 1: 5 kg at Density 0.700 kg/L</span>
+          <p class="text-slate-300 font-sans text-xs">
+            Liters = 5 kg &divide; 0.700 kg/L = <strong class="text-emerald-400 font-mono">7.1429 Liters</strong>.
+          </p>
         </div>
-        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1.5">
-          <span class="text-emerald-400 font-bold uppercase block font-sans">Step 2: Apply Density</span>
-          <p class="text-slate-300 font-sans">Find the substance density in kg/L (e.g. Water = 1.000, Diesel = 0.832).</p>
-        </div>
-        <div class="p-4 rounded-xl bg-surface-900/60 border border-white/5 space-y-1.5">
-          <span class="text-purple-400 font-bold uppercase block font-sans">Step 3: Get Liters</span>
-          <p class="text-slate-300 font-sans">Divide mass by density to get the exact volume in liters.</p>
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+          <span class="text-amber-400 font-bold uppercase block font-sans text-sm">Worked Example 2: 10 kg Diesel (0.832 kg/L)</span>
+          <p class="text-slate-300 font-sans text-xs">
+            Liters = 10 kg &divide; 0.832 kg/L = <strong class="text-amber-400 font-mono">12.0192 Liters</strong>.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- Master Quick Lookup Table -->
-    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
-            KG to Liters Conversion Table (Top Substances)
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-400">
-            Calculated volume in liters for 1 kg, 5 kg, and 10 kg at standard reference temperatures.
-          </p>
-        </div>
-        <a href="/density-reference/" class="text-xs font-semibold text-brand-400 hover:underline">
-          View 772+ substances &rarr;
-        </a>
+    <!-- 1 to 20 kg Conversion Matrix Table (Matching & Beating Competitor) -->
+    <section class="glass-card bg-surface-950/90 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6" id="conversion-table">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+          Kilogram to Liter Conversion Table (1 kg to 20 kg)
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Side-by-side volume comparisons in liters across 5 benchmark liquids: Water, Milk, Cooking Oil, Gasoline, and Diesel.
+        </p>
       </div>
 
       <div class="overflow-x-auto rounded-xl border border-white/5">
         <table class="w-full text-left text-sm font-sans">
           <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
             <tr>
-              <th class="py-3.5 px-4">Substance Name</th>
-              <th class="py-3.5 px-4 text-center font-mono">Density @ 20°C</th>
-              <th class="py-3.5 px-4 text-right font-mono">1 kg in Liters</th>
-              <th class="py-3.5 px-4 text-right font-mono">5 kg in Liters</th>
-              <th class="py-3.5 px-4 text-right font-mono">10 kg in Liters</th>
-              <th class="py-3.5 px-4 text-center">Action</th>
+              <th class="py-3.5 px-4">Weight (kg)</th>
+              <th class="py-3.5 px-4 font-mono text-sky-400">Water (1.000 kg/L)</th>
+              <th class="py-3.5 px-4 font-mono text-purple-400">Milk (1.030 kg/L)</th>
+              <th class="py-3.5 px-4 font-mono text-amber-400">Cooking Oil (0.910 kg/L)</th>
+              <th class="py-3.5 px-4 font-mono text-rose-400">Gasoline (0.748 kg/L)</th>
+              <th class="py-3.5 px-4 font-mono text-emerald-400">Diesel (0.832 kg/L)</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs sm:text-sm">
-            {keySubstances.map((item) => (
+            {oneToTwentyMatrix.map((row) => (
               <tr class="hover:bg-white/[0.02]">
-                <td class="py-3 px-4 font-semibold text-white font-sans">
-                  {item.name}
-                  <span class="text-[11px] text-slate-500 block font-normal">{item.note}</span>
-                </td>
-                <td class="py-3 px-4 text-center text-slate-400">{item.density.toFixed(3)} kg/L</td>
-                <td class="py-3 px-4 text-right text-brand-400 font-bold">{item.vol1Kg}</td>
-                <td class="py-3 px-4 text-right text-emerald-400 font-bold">{item.vol5Kg}</td>
-                <td class="py-3 px-4 text-right text-purple-400 font-bold">{item.vol10Kg}</td>
-                <td class="py-3 px-4 text-center font-sans">
-                  <a
-                    href={`/${item.category}/kg-to-litres-${item.id}/`}
-                    class="px-2.5 py-1 rounded bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-slate-950 font-semibold text-xs border border-brand-500/20 transition-all inline-block"
-                  >
-                    Convert &rarr;
-                  </a>
-                </td>
+                <td class="py-2.5 px-4 font-bold text-white font-mono">{row.kg} kg</td>
+                <td class="py-2.5 px-4 text-sky-300 font-bold">{row.water} L</td>
+                <td class="py-2.5 px-4 text-purple-300">{row.milk} L</td>
+                <td class="py-2.5 px-4 text-amber-300">{row.oil} L</td>
+                <td class="py-2.5 px-4 text-rose-300">{row.gasoline} L</td>
+                <td class="py-2.5 px-4 text-emerald-300">{row.diesel} L</td>
               </tr>
             ))}
           </tbody>
@@ -251,27 +318,88 @@ const pageSchema = [
       </div>
     </section>
 
-    <!-- Quick Quantity Matrix (1 kg to 1,000 kg) -->
-    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4">
-      <h2 class="text-xl sm:text-2xl font-bold text-white">Common KG to Liters Quantity Lookups</h2>
-      <p class="text-xs sm:text-sm text-slate-400">Click any standard quantity to view dedicated conversion breakdowns:</p>
-      
-      <div class="flex flex-wrap gap-2 pt-2">
-        {conversionSteps.map((qty) => (
-          <a
-            href={`/convert/${qty}-kg-to-litres/`}
-            class="px-3 py-1.5 rounded-lg bg-surface-900 border border-white/5 text-slate-300 hover:text-white hover:bg-surface-800 hover:border-brand-500/30 text-xs font-mono transition-all"
-          >
-            {qty} kg to liters &rarr;
+    <!-- When to Convert Kilograms to Liters -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6" id="when-to-convert">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+        When to Convert Kilograms to Liters
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-purple-500/20 space-y-2">
+          <h3 class="text-base font-bold text-purple-300">1. Cooking &amp; Professional Baking</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Professional chefs recommend measuring ingredients by weight (kg) rather than volume (liters or cups) to eliminate aeration, compaction, and humidity errors. When converting recipe volumes to digital scale masses, density is required (e.g. NIST Culinary Measurement Guidelines).
+          </p>
+          <a href="/industry/kg-to-litres-cooking/" class="text-[11px] text-purple-400 font-mono hover:underline block pt-1">
+            Chef's Cooking Guide &rarr;
           </a>
-        ))}
+        </div>
+
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-cyan-500/20 space-y-2">
+          <h3 class="text-base font-bold text-cyan-300">2. Chemical Stoichiometry</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Chemical synthesis requires combining precise molar ratios of reactants. Converting powdered solids (weighed in kg) with liquid reagents (metered in liters) ensures stoichiometric balance and prevents runaway exothermic reactions.
+          </p>
+          <a href="/industrial/kg-to-litres-solvents/" class="text-[11px] text-cyan-400 font-mono hover:underline block pt-1">
+            Industrial Solvents Guide &rarr;
+          </a>
+        </div>
+
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-emerald-500/20 space-y-2">
+          <h3 class="text-base font-bold text-emerald-300">3. Freight &amp; Logistics Transport</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Cargo transport vehicles (trucks, ships, cargo planes) face dual constraints: maximum gross axle weight (kg) and spatial cargo volume (liters / $m^3$). Converting liquid cargo mass ensures vehicles do not exceed legal weighbridge limits while maintaining required ullage headspace.
+          </p>
+          <a href="/industry/kg-to-litres-logistics/" class="text-[11px] text-emerald-400 font-mono hover:underline block pt-1">
+            Logistics &amp; Freight Guide &rarr;
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- Interactive Visualizer -->
-    <section class="space-y-4">
-      <h2 class="text-xl sm:text-2xl font-bold text-white">Visual Density Comparison</h2>
-      <HeroDensityVisualizer />
+    <!-- What Is a Kilogram? & What Is a Liter? (Formal Physics Definitions) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6" id="definitions">
+      
+      <!-- What Is a Kilogram -->
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4" id="what-is-a-kilogram">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">What Is a Kilogram?</h2>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          One kilogram (<strong class="text-white">kg</strong>) equals 1,000 grams, 2.204623 pounds, or 1/1,000 of a metric tonne.
+        </p>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Under the 2019 International System of Units (SI) revision by the BIPM, the kilogram is defined by fixing the numerical value of the <strong>Planck constant (h = 6.62607015 &times; 10⁻³⁴ J&sdot;s)</strong>. While mass is an intrinsic measure of matter, weight is gravitational force (W = m &sdot; g). An object with a mass of 1 kg exerts approximately 9.80665 Newtons of downward force on Earth.
+        </p>
+      </div>
+
+      <!-- What Is a Liter -->
+      <div class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4" id="what-is-a-liter">
+        <h2 class="text-xl sm:text-2xl font-bold text-white">What Is a Liter?</h2>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          A liter (<strong class="text-white">L</strong>, or British spelling <em>litre</em>) is a metric unit of volume equal to <strong>1 cubic decimeter (1 dm³)</strong>, 1,000 cubic centimeters (1,000 cm³), or 0.264172 US liquid gallons.
+        </p>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          The liter is an SI-accepted non-SI unit for volume. Originally defined in 1795 as the volume of 1 kilogram of pure water at melting ice temperature, it is now mathematically tied directly to the cubic meter (1 L = 0.001 m³).
+        </p>
+      </div>
+
+    </section>
+
+    <!-- Cross-Unit Conversions Hub -->
+    <section class="glass-card bg-surface-950/80 border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-4" id="cross-unit-conversions">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">More Kilogram &amp; Liter Unit Conversions</h2>
+      <p class="text-xs sm:text-sm text-slate-400">Explore conversions between kilograms, volume units, and imperial standards:</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+        {crossUnitConversions.map((item) => (
+          <a
+            href={item.href}
+            class="p-3.5 rounded-xl bg-surface-900/70 border border-white/5 hover:border-brand-500/30 transition-all block space-y-1"
+          >
+            <span class="text-xs font-bold text-white block">{item.name} &rarr;</span>
+            <span class="text-[11px] text-slate-400 block">{item.desc}</span>
+          </a>
+        ))}
+      </div>
     </section>
 
     <!-- FAQs -->
@@ -281,6 +409,18 @@ const pageSchema = [
         <p class="text-slate-400 text-sm">Everything you need to know about kg to liters conversion.</p>
       </div>
       <FAQAccordion faqs={faqs} />
+    </section>
+
+    <!-- Formal References Section (E-E-A-T) -->
+    <section class="p-6 rounded-2xl bg-surface-950/40 border border-white/5 space-y-3" id="references">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Scientific &amp; Regulatory References</h3>
+      <ol class="space-y-1 text-xs text-slate-400 list-decimal list-inside leading-relaxed">
+        <li><strong>NIST</strong> (National Institute of Standards and Technology) — <em>Culinary Measurement Tips and Volumetric Consistency</em> (NIST OWM).</li>
+        <li><strong>CK-12 / LibreTexts</strong> — <em>Mass-Volume Stoichiometry &amp; Chemical Reaction Calculations</em>.</li>
+        <li><strong>BIPM</strong> (Bureau International des Poids et Mesures) — <em>The International System of Units (SI Brochure, 9th Edition, 2019 Planck Constant Redefinition)</em>.</li>
+        <li><strong>ISO 3696 / IUPAC</strong> — <em>Water for Analytical Laboratory Use &amp; Density Reference Standard Tables</em>.</li>
+        <li><strong>ASTM D4052 &amp; Table 54B</strong> — <em>Standard Test Method for Density, Relative Density, and API Gravity of Liquids</em>.</li>
+      </ol>
     </section>
 
   </main>
