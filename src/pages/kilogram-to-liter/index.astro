@@ -1,0 +1,255 @@
+---
+// src/pages/kilogram-to-liter/index.astro
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
+import CalculatorWidget from '../../components/CalculatorWidget.astro';
+import FAQAccordion from '../../components/interactive/FAQAccordion.astro';
+
+const quickConversions = [
+  { name: 'Water', result: '1 kg = 1.000 L', density: '1.000 kg/L', icon: '💧', href: '/substances/water/' },
+  { name: 'Milk', result: '1 kg = 0.971 L', density: '1.030 kg/L', icon: '🥛', href: '/substances/milk/' },
+  { name: 'Olive Oil', result: '1 kg = 1.099 L', density: '0.910 kg/L', icon: '🫒', href: '/substances/olive-oil/' },
+  { name: 'Honey', result: '1 kg = 0.704 L', density: '1.420 kg/L', icon: '🍯', href: '/substances/honey/' },
+  { name: 'Diesel', result: '1 kg = 1.202 L', density: '0.832 kg/L', icon: '⛽', href: '/substances/diesel/' },
+  { name: 'Gasoline', result: '1 kg = 1.337 L', density: '0.748 kg/L', icon: '🚗', href: '/substances/petrol/' },
+];
+
+const faqs = [
+  {
+    q: 'How do you convert kilogram to liter?',
+    a: "Divide the mass in kilograms by the substance's density in kg/L. Formula: Volume (L) = Mass (kg) ÷ Density (kg/L). For example, 5 kg of diesel (density 0.832 kg/L) = 5 ÷ 0.832 = 6.010 liters."
+  },
+  {
+    q: 'Is 1 kilogram equal to 1 liter?',
+    a: 'Only for water at standard temperature (20°C), where density is 1.000 kg/L. For lighter substances like olive oil (0.910 kg/L), 1 kilogram = 1.099 liters. For heavier substances like honey (1.420 kg/L), 1 kilogram = 0.704 liters.'
+  },
+  {
+    q: 'What is the difference between kilogram and liter?',
+    a: 'A kilogram (kg) is a unit of mass measuring the amount of matter in an object. A liter (L) is a unit of volume measuring the three-dimensional space occupied. To convert between them, you need the density of the substance.'
+  },
+  {
+    q: 'How many liters in 5 kilograms?',
+    a: 'It depends on the substance. 5 kg of water = 5.000 L. 5 kg of milk = 4.854 L. 5 kg of olive oil = 5.495 L. 5 kg of diesel = 6.010 L. 5 kg of honey = 3.521 L.'
+  },
+  {
+    q: 'What is the kilogram to liter formula?',
+    a: 'The kilogram to liter formula is: Volume (L) = Mass (kg) ÷ Density (kg/L). In SI notation: V = m ÷ ρ, where V is volume in liters, m is mass in kilograms, and ρ (rho) is density in kg/L.'
+  }
+];
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Kilogram to Liter Converter — Free Online Calculator',
+    description: 'Convert kilogram to liter instantly. Free online calculator for 772+ substances with density-based conversion formula, worked examples, and quick reference tables.',
+    url: 'https://kgtoliter.com/kilogram-to-liter/',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Kilogram to Liter Converter | Free Online Calculator"
+  description="Convert kilogram to liter instantly. Free online calculator for 772+ substances. Kilogram to liter formula, examples, and quick reference table for water, oil, milk, diesel."
+  canonicalUrl="https://kgtoliter.com/kilogram-to-liter/"
+  schema={pageSchema}
+>
+  <main class="container mx-auto px-4 py-8 max-w-5xl space-y-10">
+    <BreadcrumbNav
+      categoryName="Universal Hubs"
+      categorySlug="convert"
+      substanceName="Kilogram to Liter Converter"
+    />
+
+    <!-- Header -->
+    <div class="mb-6 text-center space-y-3">
+      <span class="px-3 py-1 text-xs font-mono font-semibold rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 uppercase tracking-wider inline-block">
+        Complete Reference
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white section-title">
+        Kilogram to Liter Converter
+      </h1>
+      <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+        Use our free <strong class="text-white">kilogram to liter converter</strong> to calculate
+        the exact volume in liters (<strong class="text-white">L</strong>) from mass in kilograms
+        (<strong class="text-white">kg</strong>) using verified density values for
+        <strong class="text-white">772+ substances</strong>.
+      </p>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/litre-to-kg/"
+          class="px-4 py-2 rounded-xl bg-surface-900 border border-emerald-500/30 text-emerald-400 text-xs font-semibold hover:bg-emerald-500 hover:text-slate-950 transition-all shadow-sm"
+        >
+          🔄 Reverse: Liter to Kilogram &rarr;
+        </a>
+        <a
+          href="/kg-to-liters-converter/"
+          class="px-4 py-2 rounded-xl bg-surface-900 border border-brand-500/30 text-brand-400 text-xs font-semibold hover:bg-brand-500 hover:text-slate-950 transition-all shadow-sm"
+        >
+          ⚡ kg to Liters Converter &rarr;
+        </a>
+        <a
+          href="/density-reference/"
+          class="px-4 py-2 rounded-xl bg-surface-900 border border-purple-500/30 text-purple-400 text-xs font-semibold hover:bg-purple-500 hover:text-slate-950 transition-all shadow-sm"
+        >
+          📖 772+ Substance Database &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Live Calculator -->
+    <div class="space-y-4">
+      <CalculatorWidget />
+    </div>
+
+    <!-- Quick Reference Grid -->
+    <div class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] shadow-xl space-y-4">
+      <div class="flex items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
+        <div>
+          <h2 class="text-xl font-bold text-white">Standard Kilogram to Liter Conversions</h2>
+          <p class="text-xs text-slate-400 mt-1">1 Kilogram converted to liters at standard reference densities (20°C)</p>
+        </div>
+        <span class="badge badge-brand text-[10px]">1 kg &rarr; Liters</span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {
+          quickConversions.map((item) => (
+            <a href={item.href} class="bg-surface-950/80 p-4 rounded-xl border border-white/[0.06] text-center hover:border-brand-500/30 transition-colors block group">
+              <div class="text-2xl mb-1">{item.icon}</div>
+              <div class="text-sm font-semibold text-slate-300 group-hover:text-brand-300 transition-colors">{item.name}</div>
+              <div class="font-bold text-base sm:text-lg text-brand-400 font-mono mt-1">{item.result}</div>
+              <div class="text-[11px] text-slate-500 font-mono mt-0.5">({item.density})</div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Formula Section -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">The Kilogram to Liter Conversion Formula</h2>
+      <p class="text-slate-300 leading-relaxed">
+        To convert a measurement in <strong class="text-white">kilograms</strong> to <strong class="text-white">liters</strong>, divide the mass by the substance's density. Since kilograms measure mass and liters measure volume, the density bridges the two physical dimensions.
+      </p>
+      <div class="p-5 rounded-xl bg-surface-950/90 border border-brand-500/20 text-center font-mono text-lg sm:text-xl font-bold text-brand-400">
+        Volume (L) = Mass (kg) &divide; Density (kg/L)
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed font-mono text-center">
+        SI Notation: <span class="text-white">V = m &divide; &rho;</span> (where V = volume in L, m = mass in kg, &rho; = density in kg/L)
+      </p>
+
+      <!-- Worked Examples -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono pt-2">
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-emerald-500/20 space-y-2">
+          <span class="text-emerald-400 font-bold uppercase block font-sans text-sm">Example 1: 3 kg of Olive Oil</span>
+          <p class="text-slate-300 font-sans text-xs">
+            3 kg &divide; 0.910 kg/L = <strong class="text-emerald-400 font-mono">3.297 Liters</strong>
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-900/60 border border-amber-500/20 space-y-2">
+          <span class="text-amber-400 font-bold uppercase block font-sans text-sm">Example 2: 10 kg of Diesel</span>
+          <p class="text-slate-300 font-sans text-xs">
+            10 kg &divide; 0.832 kg/L = <strong class="text-amber-400 font-mono">12.019 Liters</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Use This Converter -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">Why Use Our Kilogram to Liter Converter?</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <strong class="text-white block text-sm mb-0.5">Lab-Grade Accuracy</strong>
+            <span class="text-xs text-slate-400 leading-relaxed">772+ substances with verified density values sourced from NIST, ASTM, and ISO standards.</span>
+          </div>
+        </li>
+        <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+          <span class="text-xl">🔄</span>
+          <div>
+            <strong class="text-white block text-sm mb-0.5">Two-Way Conversion</strong>
+            <span class="text-xs text-slate-400 leading-relaxed">Convert kilogram to liter and liter to kilogram in one tool.</span>
+          </div>
+        </li>
+        <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+          <span class="text-xl">📦</span>
+          <div>
+            <strong class="text-white block text-sm mb-0.5">Batch Processing</strong>
+            <span class="text-xs text-slate-400 leading-relaxed">Convert multiple substances at once with our CSV batch converter.</span>
+          </div>
+        </li>
+        <li class="p-4 rounded-xl bg-surface-950/60 border border-white/[0.04] flex items-start gap-3">
+          <span class="text-xl">🌡️</span>
+          <div>
+            <strong class="text-white block text-sm mb-0.5">Temperature Correction</strong>
+            <span class="text-xs text-slate-400 leading-relaxed">Thermal expansion affects density. Our advanced solver supports temperature-adjusted conversions.</span>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Related Keyword Links -->
+    <section class="glass-card p-6 sm:p-8 rounded-2xl border border-white/[0.08] space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">Related Conversion Guides</h2>
+      <p class="text-xs sm:text-sm text-slate-400">Explore the same conversion using different keyword styles and regional spellings:</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+        <a href="/kg-to-liters-converter/" class="p-3.5 rounded-xl bg-surface-900/70 border border-white/5 hover:border-brand-500/30 transition-all block space-y-1">
+          <span class="text-xs font-bold text-white block">kg to Liters Converter &rarr;</span>
+          <span class="text-[11px] text-slate-400 block">Full calculator &amp; 1–20 kg table</span>
+        </a>
+        <a href="/kg-to-l/" class="p-3.5 rounded-xl bg-surface-900/70 border border-white/5 hover:border-brand-500/30 transition-all block space-y-1">
+          <span class="text-xs font-bold text-white block">kg to L &rarr;</span>
+          <span class="text-[11px] text-slate-400 block">Quick shorthand reference</span>
+        </a>
+        <a href="/kg-to-litres/" class="p-3.5 rounded-xl bg-surface-900/70 border border-white/5 hover:border-brand-500/30 transition-all block space-y-1">
+          <span class="text-xs font-bold text-white block">kg to Litres &rarr;</span>
+          <span class="text-[11px] text-slate-400 block">UK / SI spelling variant</span>
+        </a>
+        <a href="/litre-to-kg/" class="p-3.5 rounded-xl bg-surface-900/70 border border-white/5 hover:border-brand-500/30 transition-all block space-y-1">
+          <span class="text-xs font-bold text-white block">Litre to kg &rarr;</span>
+          <span class="text-[11px] text-slate-400 block">Reverse volume-to-mass conversion</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="space-y-6" id="faq">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+        <p class="text-slate-400 text-sm">Everything you need to know about the kilogram to liter conversion.</p>
+      </div>
+      <FAQAccordion faqs={faqs} />
+    </section>
+
+    <!-- CTA -->
+    <div class="p-8 rounded-2xl bg-gradient-to-r from-brand-900/40 via-surface-900/60 to-brand-900/40 border border-brand-500/30 text-center space-y-4">
+      <h3 class="text-xl font-bold text-white">Need to Convert Another Substance?</h3>
+      <p class="text-sm text-slate-400 max-w-lg mx-auto">
+        Our calculator features 772+ validated density records, two-way conversion, custom density input, and multi-unit outputs.
+      </p>
+      <div class="pt-2">
+        <a href="/" class="btn-primary inline-flex items-center gap-2">
+          <span>Open Interactive Converter</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

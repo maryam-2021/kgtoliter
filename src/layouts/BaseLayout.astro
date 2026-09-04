@@ -102,6 +102,10 @@ const pageTitle = hasBrandInTitle ? title : `${title} | ${siteName}`;
     <!-- Canonical -->
     <link rel="canonical" href={effectiveCanonical} />
 
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="en" href={effectiveCanonical} />
+    <link rel="alternate" hreflang="x-default" href={effectiveCanonical} />
+
     <!-- Robots -->
     {
       noIndex ? (
