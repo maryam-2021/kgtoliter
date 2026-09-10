@@ -26,56 +26,60 @@ const categoriesList = [
   class="glass-card rounded-2xl p-4 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto space-y-6"
   id="calculator-root"
 >
-  <!-- Converter Header & Direction Controls -->
+  <!-- Converter Controls Bar: Direction Mode, Swap & Reset -->
   <div
-    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800"
+    class="flex items-center justify-between gap-3 pb-3 border-b border-slate-800"
   >
-    <div>
-      <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-        <span>Kg ↔ Litre Converter</span>
-        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">Two-Way</span>
-      </h3>
-      <p class="text-xs text-slate-400 mt-1">
-        Convert mass to volume or volume to mass for 700+ materials
-      </p>
+    <!-- Mode Toggle (kg -> L vs L -> kg) -->
+    <div
+      class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
+      role="group"
+      aria-label="Conversion direction"
+    >
+      <button
+        id="mode-kg-to-l"
+        type="button"
+        aria-pressed="true"
+        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all cursor-pointer"
+      >
+        kg &rarr; litre
+      </button>
+      <button
+        id="mode-l-to-kg"
+        type="button"
+        aria-pressed="false"
+        class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer"
+      >
+        litre &rarr; kg
+      </button>
     </div>
 
-    <!-- Mode Toggle & Swap Button -->
-    <div class="flex items-center gap-2 self-start sm:self-auto">
-      <div
-        class="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800"
-        role="group"
-        aria-label="Conversion direction"
-      >
-        <button
-          id="mode-kg-to-l"
-          type="button"
-          aria-pressed="true"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-slate-950 shadow-md transition-all cursor-pointer"
-        >
-          kg &rarr; litre
-        </button>
-        <button
-          id="mode-l-to-kg"
-          type="button"
-          aria-pressed="false"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all cursor-pointer"
-        >
-          litre &rarr; kg
-        </button>
-      </div>
-
-      <!-- Quick Swap Direction Button -->
+    <!-- Quick Action Controls: Swap & Reset -->
+    <div class="flex items-center gap-2">
       <button
         type="button"
         id="swap-direction-btn"
-        class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-brand-400 hover:border-brand-500/30 transition-all cursor-pointer"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 hover:text-brand-400 hover:border-brand-500/30 transition-all cursor-pointer shadow-sm"
         title="Swap conversion direction (kg ↔ L)"
         aria-label="Swap conversion direction"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
         </svg>
+        <span>Swap ↔</span>
+      </button>
+
+      <button
+        type="button"
+        id="reset-btn"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-medium text-slate-400 hover:text-white hover:border-slate-700 transition-all cursor-pointer shadow-sm"
+        title="Reset calculator to defaults"
+        aria-label="Reset calculator"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Reset</span>
       </button>
     </div>
   </div>
@@ -156,6 +160,17 @@ const categoriesList = [
         >
           &times;
         </button>
+      </div>
+
+      <!-- Common Substance Preset Chips -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+        <span class="text-[11px] text-slate-400 font-mono shrink-0">Common:</span>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-brand-500/20 text-brand-300 border border-brand-500/40 transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="water" data-density="1.000">💧 Water</button>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 border border-white/[0.06] transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="milk" data-density="1.030">🥛 Milk</button>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 border border-white/[0.06] transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="olive-oil" data-density="0.910">🫒 Oil</button>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 border border-white/[0.06] transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="diesel" data-density="0.832">⛽ Diesel</button>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 border border-white/[0.06] transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="petrol" data-density="0.748">🚗 Gasoline</button>
+        <button type="button" class="substance-chip px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-brand-500/20 hover:text-brand-300 text-slate-300 border border-white/[0.06] transition-all shrink-0 cursor-pointer font-medium text-xs flex items-center gap-1 active:scale-95" data-id="honey" data-density="1.420">🍯 Honey</button>
       </div>
 
       <!-- Quick Category Pills -->
@@ -325,6 +340,42 @@ const categoriesList = [
   </div>
 </div>
 
+<!-- Mobile Sticky Result Bar (Slides up when scrolling past the calculator) -->
+<aside
+  id="mobile-sticky-bar"
+  class="fixed bottom-0 inset-x-0 z-40 bg-surface-950/95 backdrop-blur-xl border-t border-brand-500/30 px-4 py-2.5 sm:hidden shadow-2xl transition-transform duration-300 translate-y-full flex items-center justify-between gap-3"
+  aria-label="Conversion Result"
+>
+  <div class="min-w-0 flex-1">
+    <div class="text-[11px] text-slate-400 font-mono truncate" id="sticky-summary">
+      1 kg of Water =
+    </div>
+    <div class="text-base font-extrabold text-brand-400 font-mono tracking-tight flex items-baseline gap-1">
+      <span id="sticky-result-val">1.000</span>
+      <span id="sticky-result-unit" class="text-xs text-slate-300">Litres</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 shrink-0">
+    <button
+      type="button"
+      id="sticky-copy-btn"
+      class="px-3.5 py-1.5 rounded-lg bg-brand-500 text-slate-950 font-bold text-xs shadow hover:bg-brand-400 active:scale-95 transition-all cursor-pointer"
+    >
+      Copy
+    </button>
+    <a
+      href="#calculator-root"
+      class="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs flex items-center justify-center cursor-pointer"
+      title="Scroll to Calculator"
+      aria-label="Scroll to Calculator"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </a>
+  </div>
+</aside>
+
 <script>
   import type { CatalogItem } from '../data/catalog';
 
@@ -369,12 +420,21 @@ const categoriesList = [
     const modeKgToLBtn = document.getElementById('mode-kg-to-l');
     const modeLToKgBtn = document.getElementById('mode-l-to-kg');
     const swapDirectionBtn = document.getElementById('swap-direction-btn');
+    const resetBtn = document.getElementById('reset-btn');
     const quickBtns = document.querySelectorAll('.quick-amt');
+    const substanceChips = document.querySelectorAll('.substance-chip');
     const copyBtn = document.getElementById('copy-btn');
     const copyText = document.getElementById('copy-text');
     const shareBtn = document.getElementById('share-btn');
     const shareText = document.getElementById('share-text');
     const categoryFilterBtns = document.querySelectorAll('.category-filter-btn');
+
+    // Mobile Sticky Bar Elements
+    const mobileStickyBar = document.getElementById('mobile-sticky-bar');
+    const stickySummary = document.getElementById('sticky-summary');
+    const stickyResultVal = document.getElementById('sticky-result-val');
+    const stickyResultUnit = document.getElementById('sticky-result-unit');
+    const stickyCopyBtn = document.getElementById('sticky-copy-btn');
 
     const customDensityToggle = document.getElementById('customDensityToggle') as HTMLInputElement;
     const customDensityInput = document.getElementById('customDensityInput') as HTMLDivElement;
@@ -533,6 +593,17 @@ const categoriesList = [
             },
           }),
         );
+      }
+
+      // Update mobile sticky result bar
+      if (stickySummary) {
+        stickySummary.textContent = `${mass} ${mode === 'kg-to-l' ? 'kg' : 'L'} of ${substanceName} =`;
+      }
+      if (stickyResultVal && resultDisplay) {
+        stickyResultVal.textContent = resultDisplay.textContent;
+      }
+      if (stickyResultUnit && resultUnit) {
+        stickyResultUnit.textContent = resultUnit.textContent;
       }
     }
 
@@ -766,6 +837,108 @@ const categoriesList = [
       }
 
       calculateAndBroadcast();
+    });
+
+    // Active substance chip styling helper
+    function updateActiveSubstanceChip(substanceId: string) {
+      substanceChips.forEach((chip) => {
+        const isMatch = (chip.getAttribute('data-id') || '').toLowerCase() === substanceId.toLowerCase();
+        if (isMatch) {
+          chip.classList.add('bg-brand-500/20', 'text-brand-300', 'border-brand-500/40');
+          chip.classList.remove('bg-slate-800/90', 'text-slate-300', 'border-white/[0.06]');
+        } else {
+          chip.classList.remove('bg-brand-500/20', 'text-brand-300', 'border-brand-500/40');
+          chip.classList.add('bg-slate-800/90', 'text-slate-300', 'border-white/[0.06]');
+        }
+      });
+    }
+
+    // Substance Preset Chips click
+    substanceChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const chipId = chip.getAttribute('data-id') || '';
+        if (customDensityToggle && customDensityToggle.checked) {
+          customDensityToggle.checked = false;
+          customDensityToggle.dispatchEvent(new Event('change'));
+        }
+        if (substanceSearchInput && substanceSearchInput.value) {
+          substanceSearchInput.value = '';
+          filterOptions();
+        }
+        const matchOpt = Array.from(substanceSelect.options).find(
+          (o) => (o.dataset.id || '').toLowerCase() === chipId.toLowerCase() || o.dataset.catalogKey === chipId
+        );
+        if (matchOpt) {
+          substanceSelect.value = matchOpt.value;
+          matchOpt.selected = true;
+          updateActiveSubstanceChip(chipId);
+          calculateAndBroadcast();
+        }
+      });
+    });
+
+    // Reset Calculator Button
+    resetBtn?.addEventListener('click', () => {
+      if (massInput) massInput.value = '1';
+      setMode('kg-to-l');
+      if (customDensityToggle && customDensityToggle.checked) {
+        customDensityToggle.checked = false;
+        customDensityToggle.dispatchEvent(new Event('change'));
+      }
+      if (substanceSearchInput) substanceSearchInput.value = '';
+      activeCategory = 'all';
+      categoryFilterBtns.forEach((b) => {
+        b.classList.remove('bg-brand-500/20', 'text-brand-300', 'border-brand-500/40');
+        b.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+      const waterOpt = Array.from(substanceSelect.options).find(
+        (o) => (o.dataset.id || '').toLowerCase() === 'water'
+      );
+      if (waterOpt) {
+        substanceSelect.value = waterOpt.value;
+        waterOpt.selected = true;
+      }
+      updateActiveSubstanceChip('water');
+      filterOptions();
+      calculateAndBroadcast();
+    });
+
+    // Mobile Sticky Bar Intersection Observer
+    const calcRoot = document.getElementById('calculator-root');
+    if (calcRoot && mobileStickyBar && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              mobileStickyBar.classList.add('translate-y-full');
+            } else {
+              mobileStickyBar.classList.remove('translate-y-full');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(calcRoot);
+    }
+
+    // Mobile Sticky Bar Copy Button
+    stickyCopyBtn?.addEventListener('click', async () => {
+      const selectedOption = substanceSelect.options[substanceSelect.selectedIndex];
+      const textToCopy = `${massInput.value} ${mode === 'kg-to-l' ? 'kg' : 'L'} of ${selectedOption?.dataset.name || 'Water'} = ${resultDisplay.textContent} ${resultUnit.textContent} (density: ${selectedOption?.value} kg/L)`;
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        stickyCopyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          stickyCopyBtn.textContent = 'Copy';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    });
+
+    substanceSelect?.addEventListener('change', () => {
+      const selectedOpt = substanceSelect.options[substanceSelect.selectedIndex];
+      updateActiveSubstanceChip(selectedOpt?.dataset.id || '');
     });
 
     calculateAndBroadcast();

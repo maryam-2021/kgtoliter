@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CalculatorWidget from '../components/CalculatorWidget.astro';
 import SubstanceCard from '../components/SubstanceCard.astro';
-import HeroDensityVisualizer from '../components/interactive/HeroDensityVisualizer.astro';
 import FormulaPlayground from '../components/interactive/FormulaPlayground.astro';
 import VolumeComparisonSlider from '../components/interactive/VolumeComparisonSlider.astro';
 import IndustrialVolumeComparisonCard from '../components/interactive/IndustrialVolumeComparisonCard.astro';
@@ -213,56 +212,23 @@ const featureLinks = [
 ---
 
 <BaseLayout title={title} description={description} schema={homepageSchema}>
-  <!-- ======== HERO SECTION ======== -->
-  <section class="max-w-5xl mx-auto px-4 pt-16 pb-8 md:pt-24 md:pb-12">
-    <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-start mb-8">
-      <div class="animate-fade-in-up space-y-6">
-        <!-- H1 with gradient -->
-        <h1 class="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.1] tracking-tight">
-          <span class="gradient-text">kg to Liters Converter</span>
-          <span class="block text-lg md:text-xl font-semibold text-slate-400 mt-2 tracking-normal">Free Online kg to L Calculator</span>
-        </h1>
+  <!-- ======== HERO SECTION (ABOVE THE FOLD) ======== -->
+  <section class="max-w-4xl mx-auto px-4 pt-6 pb-2 sm:pt-10 sm:pb-4 text-center">
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+      <span class="gradient-text">kg to Liters Converter</span>
+    </h1>
+    <p class="text-slate-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+      Convert 772+ substances instantly with lab-grade density data.
+    </p>
 
-        <!-- Refined subtitle with keyword in first 100 words -->
-        <p class="text-lg text-slate-400 leading-relaxed max-w-md">
-          Use our free <strong class="text-slate-200">kg to liters converter</strong> to instantly convert <strong class="text-slate-200">kilograms (kg) to liters (L)</strong> or litres to kilograms for 772+ substances with lab-grade reference density values.
-        </p>
-
-        <!-- CTA Buttons -->
-        <div class="flex flex-wrap gap-3 pt-2">
-          <a href="#calculator-root" class="btn-primary inline-flex items-center gap-2">
-            Start Converting
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-          </a>
-          <a href="#density-directory" class="btn-secondary inline-flex items-center gap-2">
-            Browse 772+ Substances
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-          </a>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="quick-links pt-1">
-          <a href="/kg-to-litres/">What is kg to litres?</a>
-          <a href="/kg-to-l/">Kg to L quick reference</a>
-          <a href="/substances/water/">1 kg to litres water</a>
-          <a href="/substances/milk/">1 kg to litres milk</a>
-        </div>
-      </div>
-
-      <!-- Interactive Visual Diagram with ambient glow -->
-      <div class="animate-slide-in-right hero-glow">
-        <HeroDensityVisualizer />
-      </div>
-    </div>
-
-    <!-- Calculator Widget -->
-    <div class="animate-fade-in-up mt-4" style="animation-delay: 0.2s;">
+    <!-- Calculator Widget (Hero - Above the Fold) -->
+    <div class="mt-5 text-left">
       <CalculatorWidget />
     </div>
   </section>
 
   <!-- ======== TRUST BAR ======== -->
-  <div class="max-w-5xl mx-auto px-4">
+  <div class="max-w-5xl mx-auto px-4 py-2">
     <div class="divider-glow"></div>
     <div class="trust-bar" role="complementary" aria-label="Platform statistics">
       <span class="trust-bar-item">
@@ -288,25 +254,51 @@ const featureLinks = [
     <div class="divider-glow"></div>
   </div>
 
-  <!-- ======== KEYWORD-OPTIMIZED CONTENT SECTION ======== -->
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-    <h2 class="text-2xl md:text-3xl font-bold section-title mb-4">kg to Liters Converter — Free & Accurate</h2>
-    <p class="text-slate-300 leading-relaxed max-w-3xl">
-      Convert <strong class="text-white">kg to liters</strong> instantly with our free online calculator. Whether you need to convert <strong class="text-white">kg to L</strong> for water, oil, milk, diesel, or gasoline, our tool provides accurate results for 772+ substances. Use our <strong class="text-white">kilograms to liters</strong> converter for cooking, fuel calculations, or industrial applications.
-    </p>
-    <nav aria-label="Quick conversion links" class="mt-6">
-      <ul class="flex flex-wrap gap-3 text-sm">
+  <!-- ======== QUICK REFERENCE TABLE (IMMEDIATELY USEFUL) ======== -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-2" id="kg-to-liters">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Quick kg to liters Reference Table</h2>
+        <p class="text-slate-300 text-sm mt-1">Instant lookups for common liquids at standard reference density (20°C):</p>
+      </div>
+      <span class="text-xs font-mono text-brand-400 self-start sm:self-auto bg-brand-500/10 px-3 py-1 rounded-full border border-brand-500/20">Density-Corrected</span>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-white/5 my-4 shadow-xl">
+      <table class="w-full text-left text-sm font-sans">
+        <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
+          <tr>
+            <th class="py-3 px-4">Substance</th>
+            <th class="py-3 px-4 text-brand-400">1 kg to liters</th>
+            <th class="py-3 px-4 text-brand-400">5 kg to liters</th>
+            <th class="py-3 px-4 text-brand-400">10 kg to liters</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-sm">
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>💧</span> Water</td><td class="py-2.5 px-4">1.000 L</td><td class="py-2.5 px-4">5.000 L</td><td class="py-2.5 px-4">10.000 L</td></tr>
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>🥛</span> Milk</td><td class="py-2.5 px-4">0.971 L</td><td class="py-2.5 px-4">4.854 L</td><td class="py-2.5 px-4">9.709 L</td></tr>
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>🫒</span> Olive Oil</td><td class="py-2.5 px-4">1.099 L</td><td class="py-2.5 px-4">5.495 L</td><td class="py-2.5 px-4">10.989 L</td></tr>
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>🍯</span> Honey</td><td class="py-2.5 px-4">0.704 L</td><td class="py-2.5 px-4">3.521 L</td><td class="py-2.5 px-4">7.042 L</td></tr>
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>⛽</span> Diesel</td><td class="py-2.5 px-4">1.202 L</td><td class="py-2.5 px-4">6.010 L</td><td class="py-2.5 px-4">12.019 L</td></tr>
+          <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans flex items-center gap-2"><span>🚗</span> Gasoline</td><td class="py-2.5 px-4">1.337 L</td><td class="py-2.5 px-4">6.684 L</td><td class="py-2.5 px-4">13.369 L</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Keyword Hub Internal Navigation -->
+    <nav aria-label="Quick conversion navigation" class="mt-4 pt-3 border-t border-white/5">
+      <ul class="flex flex-wrap gap-2 text-xs font-mono">
         <li>
-          <a href="/kg-to-liters-converter/" class="text-brand-400 hover:text-brand-300 underline underline-offset-2 transition-colors">kg to liters converter — free tool</a>
+          <a href="/kg-to-liters-converter/" class="px-2.5 py-1 rounded-lg bg-surface-900 border border-white/5 text-brand-400 hover:text-brand-300 hover:border-brand-500/30 transition-all inline-block">kg to liters converter &rarr;</a>
         </li>
         <li>
-          <a href="/kg-to-l/" class="text-brand-400 hover:text-brand-300 underline underline-offset-2 transition-colors">kg to L — quick conversion guide</a>
+          <a href="/kg-to-l/" class="px-2.5 py-1 rounded-lg bg-surface-900 border border-white/5 text-brand-400 hover:text-brand-300 hover:border-brand-500/30 transition-all inline-block">kg to L guide &rarr;</a>
         </li>
         <li>
-          <a href="/kilogram-to-liter/" class="text-brand-400 hover:text-brand-300 underline underline-offset-2 transition-colors">kilogram to liter — complete reference</a>
+          <a href="/kilogram-to-liter/" class="px-2.5 py-1 rounded-lg bg-surface-900 border border-white/5 text-brand-400 hover:text-brand-300 hover:border-brand-500/30 transition-all inline-block">kilogram to liter &rarr;</a>
         </li>
         <li>
-          <a href="/kg-to-litres/" class="text-brand-400 hover:text-brand-300 underline underline-offset-2 transition-colors">kg to litres — UK spelling guide</a>
+          <a href="/kg-to-litres/" class="px-2.5 py-1 rounded-lg bg-surface-900 border border-white/5 text-brand-400 hover:text-brand-300 hover:border-brand-500/30 transition-all inline-block">kg to litres (UK) &rarr;</a>
         </li>
       </ul>
     </nav>
@@ -314,135 +306,7 @@ const featureLinks = [
 
   <!-- ======== CONTENT SECTIONS ======== -->
   <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-24 pb-16">
-    <!-- Popular Substance Conversions Section -->
-    <section class="reveal-section">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">Popular Substance Conversions</h2>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
-          Instant mass-to-volume references for the most frequently calculated liquids.
-        </p>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {
-          featuredSubstances.map((substance) => (
-            <SubstanceCard
-              id={substance.id === 'gasoline' ? 'petrol' : substance.id}
-              name={substance.name}
-              density={substance.density}
-              icon={substance.icon}
-            />
-          ))
-        }
-      </div>
-    </section>
-
-    <nav aria-label="Interactive feature navigation" class="reveal-section">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">Choose a Conversion Feature</h2>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
-          Jump directly to a calculator, simulator, comparison, or searchable density reference.
-        </p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {
-          featureLinks.map((feature) => (
-            <a
-              href={feature.href}
-              class="glass-card glass-card-hover rounded-2xl p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
-            >
-              <span class="text-[10px] uppercase tracking-[0.18em] text-brand-400/80 font-semibold">
-                {feature.eyebrow}
-              </span>
-              <span class="flex items-center justify-between gap-3 mt-2.5">
-                <strong class="text-white group-hover:text-brand-300 transition-colors">
-                  {feature.title}
-                </strong>
-                <span
-                  aria-hidden="true"
-                  class="text-slate-600 group-hover:text-brand-400 group-hover:translate-x-1 transition-all"
-                >
-                  &rarr;
-                </span>
-              </span>
-              <span class="block text-xs text-slate-500 mt-2.5 leading-relaxed">
-                {feature.description}
-              </span>
-            </a>
-          ))
-        }
-      </div>
-    </nav>
-
-    <!-- Formula Playground -->
-    <section id="interactive-sliders" class="reveal-section scroll-mt-24">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">
-          Kg to Litre and Litre to Kg Formulas
-        </h2>
-        <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">
-          Divide mass by density for litres: V = m ÷ ρ. Multiply volume by density for kilograms: m
-          = V × ρ. Drag the sliders below to explore the relationship in real time.
-        </p>
-      </div>
-      <div class="max-w-3xl mx-auto">
-        <FormulaPlayground />
-      </div>
-    </section>
-
-    <!-- ======== QUICK SUBSTANCE CONVERSIONS GRID ======== -->
-    <section class="reveal-section scroll-mt-24" id="quick-substance-conversions">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">Convert kg to Liters for Any Substance</h2>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
-          Our <strong class="text-slate-200">kg to liters</strong> converter supports 772+ substances across 25+ categories. Whether you need to convert <strong class="text-slate-200">kg to L</strong> for cooking, fuel, or industrial applications, we have you covered.
-        </p>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 stagger-children">
-        <a href="/substances/water/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">💧</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Water</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.000 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(1.000 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-        <a href="/substances/milk/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">🥛</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Milk</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 0.971 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(1.030 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-        <a href="/substances/olive-oil/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">🫒</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Oil</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.099 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(0.910 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-        <a href="/substances/diesel/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">⛽</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Diesel</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.202 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(0.832 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-        <a href="/substances/petrol/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">🚗</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Gasoline</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.337 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(0.748 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-        <a href="/substances/honey/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
-          <div class="text-2xl mb-2">🍯</div>
-          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Honey</h3>
-          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 0.704 L</div>
-          <div class="text-[11px] text-slate-500 font-mono">(1.420 kg/L)</div>
-          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
-        </a>
-      </div>
-    </section>
-
+    <!-- ======== SECTION 4: FORMULA & WORKED EXAMPLES ======== -->
     <!-- How Much is kg to Litres Section -->
     <section class="content-block reveal-section max-w-4xl mx-auto scroll-mt-24" id="how-much-is-kg-to-litres">
       <h2 class="text-2xl md:text-3xl font-bold section-title">KG to Liters Converter: How Much is kg to Liters?</h2>
@@ -540,56 +404,6 @@ const featureLinks = [
         <a href="/what-is-density/" class="px-4 py-2 rounded-xl bg-surface-900 border border-purple-500/30 text-purple-400 text-xs font-semibold hover:bg-purple-500 hover:text-slate-950 transition-all">
           what is density and why it matters &rarr;
         </a>
-      </div>
-    </section>
-
-    <!-- ======== PHASE 5: KEYWORD CONTENT EXPANSION ======== -->
-
-    <!-- kg to liters: Complete Conversion Guide with Reference Table -->
-    <section class="content-block reveal-section max-w-4xl mx-auto scroll-mt-24" id="kg-to-liters">
-      <h2 class="text-2xl md:text-3xl font-bold section-title">kg to liters: Complete Conversion Guide</h2>
-      <p class="text-slate-300 mt-2"><strong class="text-white">kg to liters</strong> is the most searched conversion on our site. Here's everything you need to know:</p>
-      
-      <h3 class="text-lg font-bold text-white mt-6 mb-3">Why Convert kg to liters?</h3>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-300">
-        <li class="flex items-start gap-2">
-          <span class="text-brand-400 font-bold mt-0.5">•</span>
-          <span><strong class="text-white">Cooking:</strong> Many recipes require volume measurements while ingredients are sold by weight</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <span class="text-brand-400 font-bold mt-0.5">•</span>
-          <span><strong class="text-white">Fuel:</strong> Fuel is sold by volume but often weighed during bulk transport logistics</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <span class="text-brand-400 font-bold mt-0.5">•</span>
-          <span><strong class="text-white">Industry:</strong> Chemical processes need accurate volume dosing from mass inputs</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <span class="text-brand-400 font-bold mt-0.5">•</span>
-          <span><strong class="text-white">Science:</strong> Lab measurements often require precise mass-to-volume conversion</span>
-        </li>
-      </ul>
-
-      <h3 class="text-lg font-bold text-white mt-8 mb-3">Quick kg to liters Reference Table</h3>
-      <div class="overflow-x-auto rounded-xl border border-white/5">
-        <table class="w-full text-left text-sm font-sans">
-          <thead class="bg-surface-900 text-xs font-mono uppercase text-slate-400">
-            <tr>
-              <th class="py-3 px-4">Substance</th>
-              <th class="py-3 px-4 text-brand-400">1 kg to liters</th>
-              <th class="py-3 px-4 text-brand-400">5 kg to liters</th>
-              <th class="py-3 px-4 text-brand-400">10 kg to liters</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-sm">
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Water</td><td class="py-2.5 px-4">1.000 L</td><td class="py-2.5 px-4">5.000 L</td><td class="py-2.5 px-4">10.000 L</td></tr>
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Milk</td><td class="py-2.5 px-4">0.971 L</td><td class="py-2.5 px-4">4.854 L</td><td class="py-2.5 px-4">9.709 L</td></tr>
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Olive Oil</td><td class="py-2.5 px-4">1.099 L</td><td class="py-2.5 px-4">5.495 L</td><td class="py-2.5 px-4">10.989 L</td></tr>
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Honey</td><td class="py-2.5 px-4">0.704 L</td><td class="py-2.5 px-4">3.521 L</td><td class="py-2.5 px-4">7.042 L</td></tr>
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Diesel</td><td class="py-2.5 px-4">1.202 L</td><td class="py-2.5 px-4">6.010 L</td><td class="py-2.5 px-4">12.019 L</td></tr>
-            <tr class="hover:bg-white/[0.02]"><td class="py-2.5 px-4 font-bold text-white font-sans">Gasoline</td><td class="py-2.5 px-4">1.337 L</td><td class="py-2.5 px-4">6.684 L</td><td class="py-2.5 px-4">13.369 L</td></tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
@@ -738,6 +552,98 @@ const featureLinks = [
       </div>
     </section>
 
+    <!-- ======== SECTION 5: INTERACTIVE FORMULA PLAYGROUND ======== -->
+    <section id="interactive-sliders" class="reveal-section scroll-mt-24">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">
+          Kg to Litre and Litre to Kg Formulas
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">
+          Divide mass by density for litres: V = m ÷ ρ. Multiply volume by density for kilograms: m
+          = V × ρ. Drag the sliders below to explore the relationship in real time.
+        </p>
+      </div>
+      <div class="max-w-3xl mx-auto">
+        <FormulaPlayground />
+      </div>
+    </section>
+
+    <!-- ======== SECTION 6: POPULAR SUBSTANCE CONVERSIONS ======== -->
+    <section class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Popular Substance Conversions</h2>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
+          Instant mass-to-volume references for the most frequently calculated liquids.
+        </p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {
+          featuredSubstances.map((substance) => (
+            <SubstanceCard
+              id={substance.id === 'gasoline' ? 'petrol' : substance.id}
+              name={substance.name}
+              density={substance.density}
+              icon={substance.icon}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Quick Substance Conversions Grid -->
+    <section class="reveal-section scroll-mt-24" id="quick-substance-conversions">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Convert kg to Liters for Any Substance</h2>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
+          Our <strong class="text-slate-200">kg to liters</strong> converter supports 772+ substances across 25+ categories. Whether you need to convert <strong class="text-slate-200">kg to L</strong> for cooking, fuel, or industrial applications, we have you covered.
+        </p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 stagger-children">
+        <a href="/substances/water/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">💧</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Water</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.000 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(1.000 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+        <a href="/substances/milk/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">🥛</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Milk</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 0.971 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(1.030 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+        <a href="/substances/olive-oil/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">🫒</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Oil</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.099 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(0.910 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+        <a href="/substances/diesel/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">⛽</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Diesel</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.202 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(0.832 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+        <a href="/substances/petrol/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">🚗</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Gasoline</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 1.337 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(0.748 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+        <a href="/substances/honey/" class="glass-card glass-card-hover rounded-2xl p-5 text-center block group">
+          <div class="text-2xl mb-2">🍯</div>
+          <h3 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors">kg to Liters Honey</h3>
+          <div class="font-bold text-brand-400 font-mono mt-1">1 kg = 0.704 L</div>
+          <div class="text-[11px] text-slate-500 font-mono">(1.420 kg/L)</div>
+          <span class="text-[11px] text-brand-400 mt-2 inline-block font-semibold group-hover:translate-x-0.5 transition-transform">Convert &rarr;</span>
+        </a>
+      </div>
+    </section>
+
     <!-- Volume Comparison -->
     <section id="visual-comparisons" class="reveal-section scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
@@ -751,142 +657,56 @@ const featureLinks = [
       <VolumeComparisonSlider />
     </section>
 
-    <!-- Industrial Chemicals 1kg Volume Comparison Card -->
-    <section id="batch-conversion" class="reveal-section max-w-5xl mx-auto scroll-mt-24">
-      <IndustrialVolumeComparisonCard />
-    </section>
-
+    <!-- ======== SECTION 7: BULK/CSV CONVERTER & SPECIALISED TOOLS ======== -->
     <!-- Batch Conversion Calculator Section -->
-    <section class="reveal-section max-w-5xl mx-auto">
+    <section id="batch-conversion" class="reveal-section max-w-5xl mx-auto scroll-mt-24">
       <AdvancedBatchConverter />
     </section>
 
-    <!-- Master Subcategories & Density Filter Grid Section -->
-    <section class="reveal-section max-w-6xl mx-auto">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">Explore Master Density Categories</h2>
+    <!-- Industrial Chemicals 1kg Volume Comparison Card -->
+    <section class="reveal-section max-w-5xl mx-auto">
+      <IndustrialVolumeComparisonCard />
+    </section>
+
+    <!-- Navigation to Features -->
+    <nav aria-label="Interactive feature navigation" class="reveal-section">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Choose a Conversion Feature</h2>
         <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
-          Filter through 25+ subcategories and {catalogItems.length} substances by density range and industry
-          domain.
+          Jump directly to a calculator, simulator, comparison, or searchable density reference.
         </p>
       </div>
-      <SubcategoriesGridCard />
-    </section>
-
-    <!-- Temperature Density -->
-    <section id="temperature-simulator" class="reveal-section scroll-mt-24">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">
-          Effect of Temperature on Liquid Density
-        </h2>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
-          Demonstrating thermal expansion physics from 0°C freezing to 100°C boiling point.
-        </p>
-      </div>
-      <TemperatureDensitySlider />
-    </section>
-
-    <!-- Interactive Conversion Table -->
-    <section id="density-directory" class="reveal-section scroll-mt-24">
-      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">Substance Density Directory</h2>
-      </div>
-      <InteractiveConversionTable />
-    </section>
-
-    <!-- Guides & Articles -->
-    <section class="reveal-section space-y-8">
-      <div class="text-center max-w-2xl mx-auto space-y-3">
-        <h2 class="text-2xl md:text-3xl font-bold section-title">
-          Conversion Guides &amp; Technical Articles
-        </h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {
-          allGuides.map((guide) => (
+          featureLinks.map((feature) => (
             <a
-              href={`/guides/${guide.id}/`}
-              class="group glass-card glass-card-hover rounded-2xl p-6 block"
+              href={feature.href}
+              class="glass-card glass-card-hover rounded-2xl p-6 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
             >
-              <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-3">
-                <span class="badge badge-brand capitalize font-sans">{guide.data.category}</span>
-                <span class="text-slate-600">•</span>
-                <span class="text-slate-500">
-                  {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+              <span class="text-[10px] uppercase tracking-[0.18em] text-brand-400/80 font-semibold">
+                {feature.eyebrow}
+              </span>
+              <span class="flex items-center justify-between gap-3 mt-2.5">
+                <strong class="text-white group-hover:text-brand-300 transition-colors">
+                  {feature.title}
+                </strong>
+                <span
+                  aria-hidden="true"
+                  class="text-slate-600 group-hover:text-brand-400 group-hover:translate-x-1 transition-all"
+                >
+                  &rarr;
                 </span>
-              </div>
-              <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
-                {guide.data.title}
-              </h3>
-              <p class="text-slate-500 text-xs line-clamp-2 leading-relaxed">
-                {guide.data.description}
-              </p>
-              <div class="mt-4">
-                <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform duration-300">
-                  Read Guide &rarr;
-                </span>
-              </div>
+              </span>
+              <span class="block text-xs text-slate-500 mt-2.5 leading-relaxed">
+                {feature.description}
+              </span>
             </a>
           ))
         }
       </div>
-    </section>
+    </nav>
 
-    <!-- ======== BLOG & TECHNICAL INSIGHTS ======== -->
-    {
-      allBlogPosts.length > 0 && (
-        <section class="reveal-section space-y-8">
-          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div class="space-y-2">
-              <h2 class="text-2xl md:text-3xl font-bold section-title">Latest Articles &amp; Insights</h2>
-            </div>
-            <a
-              href="/blog/"
-              class="text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors inline-flex items-center gap-1"
-            >
-              Browse all articles &rarr;
-            </a>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
-            {allBlogPosts.slice(0, 3).map((post) => (
-              <a
-                href={`/blog/${post.id}/`}
-                class="group glass-card glass-card-hover rounded-2xl p-6 block"
-              >
-                <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-3">
-                  <span class="badge badge-brand capitalize font-sans">{post.data.category}</span>
-                  <span class="text-slate-600">•</span>
-                  <span class="text-slate-500">
-                    {new Date(post.data.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-                <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
-                  {post.data.title}
-                </h3>
-                <p class="text-slate-500 text-xs line-clamp-2 leading-relaxed">
-                  {post.data.description}
-                </p>
-                <div class="mt-4">
-                  <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform duration-300">
-                    Read Article &rarr;
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )
-    }
-
-    <!-- ======== TOOLS SHOWCASE ======== -->
+    <!-- Specialised Tools Showcase -->
     <section id="advanced-calculators" class="reveal-section scroll-mt-24">
       <div class="glass-card p-8 sm:p-10 rounded-2xl glow-brand space-y-8">
         <div class="text-center max-w-2xl mx-auto space-y-3">
@@ -939,13 +759,143 @@ const featureLinks = [
       </div>
     </section>
 
+    <!-- ======== SECTION 8: DENSITY DIRECTORY ======== -->
+    <!-- Interactive Conversion Table -->
+    <section id="density-directory" class="reveal-section scroll-mt-24">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Substance Density Directory</h2>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
+          Search and filter {catalogItems.length}+ verified substances with lab-grade densities.
+        </p>
+      </div>
+      <InteractiveConversionTable />
+    </section>
+
+    <!-- Master Subcategories & Density Filter Grid Section -->
+    <section class="reveal-section max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">Explore Master Density Categories</h2>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
+          Filter through 25+ subcategories and {catalogItems.length} substances by density range and industry
+          domain.
+        </p>
+      </div>
+      <SubcategoriesGridCard />
+    </section>
+
+    <!-- Temperature Density -->
+    <section id="temperature-simulator" class="reveal-section scroll-mt-24">
+      <div class="text-center max-w-2xl mx-auto space-y-3 mb-10">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">
+          Effect of Temperature on Liquid Density
+        </h2>
+        <p class="text-slate-400 text-sm leading-relaxed max-w-lg mx-auto">
+          Demonstrating thermal expansion physics from 0°C freezing to 100°C boiling point.
+        </p>
+      </div>
+      <TemperatureDensitySlider />
+    </section>
+
     <!-- Engine Oil Viscosity Comparison Chart Section -->
     <section class="reveal-section max-w-5xl mx-auto">
       <EngineOilViscosityChartCard />
     </section>
 
-    <!-- FAQ Section -->
+    <!-- ======== SECTION 9: GUIDES, ARTICLES & FAQ ======== -->
+    <!-- Guides & Articles -->
     <section class="reveal-section space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-3">
+        <h2 class="text-2xl md:text-3xl font-bold section-title">
+          Conversion Guides &amp; Technical Articles
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+        {
+          allGuides.map((guide) => (
+            <a
+              href={`/guides/${guide.id}/`}
+              class="group glass-card glass-card-hover rounded-2xl p-6 block"
+            >
+              <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-3">
+                <span class="badge badge-brand capitalize font-sans">{guide.data.category}</span>
+                <span class="text-slate-600">•</span>
+                <span class="text-slate-500">
+                  {new Date(guide.data.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+              <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
+                {guide.data.title}
+              </h3>
+              <p class="text-slate-500 text-xs line-clamp-2 leading-relaxed">
+                {guide.data.description}
+              </p>
+              <div class="mt-4">
+                <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform duration-300">
+                  Read Guide &rarr;
+                </span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- BLOG & TECHNICAL INSIGHTS -->
+    {
+      allBlogPosts.length > 0 && (
+        <section class="reveal-section space-y-8">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div class="space-y-2">
+              <h2 class="text-2xl md:text-3xl font-bold section-title">Latest Articles &amp; Insights</h2>
+            </div>
+            <a
+              href="/blog/"
+              class="text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors inline-flex items-center gap-1"
+            >
+              Browse all articles &rarr;
+            </a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+            {allBlogPosts.slice(0, 3).map((post) => (
+              <a
+                href={`/blog/${post.id}/`}
+                class="group glass-card glass-card-hover rounded-2xl p-6 block"
+              >
+                <div class="flex items-center gap-2 text-xs font-mono text-brand-400 mb-3">
+                  <span class="badge badge-brand capitalize font-sans">{post.data.category}</span>
+                  <span class="text-slate-600">•</span>
+                  <span class="text-slate-500">
+                    {new Date(post.data.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors duration-300 mb-2 leading-snug">
+                  {post.data.title}
+                </h3>
+                <p class="text-slate-500 text-xs line-clamp-2 leading-relaxed">
+                  {post.data.description}
+                </p>
+                <div class="mt-4">
+                  <span class="text-xs font-semibold text-brand-400 group-hover:translate-x-1 inline-block transition-transform duration-300">
+                    Read Article &rarr;
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- FAQ Section -->
+    <section class="reveal-section space-y-8" id="faq">
       <div class="text-center max-w-2xl mx-auto space-y-3">
         <h2 class="text-2xl md:text-3xl font-bold section-title">Frequently Asked Questions</h2>
       </div>
