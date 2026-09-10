@@ -7,6 +7,9 @@ import { featuredSubstances } from './src/data/substances.js';
 export default defineConfig({
   site: 'https://kgtoliter.com',
   trailingSlash: 'always',
+  build: {
+    inlineStylesheets: 'always',
+  },
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/admin'),
