@@ -225,6 +225,7 @@ import IndustryModeSelector from './IndustryModeSelector.astro';
 <script>
   import type { CatalogItem } from '../../data/catalog';
   import { industryModes } from '../../data/industryModes';
+  import { loadSubstancesCatalog } from '../../utils/catalogLoader';
 
   let catalog: CatalogItem[] = [];
   let currentIndustryMode = 'all';
@@ -756,17 +757,45 @@ Ready-mix Concrete,2400,2.400`;
       link.click();
     });
 
-    // Fetch Catalog Data
-    try {
-      const response = await fetch('/data/substances.json');
-      if (response.ok) {
-        catalog = (await response.json()) as CatalogItem[];
-        createBatchRow('diesel-2', 50);
-        createBatchRow('water-pure', 100);
-        createBatchRow('vegetable-oil', 25);
+    // Lazy-load Batch Catalog Data
+    let batchDataLoaded = false;
+    let batchDataLoading = false;
+
+    async function initBatchData(): Promise<void> {
+      if (batchDataLoaded || batchDataLoading) return;
+      batchDataLoading = true;
+      try {
+        catalog = await loadSubstancesCatalog();
+        batchDataLoaded = true;
+        if (document.querySelectorAll('.batch-row').length === 0) {
+          createBatchRow('diesel-2', 50);
+          createBatchRow('water-pure', 100);
+          createBatchRow('vegetable-oil', 25);
+        }
+      } catch (err) {
+        console.error('Failed to load substances catalog for batch converter', err);
+      } finally {
+        batchDataLoading = false;
       }
-    } catch (err) {
-      console.error('Failed to load substances catalog', err);
     }
+
+    // Lazy load when user scrolls near the batch conversion section
+    const batchSection = document.getElementById('batch-conversion') || document.getElementById('interactive-batch-section');
+    if (batchSection && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) {
+          void initBatchData();
+          observer.disconnect();
+        }
+      }, { rootMargin: '300px' });
+      observer.observe(batchSection);
+    }
+
+    // Also trigger immediately if user interacts with batch tabs or inputs
+    tabInteractive?.addEventListener('click', () => void initBatchData(), { once: true });
+    tabCsv?.addEventListener('click', () => void initBatchData(), { once: true });
+    document.getElementById('addBatchRowBtn')?.addEventListener('click', () => void initBatchData());
+    document.getElementById('csvPasteInput')?.addEventListener('focus', () => void initBatchData(), { once: true });
+    document.getElementById('loadSampleCsvBtn')?.addEventListener('click', () => void initBatchData(), { once: true });
   });
 </script>

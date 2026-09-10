@@ -134,6 +134,7 @@ function densityDisplay(item: CatalogItem): string {
 
 <script>
   import type { CatalogItem } from '../../data/catalog';
+  import { loadSubstancesCatalog } from '../../utils/catalogLoader';
 
   const PAGE_SIZE = 50;
 
@@ -151,6 +152,8 @@ function densityDisplay(item: CatalogItem): string {
     let visibleCount = PAGE_SIZE;
     let sortKey: 'name' | 'category' | 'density' = 'name';
     let sortAscending = true;
+    let catalogLoaded = false;
+    let catalogLoading = false;
 
     function appendCell(row: HTMLTableRowElement, text: string, className: string, title?: string) {
       const cell = document.createElement('td');
@@ -223,34 +226,62 @@ function densityDisplay(item: CatalogItem): string {
       loadMore.hidden = visible.length >= filtered.length;
     }
 
-    async function loadCatalog() {
+    async function loadCatalog(): Promise<void> {
+      if (catalogLoaded) return;
+      if (catalogLoading) return;
+      catalogLoading = true;
       loadMore.disabled = true;
+
       try {
-        const response = await fetch('/data/substances.json');
-        if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
-        items = (await response.json()) as CatalogItem[];
+        items = await loadSubstancesCatalog();
+        catalogLoaded = true;
         render();
       } catch (error) {
-        console.error(error);
-        status.textContent = 'The full directory could not be loaded. Showing the initial entries.';
+        console.error('Directory catalog could not be loaded:', error);
+        status.textContent = 'The full directory could not be loaded. Showing initial entries.';
         loadMore.hidden = true;
       } finally {
+        catalogLoading = false;
         loadMore.disabled = false;
+      }
+    }
+
+    function triggerLoadAndRender() {
+      if (!catalogLoaded) {
+        void loadCatalog();
+      } else {
+        render();
       }
     }
 
     searchInput.addEventListener('input', () => {
       visibleCount = PAGE_SIZE;
-      render();
+      triggerLoadAndRender();
     });
+    searchInput.addEventListener('focus', () => {
+      if (!catalogLoaded) void loadCatalog();
+    }, { once: true });
+
     filterSelect.addEventListener('change', () => {
       visibleCount = PAGE_SIZE;
-      render();
+      triggerLoadAndRender();
     });
+    filterSelect.addEventListener('focus', () => {
+      if (!catalogLoaded) void loadCatalog();
+    }, { once: true });
+
     loadMore.addEventListener('click', () => {
-      visibleCount += PAGE_SIZE;
-      render();
+      if (!catalogLoaded) {
+        void loadCatalog().then(() => {
+          visibleCount += PAGE_SIZE;
+          render();
+        });
+      } else {
+        visibleCount += PAGE_SIZE;
+        render();
+      }
     });
+
     sortButtons.forEach((button) =>
       button.addEventListener('click', () => {
         const nextKey = button.dataset.sort as typeof sortKey;
@@ -259,10 +290,20 @@ function densityDisplay(item: CatalogItem): string {
           sortKey = nextKey;
           sortAscending = true;
         }
-        render();
+        triggerLoadAndRender();
       }),
     );
 
-    void loadCatalog();
+    // IntersectionObserver — lazy load when user scrolls within 300px of directory
+    const directorySection = document.getElementById('density-directory') || tableBody.closest('figure');
+    if (directorySection && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) {
+          void loadCatalog();
+          observer.disconnect();
+        }
+      }, { rootMargin: '300px' });
+      observer.observe(directorySection);
+    }
   });
 </script>

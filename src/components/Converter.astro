@@ -378,6 +378,7 @@ const categoriesList = [
 
 <script>
   import type { CatalogItem } from '../data/catalog';
+  import { loadSubstancesCatalog } from '../utils/catalogLoader';
 
   const liquidColors: Record<string, string> = {
     water: '#60a5fa',
@@ -731,29 +732,20 @@ const categoriesList = [
       });
     });
 
+    let catalogLoaded = false;
+    let catalogLoading = false;
+
     // Populate catalog
     async function loadCatalog() {
+      if (catalogLoaded || catalogLoading) return;
+      catalogLoading = true;
       try {
-        const response = await fetch('/data/substances.json');
-        if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
-        fullCatalog = (await response.json()) as CatalogItem[];
-
-        // Check URL search parameters to pre-fill inputs if available
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramVal = urlParams.get('mass') || urlParams.get('volume') || urlParams.get('val');
-        const paramFrom = urlParams.get('from') || urlParams.get('unit');
-        const paramSub = urlParams.get('substance') || urlParams.get('material');
-
-        if (paramVal && massInput) {
-          massInput.value = paramVal;
-        }
-        if (paramFrom === 'l' || paramFrom === 'liter' || paramFrom === 'litres') {
-          setMode('l-to-kg');
-        } else if (paramFrom === 'kg') {
-          setMode('kg-to-l');
-        }
-
+        fullCatalog = await loadSubstancesCatalog();
+        catalogLoaded = true;
         filterOptions();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramSub = urlParams.get('substance') || urlParams.get('material');
 
         if (paramSub) {
           const match = fullCatalog.find(
@@ -768,12 +760,13 @@ const categoriesList = [
               (o) => o.dataset.catalogKey === match.catalogKey,
             );
             if (opt) opt.selected = true;
+            calculateAndBroadcast();
           }
         }
-
-        calculateAndBroadcast();
       } catch (error) {
         console.error('Converter catalogue could not be loaded.', error);
+      } finally {
+        catalogLoading = false;
       }
     }
 
@@ -857,23 +850,40 @@ const categoriesList = [
     substanceChips.forEach((chip) => {
       chip.addEventListener('click', () => {
         const chipId = chip.getAttribute('data-id') || '';
+        const chipDensity = chip.getAttribute('data-density');
+        const chipName = chip.textContent?.trim().replace(/^[^\s]+\s+/, '') || chipId;
+
         if (customDensityToggle && customDensityToggle.checked) {
           customDensityToggle.checked = false;
           customDensityToggle.dispatchEvent(new Event('change'));
         }
         if (substanceSearchInput && substanceSearchInput.value) {
           substanceSearchInput.value = '';
-          filterOptions();
+          if (catalogLoaded) filterOptions();
         }
-        const matchOpt = Array.from(substanceSelect.options).find(
+
+        let matchOpt = Array.from(substanceSelect.options).find(
           (o) => (o.dataset.id || '').toLowerCase() === chipId.toLowerCase() || o.dataset.catalogKey === chipId
         );
+
         if (matchOpt) {
           substanceSelect.value = matchOpt.value;
           matchOpt.selected = true;
-          updateActiveSubstanceChip(chipId);
-          calculateAndBroadcast();
+        } else if (chipDensity) {
+          // Preset clicked before full catalog loaded into select
+          matchOpt = document.createElement('option');
+          matchOpt.value = chipDensity;
+          matchOpt.textContent = `${chipName} (${chipDensity} kg/L)`;
+          matchOpt.dataset.name = chipName;
+          matchOpt.dataset.id = chipId;
+          matchOpt.dataset.category = 'common';
+          substanceSelect.appendChild(matchOpt);
+          substanceSelect.value = chipDensity;
+          matchOpt.selected = true;
         }
+
+        updateActiveSubstanceChip(chipId);
+        calculateAndBroadcast();
       });
     });
 
@@ -941,7 +951,42 @@ const categoriesList = [
       updateActiveSubstanceChip(selectedOpt?.dataset.id || '');
     });
 
+    // Check immediate URL search parameters for initial values
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramVal = urlParams.get('mass') || urlParams.get('volume') || urlParams.get('val');
+    const paramFrom = urlParams.get('from') || urlParams.get('unit');
+    const paramSub = urlParams.get('substance') || urlParams.get('material');
+
+    if (paramVal && massInput) {
+      massInput.value = paramVal;
+    }
+    if (paramFrom === 'l' || paramFrom === 'liter' || paramFrom === 'litres') {
+      setMode('l-to-kg');
+    } else if (paramFrom === 'kg') {
+      setMode('kg-to-l');
+    }
+
     calculateAndBroadcast();
-    void loadCatalog();
+
+    // If deep-linked substance was specified in URL, load immediately
+    if (paramSub) {
+      void loadCatalog();
+    } else {
+      // Lazy-load catalog when user focuses/interacts with search or dropdown
+      substanceSearchInput?.addEventListener('focus', () => void loadCatalog(), { once: true });
+      substanceSearchInput?.addEventListener('input', () => void loadCatalog(), { once: true });
+      substanceSelect?.addEventListener('focus', () => void loadCatalog(), { once: true });
+      substanceSelect?.addEventListener('mousedown', () => void loadCatalog(), { once: true });
+      categoryFilterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => void loadCatalog(), { once: true });
+      });
+
+      // Background prefetch during browser idle time (does not block initial render)
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => void loadCatalog(), { timeout: 3000 });
+      } else {
+        setTimeout(() => void loadCatalog(), 2500);
+      }
+    }
   });
 </script>
