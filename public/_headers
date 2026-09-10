@@ -20,9 +20,8 @@
 /manifest.json
   Cache-Control: public, max-age=86400, stale-while-revalidate=86400
 
-# HTML pages and documents (revalidate to ensure fresh content while utilizing ETag caching)
+# Global security headers for all routes
 /*
-  Cache-Control: public, max-age=0, must-revalidate
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
