@@ -315,43 +315,56 @@ import IndustryModeSelector from './IndustryModeSelector.astro';
     const filtered = getFilteredCatalog();
     const row = document.createElement('div');
     row.className =
-      'batch-row grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-2.5 items-center bg-surface-900/60 p-3 sm:p-4 rounded-xl border border-white/[0.05] animate-fade-in hover:border-brand-500/20 transition-colors';
+      'batch-row flex flex-col sm:grid sm:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-2.5 bg-surface-900/60 p-3 sm:p-4 rounded-xl border border-white/[0.05] animate-fade-in hover:border-brand-500/20 transition-colors';
 
     const isKgToL = batchDirection === 'kg-to-l';
 
     row.innerHTML = `
-      <div>
-        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Substance</label>
-        <select aria-label="Select substance" class="batch-row-select select-pro text-xs py-2">
-          ${filtered.map((c) => `<option value="${c.catalogKey}" ${c.catalogKey === preselectedKey ? 'selected' : ''}>${c.name} (${c.density} kg/L)</option>`).join('')}
-        </select>
+      <!-- Substance Selection with Mobile Delete Button -->
+      <div class="flex items-center gap-2">
+        <div class="flex-1 min-w-0">
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Substance</label>
+          <select aria-label="Select substance" class="batch-row-select select-pro text-xs py-2 w-full truncate">
+            ${filtered.map((c) => `<option value="${c.catalogKey}" ${c.catalogKey === preselectedKey ? 'selected' : ''}>${c.name} (${c.density} kg/L)</option>`).join('')}
+          </select>
+        </div>
+        <button type="button" aria-label="Remove row" class="batch-row-remove sm:hidden p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 transition-colors font-bold text-sm w-8 h-8 shrink-0 flex items-center justify-center">
+          ✕
+        </button>
       </div>
 
-      <div>
-        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Density (kg/L)</label>
-        <div class="relative">
-          <input type="number" step="0.001" min="0.01" class="batch-row-density input-pro text-xs py-2 font-mono" placeholder="Density" value="1.000" />
-          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg/L</span>
+      <!-- Density and Amount in 2 columns on Mobile -->
+      <div class="grid grid-cols-2 gap-2 sm:contents">
+        <div>
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">Density (kg/L)</label>
+          <div class="relative">
+            <input type="number" step="0.001" min="0.01" class="batch-row-density input-pro text-xs py-2 font-mono w-full pr-9" placeholder="Density" value="1.000" />
+            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">kg/L</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Mass (kg)' : 'Volume (L)'}</label>
+          <div class="relative">
+            <input type="number" step="0.1" min="0.01" value="${defaultAmount}" class="batch-row-amount input-pro text-xs py-2 font-mono w-full pr-8" placeholder="${isKgToL ? 'Mass' : 'Volume'}" />
+            <span class="batch-row-amount-unit absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'kg' : 'L'}</span>
+          </div>
         </div>
       </div>
 
-      <div>
-        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Mass (kg)' : 'Volume (L)'}</label>
-        <div class="relative">
-          <input type="number" step="0.1" min="0.01" value="${defaultAmount}" class="batch-row-amount input-pro text-xs py-2 font-mono" placeholder="${isKgToL ? 'Mass' : 'Volume'}" />
-          <span class="batch-row-amount-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'kg' : 'L'}</span>
+      <!-- Calculated Output -->
+      <div class="sm:contents">
+        <div>
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Volume Output' : 'Mass Output'}</label>
+          <div class="relative">
+            <input type="text" readonly class="batch-row-output bg-surface-950 border border-white/[0.08] text-emerald-400 font-mono font-bold text-xs rounded-xl p-2 sm:p-2.5 w-full outline-none pr-8" placeholder="Result" />
+            <span class="batch-row-output-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'L' : 'kg'}</span>
+          </div>
         </div>
       </div>
 
-      <div>
-        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1 sm:hidden">${isKgToL ? 'Volume Output' : 'Mass Output'}</label>
-        <div class="relative">
-          <input type="text" readonly class="batch-row-output bg-surface-950 border border-white/[0.08] text-emerald-400 font-mono font-bold text-xs rounded-xl p-2.5 w-full outline-none" placeholder="Result" />
-          <span class="batch-row-output-unit absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 pointer-events-none">${isKgToL ? 'L' : 'kg'}</span>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
+      <!-- Desktop Remove Button -->
+      <div class="hidden sm:flex justify-end">
         <button type="button" aria-label="Remove row" class="batch-row-remove p-2 rounded-lg bg-red-500/10 hover:bg-red-500/25 text-red-400 transition-colors font-bold text-sm w-9 h-9 flex items-center justify-center">
           ✕
         </button>
@@ -363,7 +376,7 @@ import IndustryModeSelector from './IndustryModeSelector.astro';
     const selectEl = row.querySelector<HTMLSelectElement>('.batch-row-select');
     const densityEl = row.querySelector<HTMLInputElement>('.batch-row-density');
     const amountEl = row.querySelector<HTMLInputElement>('.batch-row-amount');
-    const removeBtn = row.querySelector<HTMLButtonElement>('.batch-row-remove');
+    const removeBtns = row.querySelectorAll<HTMLButtonElement>('.batch-row-remove');
 
     // Auto-fill density from catalog
     if (selectEl && densityEl) {
@@ -382,9 +395,11 @@ import IndustryModeSelector from './IndustryModeSelector.astro';
     densityEl?.addEventListener('input', () => updateRowCalculation(row));
     amountEl?.addEventListener('input', () => updateRowCalculation(row));
 
-    removeBtn?.addEventListener('click', () => {
-      row.remove();
-      calculateInteractiveTotals();
+    removeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        row.remove();
+        calculateInteractiveTotals();
+      });
     });
 
     updateRowCalculation(row);

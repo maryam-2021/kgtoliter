@@ -50,7 +50,7 @@ export async function getStaticPaths() {
 
   // 3. Substance-Specific QDP Quantities (e.g. 5-kg-water-to-litres)
   topSubstances.forEach((sub) => {
-    [1, 2, 5, 10, 20, 25, 50, 100, 1000].forEach((qty) => {
+    [1, 2, 5, 10, 20, 25, 50, 100, 200, 1000].forEach((qty) => {
       // Forward: [qty]-kg-[sub]-to-litres
       paths.push({
         params: { query: `${qty}-kg-${sub.id}-to-litres` },

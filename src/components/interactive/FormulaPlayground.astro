@@ -2,19 +2,19 @@
 
 ---
 
-<div class="glass-card p-6 rounded-2xl border border-slate-800 shadow-xl max-w-4xl mx-auto">
+<div class="glass-card p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-xl max-w-4xl mx-auto">
   <h3 class="text-lg font-bold text-white mb-2">Interactive Formula Playground</h3>
   <p class="text-sm text-slate-400 mb-6">
     Drag the sliders to see how mass and density affect volume in real-time.
   </p>
 
   <!-- Formula Display -->
-  <div class="text-center py-6 bg-slate-900/90 rounded-xl border border-slate-800 mb-6 font-mono">
-    <p class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+  <div class="text-center py-4 sm:py-6 px-2 bg-slate-900/90 rounded-xl border border-slate-800 mb-6 font-mono">
+    <p class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
       <span id="fp-v" class="text-emerald-400 transition-all duration-200">1.00</span>
-      <span class="text-slate-500 mx-2">=</span>
+      <span class="text-slate-500 mx-1 sm:mx-2">=</span>
       <span id="fp-m" class="text-brand-400 transition-all duration-200">1</span>
-      <span class="text-slate-500 mx-2">&divide;</span>
+      <span class="text-slate-500 mx-1 sm:mx-2">&divide;</span>
       <span id="fp-rho" class="text-purple-400 transition-all duration-200">1.00</span>
     </p>
     <p class="text-xs text-slate-400 mt-2 font-mono">
@@ -41,7 +41,7 @@
         max="50"
         step="0.1"
         value="1"
-        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500"
+        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500 touch-pan-x"
         aria-label="Mass in kilograms"
       />
       <div class="flex justify-between text-xs text-slate-500 font-mono mt-1">
@@ -67,7 +67,7 @@
         max="3"
         step="0.01"
         value="1"
-        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
+        class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500 touch-pan-x"
         aria-label="Density in kg per litre"
       />
       <div class="flex justify-between text-xs text-slate-500 font-mono mt-1">

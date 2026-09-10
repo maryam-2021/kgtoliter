@@ -3,36 +3,36 @@
 ---
 
 <div
-  class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto"
+  class="glass-card rounded-2xl p-4 sm:p-8 border border-slate-800 shadow-xl max-w-4xl mx-auto"
   role="region"
   aria-label="Interactive Thermal Expansion and Temperature Density Simulator"
 >
   <div class="text-center mb-6">
-    <h2 class="text-2xl font-extrabold text-white">Temperature & Thermal Expansion Simulator</h2>
+    <h2 class="text-xl sm:text-2xl font-extrabold text-white">Temperature & Thermal Expansion Simulator</h2>
     <p class="text-xs text-slate-400 mt-1">
       Explore how temperature alters molecular density and spatial liquid volume
     </p>
   </div>
 
   <!-- Substance Toggle Buttons -->
-  <div class="flex justify-center items-center gap-2 mb-8">
+  <div class="flex justify-center items-center gap-2 mb-6 sm:mb-8 flex-wrap">
     <button
       type="button"
-      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-brand-500 text-slate-950 shadow-md transition-all"
+      class="temp-sub-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold bg-brand-500 text-slate-950 shadow-md transition-all"
       data-sub="water"
     >
       Water (Exact Reference Data)
     </button>
     <button
       type="button"
-      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+      class="temp-sub-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
       data-sub="diesel"
     >
       Diesel Fuel
     </button>
     <button
       type="button"
-      class="temp-sub-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+      class="temp-sub-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
       data-sub="ethanol"
     >
       Ethanol Alcohol
@@ -40,11 +40,11 @@
   </div>
 
   <!-- Main Thermometer & Readout Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-center mb-8">
     <!-- CSS Thermometer Graphic Column -->
     <div class="flex flex-col items-center justify-center space-y-2">
       <div
-        class="relative w-10 h-52 bg-slate-950 rounded-full border-4 border-slate-700/80 p-1 flex flex-col justify-end overflow-hidden shadow-inner"
+        class="relative w-8 sm:w-10 h-36 sm:h-52 bg-slate-950 rounded-full border-4 border-slate-700/80 p-1 flex flex-col justify-end overflow-hidden shadow-inner"
       >
         <!-- Mercury Tube -->
         <div
@@ -75,7 +75,7 @@
           value="20"
           step="1"
           aria-label="Adjust temperature from 0 to 100 degrees Celsius"
-          class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+          class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400 touch-pan-x"
         />
         <div class="flex justify-between text-[10px] text-slate-500 font-mono">
           <span>0°C (Freezing)</span>

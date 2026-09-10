@@ -6,9 +6,12 @@ import CalculatorWidget from '../../components/CalculatorWidget.astro';
 import CustomDensitySolver from '../../components/interactive/CustomDensitySolver.astro';
 import BreadcrumbNav from '../../components/BreadcrumbNav.astro';
 import { useI18n } from '../../utils/i18n';
+import { substances } from '../../data/densities';
 
 const { locale = 'en' } = Astro.params;
 const { t } = useI18n(locale);
+
+const dedicatedMap = new Set(substances.map((s) => `${s.category}:${s.id}`));
 
 // 50 Substances with verified density and standard sources
 const fiftySubstances = [
@@ -530,14 +533,17 @@ const pageSchema = [
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5 text-slate-300 font-mono text-xs">
-              {fiftySubstances.map((item) => (
-                <tr class="hover:bg-white/[0.02]">
-                  <td class="py-3 px-4 font-semibold text-white font-sans">
-                    <a href={`/${item.cat}/litres-to-kg-${item.id}/`} class="text-brand-400 hover:underline">
-                      {item.name}
-                    </a>
-                    <span class="text-[11px] text-slate-500 block font-normal">{item.note}</span>
-                  </td>
+              {fiftySubstances.map((item) => {
+                const hasDedicated = dedicatedMap.has(`${item.cat}:${item.id}`);
+                const targetUrl = hasDedicated ? `/${item.cat}/litres-to-kg-${item.id}/` : `/${item.cat}/`;
+                return (
+                  <tr class="hover:bg-white/[0.02]">
+                    <td class="py-3 px-4 font-semibold text-white font-sans">
+                      <a href={targetUrl} class="text-brand-400 hover:underline">
+                        {item.name}
+                      </a>
+                      <span class="text-[11px] text-slate-500 block font-normal">{item.note}</span>
+                    </td>
                   <td class="py-3 px-4 text-center text-slate-400 font-bold">{item.density.toFixed(3)} kg/L</td>
                   <td class="py-3 px-4 text-right font-bold text-white">{(1 * item.density).toFixed(3)} kg</td>
                   <td class="py-3 px-4 text-right text-emerald-400 font-bold">{(5 * item.density).toFixed(3)} kg</td>
@@ -545,7 +551,8 @@ const pageSchema = [
                   <td class="py-3 px-4 text-right text-amber-400 font-bold">{(20 * item.density).toFixed(3)} kg</td>
                   <td class="py-3 px-4 text-slate-400 font-sans text-xs">{item.standard}</td>
                 </tr>
-              ))}
+              );
+            })}
             </tbody>
           </table>
         </div>
