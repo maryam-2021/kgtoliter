@@ -1,6 +1,7 @@
 ---
 export interface Props {
   faqs?: { q: string; a: string }[];
+  renderSchema?: boolean;
 }
 
 const defaultFaqs = [
@@ -155,7 +156,7 @@ const defaultFaqs = [
   },
 ];
 
-const { faqs = defaultFaqs } = Astro.props;
+const { faqs = defaultFaqs, renderSchema = true } = Astro.props;
 
 // Strip HTML for schema generation
 const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
@@ -176,7 +177,7 @@ const faqSchema = {
 ---
 
 <!-- Inject Schema via script tag -->
-<script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+{renderSchema && <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 
 <!-- Actual UI Accordion -->
 <div class="space-y-4 max-w-4xl mx-auto my-8 font-sans">

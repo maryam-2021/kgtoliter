@@ -44,16 +44,61 @@ const pageSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: 'Master Substance Density Reference Database',
-    description: `Comprehensive reference database containing densities, temperature baselines, and ASTM/IUPAC/CRC citations for ${SUBSTANCE_DATABASE.length} chemical, industrial, food, fuel, and construction substances.`,
+    name: 'Master Substance Density Reference Database (772+ Substances)',
+    description: `Comprehensive reference database containing laboratory densities, temperature baselines, and ASTM/IUPAC/CRC citations for ${SUBSTANCE_DATABASE.length} chemical, industrial, food, fuel, and construction substances.`,
     url: 'https://kgtoliter.com/density-reference/',
+    identifier: ['kgtoliter-master-density-v2', 'https://kgtoliter.com/density-reference/'],
+    keywords: [
+      'density database',
+      'substance densities',
+      'material density table',
+      'kg to liters',
+      'specific gravity',
+      'ASTM D1298',
+      'ISO 3696',
+      'CRC Handbook of Chemistry and Physics',
+    ],
+    isAccessibleForFree: true,
     creator: {
       '@type': 'Organization',
-      name: 'Kg to Litre Engineering Team',
-      url: 'https://kgtoliter.com/'
+      name: 'Kg to Litre Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
     },
     license: 'https://creativecommons.org/licenses/by/4.0/',
-    variableMeasured: 'Density (kg/L), Specific Gravity, Reference Temperature (°C)'
+    variableMeasured: [
+      'Density (kg/L)',
+      'Specific Gravity',
+      'Reference Temperature (°C)',
+      'Reciprocal Volume (L/kg)',
+      'Density Uncertainty Range',
+    ],
+    measurementTechnique:
+      'Laboratory hydrometer, pycnometer, and oscillating U-tube digital densitometer calibrated per ASTM D1298, ASTM D4052, and ISO 3696',
+    temporalCoverage: '2024/2026',
+    spatialCoverage: 'Global',
+    distribution: [
+      {
+        '@type': 'DataDownload',
+        name: 'Master Substances Density JSON Dataset',
+        encodingFormat: 'application/json',
+        contentUrl: 'https://kgtoliter.com/data/substances.json',
+      },
+      {
+        '@type': 'DataDownload',
+        name: 'Interactive Master Density Directory',
+        encodingFormat: 'text/html',
+        contentUrl: 'https://kgtoliter.com/density-reference/',
+      },
+    ],
   },
   {
     '@context': 'https://schema.org',
@@ -63,10 +108,10 @@ const pageSchema = [
       name: f.q,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: f.a
-      }
-    }))
-  }
+        text: f.a,
+      },
+    })),
+  },
 ];
 ---
 
@@ -264,7 +309,7 @@ const pageSchema = [
         <h2 class="text-2xl font-bold text-white">Database & Methodology FAQs</h2>
         <p class="text-slate-400 text-sm">Standards, sourcing, and calculation accuracy.</p>
       </div>
-      <FAQAccordion faqs={faqs} />
+      <FAQAccordion faqs={faqs} renderSchema={false} />
     </section>
 
   </main>

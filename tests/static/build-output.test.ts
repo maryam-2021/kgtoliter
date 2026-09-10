@@ -61,3 +61,45 @@ test('homepage contains essential document landmarks and metadata', async () => 
   assert.match(html, /<link rel="canonical" href="https:\/\/kgtoliter\.com\/"/);
   assert.match(html, /navigator\.serviceWorker\.register\(/);
 });
+
+test('key pages contain valid FAQPage, HowTo, and Dataset schema markup', async () => {
+  const indexHtml = await readFile(path.join(outputRoot, 'index.html'), 'utf8');
+  const jsonLdMatches = [...indexHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  assert.ok(jsonLdMatches.length > 0, 'Homepage must contain JSON-LD scripts');
+
+  const schemas = jsonLdMatches.flatMap((m) => {
+    try {
+      const parsed = JSON.parse(m[1]);
+      return Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      return [];
+    }
+  });
+
+  const schemaTypes = schemas.map((s) => s['@type']);
+  assert.ok(schemaTypes.includes('FAQPage'), 'Homepage must contain FAQPage schema');
+  assert.ok(schemaTypes.includes('HowTo'), 'Homepage must contain HowTo schema');
+  assert.ok(schemaTypes.includes('Dataset'), 'Homepage must contain Dataset schema');
+
+  // Verify HowTo step structure on homepage
+  const howTo = schemas.find((s) => s['@type'] === 'HowTo');
+  assert.ok(Array.isArray(howTo.step) && howTo.step.length >= 3, 'HowTo must contain at least 3 steps');
+  assert.equal(howTo.step[0]['@type'], 'HowToStep');
+
+  // Verify Dataset structure on density reference
+  const densityRefHtml = await readFile(path.join(outputRoot, 'density-reference', 'index.html'), 'utf8');
+  assert.match(densityRefHtml, /"@type":"Dataset"/);
+  assert.match(densityRefHtml, /"@type":"FAQPage"/);
+
+  // Verify HowTo on dedicated conversion pages
+  const waterPageHtml = await readFile(path.join(outputRoot, 'basic', 'kg-to-litres-water', 'index.html'), 'utf8');
+  assert.match(waterPageHtml, /"@type":"HowTo"/);
+  assert.match(waterPageHtml, /"@type":"FAQPage"/);
+
+  // Verify HowTo on reverse guide
+  const litreToKgHtml = await readFile(path.join(outputRoot, 'litre-to-kg', 'index.html'), 'utf8');
+  assert.match(litreToKgHtml, /"@type":"HowTo"/);
+  assert.match(litreToKgHtml, /"@type":"FAQPage"/);
+  assert.match(litreToKgHtml, /"@type":"Dataset"/);
+});
+

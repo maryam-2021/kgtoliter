@@ -1,8 +1,10 @@
 ---
 // src/components/schemas/FAQSchema.astro
 export interface FAQItem {
-  question: string;
-  answer: string;
+  question?: string;
+  answer?: string;
+  q?: string;
+  a?: string;
 }
 
 export interface Props {
@@ -11,15 +13,17 @@ export interface Props {
 
 const { faqs = [] } = Astro.props;
 
+const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: faqs.map((faq) => ({
     '@type': 'Question',
-    name: faq.question,
+    name: faq.question || faq.q || '',
     acceptedAnswer: {
       '@type': 'Answer',
-      text: faq.answer,
+      text: stripHtml(faq.answer || faq.a || ''),
     },
   })),
 };

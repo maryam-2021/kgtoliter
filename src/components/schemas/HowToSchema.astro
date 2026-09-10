@@ -1,0 +1,140 @@
+---
+// src/components/schemas/HowToSchema.astro
+export interface HowToStepItem {
+  name: string;
+  text: string;
+  url?: string;
+  image?: string;
+}
+
+export interface Props {
+  name?: string;
+  description?: string;
+  totalTime?: string;
+  substanceName?: string;
+  density?: number;
+  direction?: 'kg-to-litres' | 'litres-to-kg';
+  steps?: HowToStepItem[];
+  yieldValue?: string;
+  pageUrl?: string;
+}
+
+const {
+  name,
+  description,
+  totalTime = 'PT1M',
+  substanceName,
+  density,
+  direction = 'kg-to-litres',
+  steps,
+  yieldValue = '1 calculated volume/mass conversion result',
+  pageUrl = 'https://kgtoliter.com/',
+} = Astro.props;
+
+const isReverse = direction === 'litres-to-kg';
+
+const defaultTitle = isReverse
+  ? substanceName
+    ? `How to Convert Litres to Kilograms of ${substanceName}`
+    : 'How to Convert Litres to Kilograms'
+  : substanceName
+    ? `How to Convert Kilograms to Litres of ${substanceName}`
+    : 'How to Convert Kilograms to Litres';
+
+const defaultDescription = isReverse
+  ? substanceName
+    ? `Step-by-step guide to calculating mass in kilograms from volume in litres for ${substanceName}${density ? ` using density ${density.toFixed(3)} kg/L` : ''}.`
+    : 'Step-by-step guide to converting liquid volume in litres to mass in kilograms using material density.'
+  : substanceName
+    ? `Step-by-step guide to calculating volume in litres from mass in kilograms for ${substanceName}${density ? ` using density ${density.toFixed(3)} kg/L` : ''}.`
+    : 'Step-by-step guide to calculating liquid volume in litres from mass in kilograms using material density.';
+
+const resolvedSteps: HowToStepItem[] = steps || (isReverse
+  ? [
+      {
+        name: 'Find Material Density (ρ)',
+        text: substanceName && density
+          ? `Verify the density of ${substanceName} (${density.toFixed(3)} kg/L at standard reference conditions).`
+          : 'Look up the substance density in kilograms per litre (kg/L) at operating temperature (e.g. water = 1.000 kg/L, diesel = 0.832 kg/L, olive oil = 0.910 kg/L).',
+        url: `${pageUrl}#step-density`,
+      },
+      {
+        name: 'Measure Volume in Litres (V)',
+        text: 'Determine the liquid or bulk volume in litres (L) using a calibrated container, graduated cylinder, or flow meter.',
+        url: `${pageUrl}#step-volume`,
+      },
+      {
+        name: 'Calculate Mass using m = V × ρ',
+        text: substanceName && density
+          ? `Multiply volume (L) by ${density.toFixed(3)} kg/L to find mass in kilograms: Mass (kg) = Volume (L) × ${density.toFixed(3)} kg/L.`
+          : 'Multiply volume (L) by density (kg/L) to find mass in kilograms: Mass (kg) = Volume (L) × Density (kg/L).',
+        url: `${pageUrl}#step-formula`,
+      },
+      {
+        name: 'Verify Operating Temperature',
+        text: 'Confirm liquid temperature against standard 20°C (or 15°C for petroleum fuels). Apply thermal expansion adjustments if operating at elevated temperatures.',
+        url: `${pageUrl}#step-temperature`,
+      },
+    ]
+  : [
+      {
+        name: 'Find Material Density (ρ)',
+        text: substanceName && density
+          ? `Verify the density of ${substanceName} (${density.toFixed(3)} kg/L at standard reference conditions).`
+          : 'Look up the substance density in kilograms per litre (kg/L) at operating temperature (e.g. water = 1.000 kg/L, milk = 1.030 kg/L, diesel = 0.832 kg/L).',
+        url: `${pageUrl}#step-density`,
+      },
+      {
+        name: 'Measure Net Mass in Kilograms (m)',
+        text: 'Determine the net mass in kilograms (kg) on a calibrated digital scale, excluding container tare weight.',
+        url: `${pageUrl}#step-mass`,
+      },
+      {
+        name: 'Calculate Volume using V = m ÷ ρ',
+        text: substanceName && density
+          ? `Divide mass in kilograms by ${density.toFixed(3)} kg/L: Volume (L) = Mass (kg) ÷ ${density.toFixed(3)} kg/L.`
+          : 'Divide mass in kilograms by density in kg/L: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+        url: `${pageUrl}#step-formula`,
+      },
+      {
+        name: 'Verify Operating Temperature',
+        text: 'Check whether liquid temperature is at standard 20°C (or 15°C for petroleum fuels) for precise volumetric verification.',
+        url: `${pageUrl}#step-temperature`,
+      },
+    ]);
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: name || defaultTitle,
+  description: description || defaultDescription,
+  image: 'https://kgtoliter.com/og-image.png',
+  totalTime,
+  yield: yieldValue,
+  tool: [
+    {
+      '@type': 'HowToTool',
+      name: 'Calibrated Digital Scale (kg)',
+    },
+    {
+      '@type': 'HowToTool',
+      name: 'Kg to Litres Converter Calculator',
+    },
+  ],
+  supply: [
+    {
+      '@type': 'HowToSupply',
+      name: substanceName ? `${substanceName} sample` : 'Liquid or material sample with known density',
+    },
+  ],
+  step: resolvedSteps.map((s, index) => ({
+    '@type': 'HowToStep',
+    position: index + 1,
+    name: s.name,
+    text: s.text,
+    url: s.url,
+  })),
+};
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(howToSchema)} />

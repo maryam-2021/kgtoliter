@@ -14,9 +14,45 @@ const { category } = Astro.props;
 const categorySubstances = substances.filter((s) => s.category === category.id);
 const title = `Kg to Litres & Litres to Kg of ${category.name} | Density Reference`;
 const description = `Two-way mass and volume conversion tools for ${category.name.toLowerCase()}. Convert kg to litres or litres to kg using compiled density values.`;
+
+const categorySchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `${category.name} Density Reference Dataset`,
+    description: `Laboratory-referenced density values and conversion parameters for substances in the ${category.name.toLowerCase()} category. Verified values in kg/L under standard reference temperatures.`,
+    url: `https://kgtoliter.com/${category.slug}/`,
+    identifier: [`kgtoliter-${category.slug}-density-dataset`, `https://kgtoliter.com/${category.slug}/`],
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+    creator: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Review Board',
+      url: 'https://kgtoliter.com/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kg to Litre',
+      url: 'https://kgtoliter.com/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kgtoliter.com/favicon.svg',
+      },
+    },
+    variableMeasured: ['Density (kg/L)', 'Specific Gravity', 'Reciprocal Volume (L/kg)'],
+    distribution: [
+      {
+        '@type': 'DataDownload',
+        name: `${category.name} Density JSON Data`,
+        encodingFormat: 'application/json',
+        contentUrl: 'https://kgtoliter.com/data/substances.json',
+      },
+    ],
+  },
+];
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} schema={categorySchema}>
   <article class="max-w-6xl mx-auto px-4 py-10 space-y-12">
     <!-- Breadcrumbs -->
     <nav class="text-sm text-slate-400 flex items-center gap-2 font-mono">

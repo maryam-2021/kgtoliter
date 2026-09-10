@@ -126,6 +126,74 @@ const pageSchema = [
       },
     })),
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Convert Kilograms to Litres (Complete Guide)',
+    description: 'Master formula and steps to convert mass in kilograms into liquid volume in litres using substance density.',
+    totalTime: 'PT1M',
+    image: 'https://kgtoliter.com/og-image.png',
+    tool: [
+      { '@type': 'HowToTool', name: 'Digital Scale (kg)' },
+      { '@type': 'HowToTool', name: 'Kg to Litres Engineering Calculator' },
+    ],
+    supply: [
+      { '@type': 'HowToSupply', name: 'Substance density value (kg/L)' },
+    ],
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: 'Look Up the Density',
+        text: 'Determine the material density (ρ) in kg/L at reference conditions (e.g., water = 1.000 kg/L, diesel = 0.832 kg/L).',
+        url: 'https://kgtoliter.com/kg-to-litres-guide/#density-table',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: 'Weigh Mass in Kilograms',
+        text: 'Measure the net mass (m) in kilograms on a calibrated scale.',
+        url: 'https://kgtoliter.com/kg-to-litres-guide/#formula',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: 'Calculate Volume (V = m ÷ ρ)',
+        text: 'Divide the mass in kilograms by the density in kg/L: Volume (L) = Mass (kg) ÷ Density (kg/L).',
+        url: 'https://kgtoliter.com/kg-to-litres-guide/#worked-examples',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: 'Verify Temperature Conditions',
+        text: 'Check if operating temperature deviates from 20°C and apply thermal expansion adjustment if required.',
+        url: 'https://kgtoliter.com/kg-to-litres-guide/#temperature-effects',
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Kg to Litres Reference Density Dataset',
+    description: 'Reference density table for 772+ chemical and physical substances in kg/L at calibrated standard temperatures.',
+    url: 'https://kgtoliter.com/density-reference/',
+    identifier: ['kgtoliter-guide-density-catalog', 'https://kgtoliter.com/density-reference/'],
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+    creator: {
+      '@type': 'Organization',
+      name: 'Kg to Litre Engineering Team',
+      url: 'https://kgtoliter.com/',
+    },
+    distribution: [
+      {
+        '@type': 'DataDownload',
+        name: 'Substances Density JSON Dataset',
+        encodingFormat: 'application/json',
+        contentUrl: 'https://kgtoliter.com/data/substances.json',
+      },
+    ],
+  },
 ];
 ---
 
@@ -858,7 +926,7 @@ const pageSchema = [
           <p class="text-slate-400 text-sm">Common questions regarding kg to litre conversion calculations.</p>
         </div>
 
-        <FAQAccordion faqs={guideFaqs} />
+        <FAQAccordion faqs={guideFaqs} renderSchema={false} />
       </section>
 
       <!-- CTA Box -->

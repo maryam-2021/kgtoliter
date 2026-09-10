@@ -145,7 +145,79 @@ const toolSchema: Record<string, any>[] = [
         text: item.a,
       },
     })),
-  }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: isReverse
+      ? `How to Convert Litres of ${substance.name} to Kilograms`
+      : `How to Convert Kilograms of ${substance.name} to Litres`,
+    description: isReverse
+      ? `Step-by-step procedure to calculate mass in kilograms from volume in litres for ${substance.name} using calibrated density (${substance.density_kg_per_l} kg/L).`
+      : `Step-by-step procedure to calculate volume in litres from mass in kilograms for ${substance.name} using calibrated density (${substance.density_kg_per_l} kg/L).`,
+    totalTime: 'PT1M',
+    image: 'https://kgtoliter.com/og-image.png',
+    tool: [
+      { '@type': 'HowToTool', name: isReverse ? 'Liquid Measuring Vessel (L)' : 'Digital Scale (kg)' },
+      { '@type': 'HowToTool', name: `Kg to Litres ${substance.name} Calculator` },
+    ],
+    supply: [
+      { '@type': 'HowToSupply', name: `${substance.name} fluid sample` },
+    ],
+    step: isReverse
+      ? [
+          {
+            '@type': 'HowToStep',
+            position: 1,
+            name: `Reference ${substance.name} Density`,
+            text: `Note the calibrated density of ${substance.name}: ${substance.density_kg_per_l} kg/L at standard reference conditions.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 2,
+            name: 'Measure Volume in Litres',
+            text: `Measure the volume of ${substance.name} in litres (L) using a calibrated container, flow meter, or tank gauge.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 3,
+            name: 'Calculate Mass using m = V × ρ',
+            text: `Multiply volume in litres by ${substance.density_kg_per_l} kg/L: Mass (kg) = Volume (L) × ${substance.density_kg_per_l} kg/L. 1 litre equals ${massPer1L} kg.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 4,
+            name: 'Check Operating Temperature',
+            text: `Verify operating temperature against standard ${substance.temperature || 20}°C to account for thermal expansion if needed.`,
+          },
+        ]
+      : [
+          {
+            '@type': 'HowToStep',
+            position: 1,
+            name: `Reference ${substance.name} Density`,
+            text: `Note the calibrated density of ${substance.name}: ${substance.density_kg_per_l} kg/L at standard reference conditions.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 2,
+            name: 'Weigh Net Mass in Kilograms',
+            text: `Weigh ${substance.name} in kilograms (kg) on a digital scale, subtracting tare container weight.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 3,
+            name: 'Calculate Volume using V = m ÷ ρ',
+            text: `Divide mass in kilograms by ${substance.density_kg_per_l} kg/L: Volume (L) = Mass (kg) ÷ ${substance.density_kg_per_l} kg/L. 1 kg equals ${volumePer1Kg} L.`,
+          },
+          {
+            '@type': 'HowToStep',
+            position: 4,
+            name: 'Check Operating Temperature',
+            text: `Verify operating temperature against standard ${substance.temperature || 20}°C to account for thermal expansion if needed.`,
+          },
+        ],
+  },
 ];
 
 const conversionSteps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 1000];
@@ -384,7 +456,7 @@ const conversionSteps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 1000];
         <h2 class="text-2xl font-bold text-white">Frequently Asked Questions</h2>
         <p class="text-xs sm:text-sm text-slate-400">Common practical questions for converting {substance.name}.</p>
       </div>
-      <FAQAccordion faqs={faqsToDisplay} />
+      <FAQAccordion faqs={faqsToDisplay} renderSchema={false} />
     </section>
 
     <!-- Related Silo Tools -->

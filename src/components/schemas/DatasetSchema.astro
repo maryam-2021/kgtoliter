@@ -1,0 +1,97 @@
+---
+// src/components/schemas/DatasetSchema.astro
+export interface Props {
+  name?: string;
+  description?: string;
+  url?: string;
+  keywords?: string[];
+  categoryName?: string;
+  substanceCount?: number;
+}
+
+const {
+  name,
+  description,
+  url = 'https://kgtoliter.com/density-reference/',
+  keywords,
+  categoryName,
+  substanceCount = 772,
+} = Astro.props;
+
+const defaultName = categoryName
+  ? `${categoryName} Density and Conversion Dataset (${substanceCount}+ Substances)`
+  : `Comprehensive Liquid and Material Density Reference Database (${substanceCount}+ Substances)`;
+
+const defaultDescription = categoryName
+  ? `Laboratory-referenced density values in kg/L for ${categoryName.toLowerCase()} under standard conditions. Includes chemical reference temperatures, uncertainty ranges, and volume reciprocity values for engineering and commercial calculation.`
+  : `Authoritative physical and chemical density reference dataset covering ${substanceCount}+ substances across culinary liquids, petroleum fuels, automotive lubricants, industrial solvents, construction materials, and agricultural solutions. Compiled under ISO 3696, ASTM D1298, ASTM D4052, and CRC Handbook standards with verified reference temperatures, densities in kg/L, and uncertainty ranges.`;
+
+const defaultKeywords = keywords || [
+  'density database',
+  'kg to liters',
+  'material densities',
+  'liquid density table',
+  'specific gravity',
+  'chemical density catalog',
+  'mass to volume conversion',
+  'ASTM D1298',
+  'ISO 3696',
+  categoryName ? categoryName.toLowerCase() : 'all substances',
+];
+
+const datasetSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: name || defaultName,
+  description: description || defaultDescription,
+  url,
+  identifier: [
+    `kgtoliter-${categoryName ? categoryName.toLowerCase().replace(/\s+/g, '-') : 'master'}-density-v2`,
+    url,
+  ],
+  keywords: defaultKeywords,
+  license: 'https://creativecommons.org/licenses/by/4.0/',
+  isAccessibleForFree: true,
+  creator: {
+    '@type': 'Organization',
+    name: 'Kg to Litre Engineering Review Board',
+    url: 'https://kgtoliter.com/',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Kg to Litre',
+    url: 'https://kgtoliter.com/',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://kgtoliter.com/favicon.svg',
+    },
+  },
+  variableMeasured: [
+    'Density (kg/L)',
+    'Specific Gravity',
+    'Reference Temperature (°C)',
+    'Reciprocal Volume (L/kg)',
+    'Density Uncertainty Range',
+  ],
+  measurementTechnique:
+    'Laboratory hydrometer, pycnometer, and oscillating U-tube digital densitometer calibrated per ASTM D1298, ASTM D4052, and ISO 3696',
+  temporalCoverage: '2024/2026',
+  spatialCoverage: 'Global',
+  distribution: [
+    {
+      '@type': 'DataDownload',
+      name: 'Substances Density JSON Dataset',
+      encodingFormat: 'application/json',
+      contentUrl: 'https://kgtoliter.com/data/substances.json',
+    },
+    {
+      '@type': 'DataDownload',
+      name: 'Interactive Density Directory Web Interface',
+      encodingFormat: 'text/html',
+      contentUrl: url,
+    },
+  ],
+};
+---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(datasetSchema)} />
